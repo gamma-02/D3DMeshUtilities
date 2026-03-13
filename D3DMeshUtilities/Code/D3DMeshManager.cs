@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Numerics;
 using System.Text;
 using Accessibility;
+using D3DMeshUtilities.Code.ImageStuffAUGH;
 using SharpGLTF.Geometry;
 using SharpGLTF.Geometry.VertexTypes;
 using SharpGLTF.Materials;
@@ -11,11 +12,15 @@ using SharpGLTF.Memory;
 using SharpGLTF.Scenes;
 using SharpGLTF.Schema2;
 using TelltaleToolKit;
+using TelltaleToolKit.Resource;
 using TelltaleToolKit.Serialization.Binary;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
 using TelltaleToolKit.T3Types.Textures;
+using TelltaleToolKit.TelltaleArchives;
+using Image = SharpGLTF.Schema2.Image;
+using Texture = D3DMeshUtilities.Code.ImageStuffAUGH.Texture;
 using Toolkit = SharpGLTF.Schema2.Toolkit;
 
 namespace D3DMeshUtilities.Code;
@@ -89,34 +94,17 @@ public class D3DMeshManager(List<string> file, string outputPath)
                 var mb = new MaterialBuilder(materialName).WithDoubleSide(false);
 
                 Handle<T3Texture>? materialBaseColor = mesh.GetDiffuseTexture(mat.Material);
+                ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor);
+
+                Handle<T3Texture>? normalMap = mesh.GetNormalMapTexture(mat.Material);
+                ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal);
+
+                Handle<T3Texture>? specularMap = mesh.GetSpecularTexture(mat.Material);
+                ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor);
                 
-                if(materialBaseColor != null && TttkInit.Instance.Workspace!.ResolveSymbol(materialBaseColor.ObjectInfo.ObjectName))
-                {
-                    Stream? file = TttkInit.Instance.Workspace?.ExtractFile(materialBaseColor.ObjectInfo.ObjectName.Crc64);
-                    
-                    if(file == null || file.Length < 4)
-                        continue;
+                //unknown: what is detail texture and how is it used
 
-                    if (file.Position != 0)
-                        file.Position = 0;
-
-                    T3Texture? texture = TttkInit.Instance.Workspace?.TryOpenObject<T3Texture>(file, out _);
-
-                    if (texture == null)
-                        continue;
-
-                    MemoryImage memImage = new MemoryImage(texture.DdsTextureData);
-
-                    ImageBuilder image = ImageBuilder.From(memImage, materialBaseColor.ObjectInfo.ObjectName.SymbolName);
-
-                    mb.WithBaseColor(image);
-
-                }
-                
-
-
-
-
+                materials.Add(mb);
             }
             
             
@@ -124,7 +112,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
             //todo: make this dynamic! gonna have to do a bunch of variations for different combos :3
             //todo: add back ColorTexture2!!!!!!
             
-            var material = new MaterialBuilder("material");
+            // var material = new MaterialBuilder("material");
 
             var meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>("mesh1");
             //
@@ -179,6 +167,9 @@ public class D3DMeshManager(List<string> file, string outputPath)
             allBatches.AddRange(lod.Batches1);
             allBatches.AddRange(lod.Batches2);
 
+            //todo: also working with just one material, will change later 
+            MaterialBuilder material = materials[0];
+
             foreach (T3MeshBatch batch in allBatches)
             {
                 Console.Out.WriteLine(batch.AdjacencyStartIndex);
@@ -209,9 +200,9 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             ModelRoot root = scene.ToGltf2();
             
-            string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "gltf"));
+            string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "glb"));
 
-            root.SaveGLTF(outPath);
+            root.SaveGLB(outPath);
 
             Console.Out.WriteLine($"Saved at: {outPath}");
             
@@ -497,6 +488,50 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
         return vertices;
     }
+
+
+    public void ProcessTexture(Handle<T3Texture>? textureHandle, Workspace workspace, MaterialBuilder mb, KnownChannel channel)
+    {
+        //Make sure the texture exists :D
+        if (textureHandle == null || !workspace.ResolveSymbol(textureHandle.ObjectInfo.ObjectName)) return;
+        
+        // Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
+
+        IFileProvider? textureEntry = workspace.GetFileProviderForResource(textureHandle.ObjectInfo.ObjectName.Crc64);
+
+        Stream? file = textureEntry?.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
+                    
+        if(file == null || file.Length < 4)
+            return;
+
+        if (file.Position != 0)
+            file.Position = 0;
+
+        T3Texture? texture = workspace.TryOpenObject<T3Texture>(file, out _);
+
+        if (texture == null)
+            return;
+
+        Texture intermediateTexture = D3dtxCodec.Codec.LoadFromMemory(texture, new CodecOptions());
+        
+        intermediateTexture.ConvertToRGBA8sRGB();
+        
+        byte[] pngData = PngCodec.Codec.SaveToMemory(intermediateTexture, new CodecOptions(), true);
+        
+        // File.WriteAllBytes(Path.Combine(outputPath, textureHandle.ObjectInfo.ObjectName + ".dds"), ddsData);
+        
+        MemoryImage memImage = new MemoryImage(pngData);
+        
+        // memImage.SaveToFile(Path.Combine(outputPath, textureHandle.ObjectInfo.ObjectName + "-memImage.dds"));
+        
+        
+        ImageBuilder image = ImageBuilder.From(memImage, textureHandle.ObjectInfo.ObjectName.ToString());
+
+        mb.WithChannelImage(channel, image);
+        
+        Console.Out.WriteLine("Loaded texture: " + textureHandle.ObjectInfo.ObjectName);
+    }
+    
     
     
 }

@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D3DMeshUtilities", "D3DMeshUtilities\D3DMeshUtilities.csproj", "{A8EDC234-815C-46F7-B67C-6A615EE8DD08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelltaleToolKit", "TelltaleToolKit\TelltaleToolKit.csproj", "{7202937A-F6DA-45F0-81E9-99232E484913}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelltaleToolKit", "TelltaleToolKit-Contribs\src\TelltaleToolKit\TelltaleToolKit.csproj", "{F8596FC0-579E-431E-A401-4028D8E0E624}"
 EndProject
 Global
@@ -16,10 +14,6 @@ Global
 		{A8EDC234-815C-46F7-B67C-6A615EE8DD08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8EDC234-815C-46F7-B67C-6A615EE8DD08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8EDC234-815C-46F7-B67C-6A615EE8DD08}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7202937A-F6DA-45F0-81E9-99232E484913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7202937A-F6DA-45F0-81E9-99232E484913}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7202937A-F6DA-45F0-81E9-99232E484913}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7202937A-F6DA-45F0-81E9-99232E484913}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8596FC0-579E-431E-A401-4028D8E0E624}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8596FC0-579E-431E-A401-4028D8E0E624}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8596FC0-579E-431E-A401-4028D8E0E624}.Release|Any CPU.ActiveCfg = Release|Any CPU
