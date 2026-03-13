@@ -1,0 +1,208 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <!-- Exclude all .cs files in a specific directory -->
+      <Compile Remove="ExFromShadow\*.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LuaCSharp" Version="0.5.3" />
+      <PackageReference Include="SharpGLTF.Core" Version="1.0.6" />
+      <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.6" />
+<!--      <PackageReference Include="TelltaleToolKit" Version="0.1.1" />-->
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="bin\Debug\data\CHANGELOG.md" />
+      <None Include="bin\Debug\data\game_profiles\batman-the-enemy-within-2017.json" />
+      <None Include="bin\Debug\data\game_profiles\batman-the-telltale-series-2016-12.json" />
+      <None Include="bin\Debug\data\game_profiles\bone-act-1-2-combo-pack-2007.json" />
+      <None Include="bin\Debug\data\game_profiles\bone-out-from-boneville-2005.json" />
+      <None Include="bin\Debug\data\game_profiles\bone-out-from-boneville-2007.json" />
+      <None Include="bin\Debug\data\game_profiles\bone-the-great-cowrace-2006.json" />
+      <None Include="bin\Debug\data\game_profiles\borderlands-2015.json" />
+      <None Include="bin\Debug\data\game_profiles\csi-3-dimensions-of-murder-2006-demo.json" />
+      <None Include="bin\Debug\data\game_profiles\csi-hard-evidence-2007.json" />
+      <None Include="bin\Debug\data\game_profiles\game-of-thrones-2015.json" />
+      <None Include="bin\Debug\data\game_profiles\guardians-of-the-galaxy-2017.json" />
+      <None Include="bin\Debug\data\game_profiles\minecraft-story-mode-2015-old.json" />
+      <None Include="bin\Debug\data\game_profiles\minecraft-story-mode-2015.json" />
+      <None Include="bin\Debug\data\game_profiles\minecraft-story-mode-season-2-2017.json" />
+      <None Include="bin\Debug\data\game_profiles\poker-night-2-2013.json" />
+      <None Include="bin\Debug\data\game_profiles\poker-night-at-the-inventory-remastered-2026.json" />
+      <None Include="bin\Debug\data\game_profiles\poker-night-at-the-inventory-remastered-NEW.vdb.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-101-2006-demo.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-102-2006-demo.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-103-2006-demo.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-104-2006-demo.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-105-2006-demo.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-106-2006-demo.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-201-2007.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-203-2008.json" />
+      <None Include="bin\Debug\data\game_profiles\sam-and-max-season-1-remastered-2019.json" />
+      <None Include="bin\Debug\data\game_profiles\tales-from-the-borderlands-2021-pc.json" />
+      <None Include="bin\Debug\data\game_profiles\tales-from-the-borderlands-2021-switch.json" />
+      <None Include="bin\Debug\data\game_profiles\telltale-texas-hold-em-2005.json" />
+      <None Include="bin\Debug\data\game_profiles\the-walking-dead-collection-2017.json" />
+      <None Include="bin\Debug\data\game_profiles\the-walking-dead-definitive-series-2019.json" />
+      <None Include="bin\Debug\data\game_profiles\the-walking-dead-michonne-2016.json" />
+      <None Include="bin\Debug\data\game_profiles\the-walking-dead-season-2.json" />
+      <None Include="bin\Debug\data\game_profiles\the-walking-dead-season-3-2016.json" />
+      <None Include="bin\Debug\data\game_profiles\the-walking-dead-season-4-2018.json" />
+      <None Include="bin\Debug\data\hashdb\AG-Bones.txt" />
+      <None Include="bin\Debug\data\hashdb\BoneNames.txt" />
+      <None Include="bin\Debug\data\hashdb\PropertySet-Keys.txt" />
+      <None Include="bin\Debug\data\README.md" />
+      <None Include="bin\Debug\data\versiondb\back-to-the-future-101-UNSUPPORTED.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\back-to-the-future-101.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\batman-the-enemy-within-2017.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\batman-the-telltale-series-2016-12.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\bone-act-1-2-combo-pack-2007.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\bone-out-from-boneville-2005.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\bone-out-from-boneville-2007.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\bone-the-great-cowrace-2006.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\borderlands-2015.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\csi-3-dimensions-of-murder-2006-demo.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\csi-hard-evidence-2007.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\game-of-thrones-2015.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\guardians-of-the-galaxy-2017.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\ignore-unsupported.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\ignore.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\jurassic-park-the-game-NEW.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\jurassic-park-the-game-UNSUPPORTED.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\minecraft-story-mode-2015-ARCHIVED.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\minecraft-story-mode-2015-UNSUPPORTED-TYPES.csv" />
+      <None Include="bin\Debug\data\versiondb\minecraft-story-mode-2015.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\minecraft-story-mode-season-2-2017.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\poker-night-2-2013.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-101-2006-demo.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-102-2006-demo.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-103-2006-demo.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-104-2006-demo.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-105-2006-demo.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-106-2006-demo.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-201-2007.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\sam-and-max-season-1-remastered-2019.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED-TYPES.csv" />
+      <None Include="bin\Debug\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\tales-from-the-borderlands-2021-pc.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\tales-from-the-borderlands-2021-switch-UNSUPPORTED-TYPES.csv" />
+      <None Include="bin\Debug\data\versiondb\tales-from-the-borderlands-2021-switch.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\telltale-texas-hold-em-2005.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\the-walking-dead-collection-2017.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\the-walking-dead-definitive-series-2019.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\the-walking-dead-michonne-2016.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\the-walking-dead-season-2.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\the-walking-dead-season-3-2016.vdb.json" />
+      <None Include="bin\Debug\data\versiondb\the-walking-dead-season-4-2018.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\CHANGELOG.md" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\batman-the-enemy-within-2017.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\batman-the-telltale-series-2016-12.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-act-1-2-combo-pack-2007.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-out-from-boneville-2005.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-out-from-boneville-2007.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-the-great-cowrace-2006.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\borderlands-2015.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\csi-3-dimensions-of-murder-2006-demo.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\csi-hard-evidence-2007.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\game-of-thrones-2015.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\guardians-of-the-galaxy-2017.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\minecraft-story-mode-2015-old.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\minecraft-story-mode-2015.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\minecraft-story-mode-season-2-2017.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\poker-night-2-2013.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\poker-night-at-the-inventory-remastered-2026.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\poker-night-at-the-inventory-remastered-NEW.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-101-2006-demo.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-102-2006-demo.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-103-2006-demo.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-104-2006-demo.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-105-2006-demo.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-106-2006-demo.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-201-2007.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-203-2008.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-season-1-remastered-2019.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\tales-from-the-borderlands-2021-pc.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\tales-from-the-borderlands-2021-switch.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\telltale-texas-hold-em-2005.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-collection-2017.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-definitive-series-2019.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-michonne-2016.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-season-2.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-season-3-2016.json" />
+      <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-season-4-2018.json" />
+      <None Include="bin\Debug\net9.0-windows\data\hashdb\AG-Bones.txt" />
+      <None Include="bin\Debug\net9.0-windows\data\hashdb\BoneNames.txt" />
+      <None Include="bin\Debug\net9.0-windows\data\hashdb\PropertySet-Keys.txt" />
+      <None Include="bin\Debug\net9.0-windows\data\README.md" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\back-to-the-future-101-UNSUPPORTED.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\back-to-the-future-101.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\batman-the-enemy-within-2017.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\batman-the-telltale-series-2016-12.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-act-1-2-combo-pack-2007.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-out-from-boneville-2005.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-out-from-boneville-2007.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-the-great-cowrace-2006.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\borderlands-2015.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\csi-3-dimensions-of-murder-2006-demo.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\csi-hard-evidence-2007.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\game-of-thrones-2015.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\guardians-of-the-galaxy-2017.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\ignore-unsupported.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\ignore.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\jurassic-park-the-game-NEW.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\jurassic-park-the-game-UNSUPPORTED.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-2015-ARCHIVED.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-2015-UNSUPPORTED-TYPES.csv" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-2015.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-season-2-2017.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-2-2013.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-at-the-inventory-remastered-NEW.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-101-2006-demo.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-102-2006-demo.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-103-2006-demo.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-104-2006-demo.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-105-2006-demo.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-106-2006-demo.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-201-2007.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-season-1-remastered-2019.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED-TYPES.csv" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-pc.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-switch-UNSUPPORTED-TYPES.csv" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-switch.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\telltale-texas-hold-em-2005.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-collection-2017.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-definitive-series-2019.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-michonne-2016.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-season-2.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-season-3-2016.vdb.json" />
+      <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-season-4-2018.vdb.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-at-the-inventory-remastered-2026.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TelltaleToolKit\TelltaleToolKit.csproj" />
+    </ItemGroup>
+
+
+<!--    <ItemGroup>-->
+<!--        <ProjectReference Include="..\TelltaleToolKit\TelltaleToolKit.csproj" />-->
+<!--    </ItemGroup>-->
+    
+</Project>

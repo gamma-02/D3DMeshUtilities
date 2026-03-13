@@ -1,0 +1,4 @@
+﻿//todo: abstract mesh parsing into different formats that we can distinguish between
+
+This folder will contain all of the different supported 3D3Mesh formats. Right now, it only supports
+the format as specified in non-skinned or armatured models. I have to look at those to figure them out though!

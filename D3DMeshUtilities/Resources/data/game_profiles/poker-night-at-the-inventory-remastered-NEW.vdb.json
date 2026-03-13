@@ -1,0 +1,3484 @@
+[
+{
+"type": "T3MaterialParameter",
+"crc32": 477653772,
+"members": [
+{
+"name": "mName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mPropertyType",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValueType",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mFlags",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mScalarOffset",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mPreShaderScalarOffset",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mNestedMaterialIndex",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "EnumHTextAlignmentType",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "EnumRenderMaskWrite",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "LogicGroup",
+"crc32": 68987052,
+"members": [
+{
+"name": "mOperator",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mItems",
+"type": "Map<String,LogicGroup::LogicItem,less<String>>",
+"flags": 0
+},
+{
+"name": "mLogicGroups",
+"type": "DCArray<LogicGroup>",
+"flags": 0
+},
+{
+"name": "mGroupOperator",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mType",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mName",
+"type": "String",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimOrChore",
+"crc32": 3699549148,
+"members": [
+{
+"name": "mhAnim",
+"type": "Handle<Animation>",
+"flags": 0
+},
+{
+"name": "mhChore",
+"type": "Handle<Chore>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MaterialPreShader",
+"crc32": 4202237178,
+"members": [
+{
+"name": "mValueType",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mFlags",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mPreShaderOffset",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mScalarParameterOffset",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "EnumT3LightEnvGroup",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<Color>",
+"crc32": 320877508,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Color>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Color",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Color",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Color>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "EnumPlatformType",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "T3MaterialRuntimeProperty",
+"crc32": 3101824951,
+"members": [
+{
+"name": "mName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mRuntimeName",
+"type": "Symbol",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Handle<Chore>>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<Transform>::Sample",
+"crc32": 3614464131,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Transform",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Animation",
+"crc32": 425476598,
+"members": [
+{
+"name": "mVersion",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mLength",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mAdditiveMask",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mValues",
+"type": "DCArray<Ptr<AnimationValueInterfaceBase>>",
+"flags": 1
+},
+{
+"name": "mToolProps",
+"type": "ToolProps",
+"flags": 8224
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Transform>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "T3MeshData",
+"crc32": 3315619099,
+"members": [
+{
+"name": "mLODs",
+"type": "DCArray<T3MeshLOD>",
+"flags": 0
+},
+{
+"name": "mTextures",
+"type": "DCArray<T3MeshTexture>",
+"flags": 0
+},
+{
+"name": "mMaterials",
+"type": "DCArray<T3MeshMaterial>",
+"flags": 0
+},
+{
+"name": "mMaterialOverrides",
+"type": "DCArray<T3MeshMaterialOverride>",
+"flags": 0
+},
+{
+"name": "mBones",
+"type": "DCArray<T3MeshBoneEntry>",
+"flags": 0
+},
+{
+"name": "mLocalTransforms",
+"type": "DCArray<T3MeshLocalTransformEntry>",
+"flags": 0
+},
+{
+"name": "mMaterialRequirements",
+"type": "T3MaterialRequirements",
+"flags": 0
+},
+{
+"name": "mVertexStreams",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mBoundingBox",
+"type": "BoundingBox",
+"flags": 0
+},
+{
+"name": "mBoundingSphere",
+"type": "Sphere",
+"flags": 0
+},
+{
+"name": "mEndianType",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mPositionScale",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mPositionWScale",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mPositionOffset",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mLightmapTexelAreaPerSurfaceArea",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mPropertyKeyBase",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mVertexCount",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mMeshPreload",
+"type": "DCArray<T3MeshEffectPreload>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Handle<D3DMesh>>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "BoundingBox",
+"crc32": 3061401172,
+"members": [
+{
+"name": "mMin",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mMax",
+"type": "Vector3",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Chore",
+"crc32": 1830142088,
+"members": [
+{
+"name": "mName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mLength",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mNumResources",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mNumAgents",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mEditorProps",
+"type": "PropertySet",
+"flags": 8192
+},
+{
+"name": "mChoreSceneFile",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mRenderDelay",
+"type": "int32",
+"flags": 8192
+},
+{
+"name": "mSynchronizedToLocalization",
+"type": "LocalizeInfo",
+"flags": 0
+},
+{
+"name": "mDependencies",
+"type": "DependencyLoader<1>",
+"flags": 8192
+},
+{
+"name": "mToolProps",
+"type": "ToolProps",
+"flags": 8224
+},
+{
+"name": "mWalkPaths",
+"type": "Map<Symbol,WalkPath,less<Symbol>>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Symbol>::Sample",
+"crc32": 2519506812,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Symbol",
+"flags": 0
+}
+]
+}, 
+{
+"type": "ChoreResource",
+"crc32": 3269442563,
+"members": [
+{
+"name": "mpChore",
+"type": "Ptr<PtrBase>",
+"flags": 0
+},
+{
+"name": "mVersion",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mResName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mResLength",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mPriority",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mResourceGroup",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mhObject",
+"type": "HandleBase",
+"flags": 0
+},
+{
+"name": "mControlAnimation",
+"type": "Animation",
+"flags": 0
+},
+{
+"name": "mBlocks",
+"type": "DCArray<ChoreResource::Block>",
+"flags": 0
+},
+{
+"name": "mbNoPose",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbEmbedded",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbEnabled",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbIsAgentResource",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbViewGraphs",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbViewEmptyGraphs",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbViewProperties",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbViewResourceGroups",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mResourceProperties",
+"type": "PropertySet",
+"flags": 0
+},
+{
+"name": "mResourceGroupInclude",
+"type": "Map<Symbol,float,less<Symbol>>",
+"flags": 0
+},
+{
+"name": "mAAStatus",
+"type": "AutoActStatus",
+"flags": 0
+}
+]
+}, 
+{
+"type": "PhonemeKey",
+"crc32": 3621647849,
+"members": [
+{
+"name": "mPhoneme",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mFadeInTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mHoldTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mFadeOutTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mTargetContribution",
+"type": "float",
+"flags": 0
+}
+]
+}, 
+{
+"type": "ActorAgentBinding",
+"crc32": 860827662,
+"members": [
+{
+"name": "mActorName",
+"type": "String",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<PhonemeTable>>::Sample",
+"crc32": 3986050719,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Handle<PhonemeTable>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "ChoreResource::Block",
+"crc32": 1491678885,
+"members": [
+{
+"name": "mStartTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mEndTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbLoopingBlock",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mScale",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbSelected",
+"type": "bool",
+"flags": 1
+}
+]
+}, 
+{
+"type": "Rule",
+"crc32": 1665827590,
+"members": [
+{
+"name": "mName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mRuntimePropName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mConditions",
+"type": "LogicGroup",
+"flags": 0
+},
+{
+"name": "mActions",
+"type": "LogicGroup",
+"flags": 0
+},
+{
+"name": "mElse",
+"type": "LogicGroup",
+"flags": 0
+},
+{
+"name": "mAgentCategory",
+"type": "String",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshMaterialOverride",
+"crc32": 2361861277,
+"members": [
+{
+"name": "mhOverrideMaterial",
+"type": "Handle<PropertySet>",
+"flags": 0
+},
+{
+"name": "mMaterialIndex",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<T3Texture>>::Sample",
+"crc32": 3747927516,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Handle<T3Texture>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MaterialEnlightenPrecomputeParams",
+"crc32": 3740700792,
+"members": [
+{
+"name": "mIndirectReflectivity",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mIndirectTransparency",
+"type": "float",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<PhonemeKey>",
+"crc32": 2151867658,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<PhonemeKey>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "PhonemeKey",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "PhonemeKey",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<PhonemeKey>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<SoundData>>::Sample",
+"crc32": 2544300316,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Handle<SoundData>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<int>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<float>::Sample",
+"crc32": 1585374809,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 8192
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mRecipTimeToNextSample",
+"type": "float",
+"flags": 8225
+}
+]
+}, 
+{
+"type": "T3GFXVertexState",
+"crc32": 3691378007,
+"members": [
+{
+"name": "mVertexCountPerInstance",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mIndexBufferCount",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mVertexBufferCount",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mAttributeCount",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<PhonemeTable>>",
+"crc32": 781389097,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Handle<PhonemeTable>>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Handle<PhonemeTable>",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Handle<PhonemeTable>",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Handle<PhonemeTable>>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<String>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "D3DMesh",
+"crc32": 2649170624,
+"members": [
+{
+"name": "mName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mVersion",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mMeshData",
+"type": "T3MeshData",
+"flags": 1
+},
+{
+"name": "mInternalResources",
+"type": "DCArray<HandleBase>",
+"flags": 1
+},
+{
+"name": "mToolProps",
+"type": "ToolProps",
+"flags": 32
+},
+{
+"name": "mLightmapGlobalScale",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mLightmapTexCoordVersion",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mLODParamCRC",
+"type": "uint64",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<SoundData>>",
+"crc32": 2171168153,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Handle<SoundData>>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Handle<SoundData>",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Handle<SoundData>",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Handle<SoundData>>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3Texture",
+"crc32": 2804984673,
+"members": [
+{
+"name": "mVersion",
+"type": "int32",
+"flags": 32
+},
+{
+"name": "mSamplerState",
+"type": "T3SamplerStateBlock",
+"flags": 0
+},
+{
+"name": "mPlatform",
+"type": "EnumPlatformType",
+"flags": 0
+},
+{
+"name": "mName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mImportName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mImportScale",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mToolProps",
+"type": "ToolProps",
+"flags": 32
+},
+{
+"name": "mNumMipLevels",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mWidth",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mHeight",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mDepth",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mArraySize",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mSurfaceFormat",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mTextureLayout",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mSurfaceGamma",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mSurfaceMultisample",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mResourceUsage",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mType",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mSwizzle",
+"type": "RenderSwizzleParams",
+"flags": 0
+},
+{
+"name": "mSpecularGlossExponent",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mHDRLightmapScale",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mToonGradientCutoff",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mAlphaMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mColorMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mUVOffset",
+"type": "Vector2",
+"flags": 0
+},
+{
+"name": "mUVScale",
+"type": "Vector2",
+"flags": 0
+},
+{
+"name": "mNumMipLevelsAllocated",
+"type": "uint32",
+"flags": 1
+},
+{
+"name": "mNumSurfacesRequested",
+"type": "uint32",
+"flags": 1
+},
+{
+"name": "mNumSurfacesRequired",
+"type": "uint32",
+"flags": 1
+},
+{
+"name": "mNumSurfacesLoaded",
+"type": "uint32",
+"flags": 1
+},
+{
+"name": "mArrayFrameNames",
+"type": "DCArray<Symbol>",
+"flags": 0
+},
+{
+"name": "mToonRegions",
+"type": "DCArray<T3ToonGradientRegion>",
+"flags": 32
+}
+]
+}, 
+{
+"type": "AutoActStatus",
+"crc32": 1230570824,
+"members": [
+{
+"name": "m_Status",
+"type": "int32",
+"flags": 64
+}
+]
+}, 
+{
+"type": "KeyframedValue<Color>::Sample",
+"crc32": 2943929484,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Color",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Flags",
+"crc32": 86496959,
+"members": [
+{
+"name": "mFlags",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<AnimOrChore>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "T3MaterialTransform2D",
+"crc32": 3690548104,
+"members": [
+{
+"name": "mParameterPrefix",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mScalarOffset0",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mScalarOffset1",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mPreShaderScalarOffset0",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mPreShaderScalarOffset1",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mNestedMaterialIndex",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Symbol",
+"crc32": 3040456959,
+"members": [
+{
+"name": "mCrc64",
+"type": "uint64",
+"flags": 0
+}
+]
+}, 
+{
+"type": "LogicGroup::LogicItem",
+"crc32": 164050022,
+"members": [
+{
+"name": "Baseclass_PropertySet",
+"type": "PropertySet",
+"flags": 16
+},
+{
+"name": "mName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mKeyNegateList",
+"type": "Map<Symbol,bool,less<Symbol>>",
+"flags": 0
+},
+{
+"name": "mKeyComparisonList",
+"type": "Map<Symbol,int,less<Symbol>>",
+"flags": 0
+},
+{
+"name": "mKeyActionList",
+"type": "Map<Symbol,int,less<Symbol>>",
+"flags": 0
+},
+{
+"name": "mReferenceKeyList",
+"type": "DCArray<String>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "LocalizeInfo",
+"crc32": 1148494836,
+"members": [
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Scene::AgentInfo",
+"crc32": 2552262729,
+"members": [
+{
+"name": "mpAgent",
+"type": "Ptr<PtrBase>",
+"flags": 0
+},
+{
+"name": "mAgentName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mAgentSceneProps",
+"type": "PropertySet",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Symbol>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<Symbol>",
+"crc32": 3953242255,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Symbol>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Symbol>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshMaterial",
+"crc32": 2273025517,
+"members": [
+{
+"name": "mhMaterial",
+"type": "Handle<PropertySet>",
+"flags": 0
+},
+{
+"name": "mBaseMaterialName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mLegacyRenderTextureProperty",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mBoundingBox",
+"type": "BoundingBox",
+"flags": 0
+},
+{
+"name": "mBoundingSphere",
+"type": "Sphere",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimationValueInterfaceBase",
+"crc32": 945226703,
+"members": [
+{
+"name": "mName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "ChoreAgent",
+"crc32": 940153092,
+"members": [
+{
+"name": "mpChore",
+"type": "Ptr<PtrBase>",
+"flags": 0
+},
+{
+"name": "mAgentName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mResources",
+"type": "DCArray<int>",
+"flags": 0
+},
+{
+"name": "mAttachment",
+"type": "ChoreAgent::Attachment",
+"flags": 0
+},
+{
+"name": "mAABinding",
+"type": "ActorAgentBinding",
+"flags": 0
+},
+{
+"name": "mAgentEnabledRule",
+"type": "Rule",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Procedural_LookAt::Constraint",
+"crc32": 3305178018,
+"members": [
+{
+"name": "mMaxLeftRight",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mMinLeftRight",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mMaxUp",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mMinUp",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mLeftRightFixedOffsset",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mUpDownFixedOffsset",
+"type": "float",
+"flags": 0
+}
+]
+}, 
+{
+"type": "BlendMode",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "EnumT3LightEnvType",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Vector2>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<PhonemeKey>::Sample",
+"crc32": 4010447162,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "PhonemeKey",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<bool>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "T3MeshTexCoordTransform",
+"crc32": 46145939,
+"members": [
+{
+"name": "mScale",
+"type": "Vector2",
+"flags": 0
+},
+{
+"name": "mOffset",
+"type": "Vector2",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshBoneEntry",
+"crc32": 2510664983,
+"members": [
+{
+"name": "mBoneName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mBoundingBox",
+"type": "BoundingBox",
+"flags": 0
+},
+{
+"name": "mBoundingSphere",
+"type": "Sphere",
+"flags": 0
+},
+{
+"name": "mNumVerts",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshEffectPreloadDynamicFeatures",
+"crc32": 352806098,
+"members": [
+{
+"name": "mDynamicFeatures",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mPriority",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Scene",
+"crc32": 1691407110,
+"members": [
+{
+"name": "mTimeScale",
+"type": "float",
+"flags": 1
+},
+{
+"name": "mbActive",
+"type": "bool",
+"flags": 1
+},
+{
+"name": "mbHidden",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mName",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mAgentList",
+"type": "LinkedList<Scene::AgentInfo,0>",
+"flags": 1
+},
+{
+"name": "mReferencedScenes",
+"type": "DCArray<HandleLock<Scene>>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "LocationInfo",
+"crc32": 523314166,
+"members": [
+{
+"name": "mAttachmentAgent",
+"type": "String",
+"flags": 4096
+},
+{
+"name": "mAttachmentNode",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mInitialLocalTransform",
+"type": "Transform",
+"flags": 0
+}
+]
+}, 
+{
+"type": "EnumT3MaterialLightModelType",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "ChoreAgent::Attachment",
+"crc32": 218092985,
+"members": [
+{
+"name": "mbDoAttach",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mAttachTo",
+"type": "String",
+"flags": 4096
+},
+{
+"name": "mAttachToNode",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mAttachPos",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mAttachQuat",
+"type": "Quaternion",
+"flags": 0
+},
+{
+"name": "mbAttachPreserveWorldPos",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mbLeaveAttachedWhenComplete",
+"type": "bool",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Procedural_LookAt",
+"crc32": 4294967295,
+"members": [
+{
+"name": "mHostNode",
+"type": "String",
+"flags": 1
+},
+{
+"name": "mTargetAgent",
+"type": "String",
+"flags": 1
+},
+{
+"name": "mTargetNode",
+"type": "String",
+"flags": 1
+},
+{
+"name": "mTargetOffset",
+"type": "Vector3",
+"flags": 1
+},
+{
+"name": "mbUsePrivateNode",
+"type": "bool",
+"flags": 1
+},
+{
+"name": "mhXAxisChore",
+"type": "AnimOrChore",
+"flags": 1
+},
+{
+"name": "mhYAxisChore",
+"type": "AnimOrChore",
+"flags": 1
+},
+{
+"name": "mbRotateHostNode",
+"type": "bool",
+"flags": 1
+},
+{
+"name": "mLastLRAngle",
+"type": "float",
+"flags": 1
+},
+{
+"name": "mLastUDAngle",
+"type": "float",
+"flags": 1
+},
+{
+"name": "mLastLRWeight",
+"type": "float",
+"flags": 1
+},
+{
+"name": "mLastUDWeight",
+"type": "float",
+"flags": 1
+},
+{
+"name": "mLookAtComputeStage",
+"type": "Procedural_LookAt::EnumLookAtComputeStage",
+"flags": 1
+}
+]
+}, 
+{
+"type": "RenderSwizzleParams",
+"crc32": 1531463941,
+"members": [
+{
+"name": "mSwizzle[0]",
+"type": "uint8",
+"flags": 0
+},
+{
+"name": "mSwizzle[1]",
+"type": "uint8",
+"flags": 0
+},
+{
+"name": "mSwizzle[2]",
+"type": "uint8",
+"flags": 0
+},
+{
+"name": "mSwizzle[3]",
+"type": "uint8",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MaterialData",
+"crc32": 2111786057,
+"members": [
+{
+"name": "mMaterialName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mRuntimePropertiesName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mLegacyRenderTextureProperty",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mLegacyBlendModeRuntimeProperty",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mDomain",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mRuntimeProperties",
+"type": "DCArray<T3MaterialRuntimeProperty>",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mRuntimeFlags",
+"type": "Flags",
+"flags": 1
+},
+{
+"name": "mVersion",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mCompiledData2",
+"type": "DCArray<T3MaterialCompiledData>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "SkeletonPoseValue::BoneEntry",
+"crc32": 1798976013,
+"members": [
+{
+"name": "mName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "SkeletonPoseValue",
+"crc32": 273971083,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+},
+{
+"name": "mBones",
+"type": "DCArray<SkeletonPoseValue::BoneEntry>",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<SkeletonPoseValue::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Transform",
+"crc32": 2385176384,
+"members": [
+{
+"name": "mRot",
+"type": "Quaternion",
+"flags": 0
+},
+{
+"name": "mTrans",
+"type": "Vector3",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshEffectPreload",
+"crc32": 3415625090,
+"members": [
+{
+"name": "mEffectQuality",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mEntries",
+"type": "DCArray<T3MeshEffectPreloadEntry>",
+"flags": 0
+},
+{
+"name": "mTotalEffectCount",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Vector2>",
+"crc32": 3396776795,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Vector2>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Vector2",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Vector2",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Vector2>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<T3Texture>>",
+"crc32": 525278714,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Handle<T3Texture>>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Handle<T3Texture>",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Handle<T3Texture>",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Handle<T3Texture>>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<int>",
+"crc32": 3498313777,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<int>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<int>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "FlagsT3LightEnvGroupSet",
+"crc32": 1148494836,
+"members": [
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 262144
+}
+]
+}, 
+{
+"type": "EnumT3LightEnvShadowQuality",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "PropertySet",
+"crc32": 569556169,
+"members": [
+{
+"name": "mPropVersion",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mPropertyFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mKeyMap",
+"type": "IntrusiveSet<Symbol,PropertySet::KeyInfo,TagPropertyKeyInfoSet,Symbol::CompareCRC>",
+"flags": 1
+}
+]
+}, 
+{
+"type": "KeyframedValue<bool>",
+"crc32": 2075150696,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<bool>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<bool>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<Chore>>",
+"crc32": 2460368279,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Handle<Chore>>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Handle<Chore>",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Handle<Chore>",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Handle<Chore>>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<String>",
+"crc32": 2627330865,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<String>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "String",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<String>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Sphere",
+"crc32": 1378682100,
+"members": [
+{
+"name": "mCenter",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mRadius",
+"type": "float",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<float>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<bool>::Sample",
+"crc32": 427324047,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "bool",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3GFXBuffer",
+"crc32": 4152406900,
+"members": [
+{
+"name": "mResourceUsage",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mBufferFormat",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mBufferUsage",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mCount",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mStride",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3LightEnvLOD",
+"crc32": 1148494836,
+"members": [
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 262144
+}
+]
+}, 
+{
+"type": "EnumRenderMaskTest",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<Vector3>::Sample",
+"crc32": 1190140476,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Vector3",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Handle<PhonemeTable>>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<Chore>>::Sample",
+"crc32": 1125988888,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Handle<Chore>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<D3DMesh>>::Sample",
+"crc32": 2442304236,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Handle<D3DMesh>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3Texture::StreamHeader",
+"crc32": 2599746624,
+"members": [
+{
+"name": "mRegionCount",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mAuxDataCount",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mTotalDataSize",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3Texture::RegionStreamHeader",
+"crc32": 1347938913,
+"members": [
+{
+"name": "mFaceIndex",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mMipIndex",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mMipCount",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mDataSize",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mPitch",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mSlicePitch",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Vector2",
+"crc32": 3785346050,
+"members": [
+{
+"name": "x",
+"type": "float",
+"flags": 0
+},
+{
+"name": "y",
+"type": "float",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<AnimOrChore>",
+"crc32": 3605579676,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<AnimOrChore>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "AnimOrChore",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "AnimOrChore",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<AnimOrChore>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<String>::Sample",
+"crc32": 277839324,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "String",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Handle<T3Texture>>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "SkeletonPoseValue::Sample",
+"crc32": 1639625289,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mRecipTimeToNextSample",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mValues",
+"type": "DCArray<Transform>",
+"flags": 0
+},
+{
+"name": "mTangents",
+"type": "DCArray<int>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshLOD",
+"crc32": 1854703696,
+"members": [
+{
+"name": "mBatches[0]",
+"type": "DCArray<T3MeshBatch>",
+"flags": 0
+},
+{
+"name": "mBatches[1]",
+"type": "DCArray<T3MeshBatch>",
+"flags": 0
+},
+{
+"name": "mVertexStreams",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mBoundingBox",
+"type": "BoundingBox",
+"flags": 0
+},
+{
+"name": "mBoundingSphere",
+"type": "Sphere",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mVertexStateIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mNumPrimitives",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mNumBatches",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mVertexStart",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mVertexCount",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mTextureAtlasWidth",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mTextureAtlasHeight",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mPixelSize",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mDistance",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mBones",
+"type": "DCArray<Symbol>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3SamplerStateBlock",
+"crc32": 3001274032,
+"members": [
+{
+"name": "mData",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<AnimOrChore>::Sample",
+"crc32": 3190388998,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "AnimOrChore",
+"flags": 0
+}
+]
+}, 
+{
+"type": "EnumT3LightEnvShadowType",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "T3MeshCPUSkinningData",
+"crc32": 2932378030,
+"members": [
+{
+"name": "mPositionFormat",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mWeightFormat",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mNormalFormat",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mVertexStreams",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mNormalCount",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mWeightOffset",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mVertexSize",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mWeightSize",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mData",
+"type": "BinaryBuffer",
+"flags": 0
+}
+]
+}, 
+{
+"type": "Color",
+"crc32": 890537836,
+"members": [
+{
+"name": "r",
+"type": "float",
+"flags": 0
+},
+{
+"name": "g",
+"type": "float",
+"flags": 0
+},
+{
+"name": "b",
+"type": "float",
+"flags": 0
+},
+{
+"name": "a",
+"type": "float",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshBatch",
+"crc32": 3218022785,
+"members": [
+{
+"name": "mBoundingBox",
+"type": "BoundingBox",
+"flags": 0
+},
+{
+"name": "mBoundingSphere",
+"type": "Sphere",
+"flags": 0
+},
+{
+"name": "mBatchUsage",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mMinVertIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mMaxVertIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mBaseIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mStartIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mNumPrimitives",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mNumIndices",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mTextureIndices",
+"type": "T3MeshTextureIndices",
+"flags": 0
+},
+{
+"name": "mMaterialIndex",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mAdjacencyStartIndex",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Handle<D3DMesh>>",
+"crc32": 3599676780,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Handle<D3DMesh>>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Handle<D3DMesh>",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Handle<D3DMesh>",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Handle<D3DMesh>>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MeshEffectPreloadEntry",
+"crc32": 1993449091,
+"members": [
+{
+"name": "mEffectType",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mStaticEffectFeatures",
+"type": "BitSetBase<3>",
+"flags": 0
+},
+{
+"name": "mMaterialCRC",
+"type": "uint64",
+"flags": 0
+},
+{
+"name": "mDynamicEffectFeatures",
+"type": "DCArray<T3MeshEffectPreloadDynamicFeatures>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MaterialPassData",
+"crc32": 632005338,
+"members": [
+{
+"name": "mPassType",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mBlendMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mMaterialCrc",
+"type": "uint64",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<int>::Sample",
+"crc32": 545374144,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MaterialStaticParameter",
+"crc32": 271921936,
+"members": [
+{
+"name": "mName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mNestedMaterialIndex",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<float>",
+"crc32": 216118732,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<float>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<float>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<PhonemeKey>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Vector3>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Handle<SoundData>>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "KeyframedValue<Vector3>",
+"crc32": 449720202,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Vector3>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Vector3",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Vector3>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "EnumT3LightEnvMobility",
+"crc32": 2762767791,
+"members": [
+{
+"name": "mVal",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "Baseclass_EnumBase",
+"type": "EnumBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "GFXPlatformAttributeParams",
+"crc32": 3630159315,
+"members": [
+{
+"name": "mAttribute",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mFormat",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mAttributeIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mBufferIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mBufferOffset",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Transform>",
+"crc32": 3636394389,
+"members": [
+{
+"name": "Baseclass_AnimatedValueInterface<T>",
+"type": "AnimatedValueInterface<Transform>",
+"flags": 16
+},
+{
+"name": "Baseclass_KeyframedValueInterface",
+"type": "KeyframedValueInterface",
+"flags": 16
+},
+{
+"name": "mMinVal",
+"type": "Transform",
+"flags": 0
+},
+{
+"name": "mMaxVal",
+"type": "Transform",
+"flags": 0
+},
+{
+"name": "mSamples",
+"type": "DCArray<KeyframedValue<Transform>::Sample>",
+"flags": 0
+}
+]
+}, 
+{
+"type": "KeyframedValue<Vector2>::Sample",
+"crc32": 700778886,
+"members": [
+{
+"name": "mTime",
+"type": "float",
+"flags": 0
+},
+{
+"name": "mbInterpolateToNextKey",
+"type": "bool",
+"flags": 0
+},
+{
+"name": "mTangentMode",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mValue",
+"type": "Vector2",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MaterialCompiledData",
+"crc32": 1736648665,
+"members": [
+{
+"name": "mParameters",
+"type": "DCArray<T3MaterialParameter>",
+"flags": 0
+},
+{
+"name": "mTextures",
+"type": "DCArray<T3MaterialTexture>",
+"flags": 0
+},
+{
+"name": "mTransforms",
+"type": "DCArray<T3MaterialTransform2D>",
+"flags": 0
+},
+{
+"name": "mNestedMaterials",
+"type": "DCArray<T3MaterialNestedMaterial>",
+"flags": 0
+},
+{
+"name": "mPreShaders",
+"type": "DCArray<T3MaterialPreShader>",
+"flags": 0
+},
+{
+"name": "mStaticParameters",
+"type": "DCArray<T3MaterialStaticParameter>",
+"flags": 0
+},
+{
+"name": "mTextureParams",
+"type": "DCArray<T3MaterialTextureParam>",
+"flags": 0
+},
+{
+"name": "mPasses",
+"type": "DCArray<T3MaterialPassData>",
+"flags": 0
+},
+{
+"name": "mMaterialQuality",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mMaterialBlendModes",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mMaterialPasses",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mMaterialChannels",
+"type": "BitSetBase<2>",
+"flags": 0
+},
+{
+"name": "mShaderInputs",
+"type": "BitSetBase<3>",
+"flags": 0
+},
+{
+"name": "mSceneTextures",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mOptionalPropertyTypes",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mPreShaderBuffer",
+"type": "BinaryBuffer",
+"flags": 0
+},
+{
+"name": "mFlags",
+"type": "Flags",
+"flags": 0
+},
+{
+"name": "mParameterBufferScalarSize[0]",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mParameterBufferScalarSize[1]",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mPreShaderParameterBufferScalarSize",
+"type": "uint32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "AnimatedValueInterface<Color>",
+"crc32": 1911535390,
+"members": [
+{
+"name": "Baseclass_AnimationValueInterfaceBase",
+"type": "AnimationValueInterfaceBase",
+"flags": 16
+}
+]
+}, 
+{
+"type": "T3MaterialTexture",
+"crc32": 1242503405,
+"members": [
+{
+"name": "mName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mTextureName",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mTextureNameWithoutExtension",
+"type": "Symbol",
+"flags": 0
+},
+{
+"name": "mLayout",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mPropertyType",
+"type": "int32",
+"flags": 64
+},
+{
+"name": "mTextureTypes",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mFirstParamIndex",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mParamCount",
+"type": "uint32",
+"flags": 0
+},
+{
+"name": "mTextureIndex",
+"type": "int32",
+"flags": 0
+},
+{
+"name": "mNestedMaterialIndex",
+"type": "int32",
+"flags": 0
+}
+]
+}, 
+{
+"type": "T3MaterialRequirements",
+"crc32": 1979023119,
+"members": [
+{
+"name": "mPasses",
+"type": "BitSetBase<1>",
+"flags": 0
+},
+{
+"name": "mChannels",
+"type": "BitSetBase<2>",
+"flags": 0
+},
+{
+"name": "mInputs",
+"type": "BitSetBase<3>",
+"flags": 0
+}
+]
+}]
