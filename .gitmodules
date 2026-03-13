@@ -1,0 +1,3 @@
+﻿[submodule "TelltaleToolKit-Contribs"]
+	path = TelltaleToolKit-Contribs
+	url = https://github.com/gamma-02/TelltaleToolKit.git
