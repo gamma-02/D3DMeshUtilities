@@ -18,6 +18,7 @@
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
 
         </Grid.RowDefinitions>
         
@@ -45,6 +46,16 @@
                 
             <Button Grid.Column="1" FontSize="20" Click="Convert_OnClick
             "> Convert! </Button>
+        </Grid>
+        
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+                
+            <Button Grid.Column="1" FontSize="20" Click="Back_OnClick"> Back to Model Select </Button>
         </Grid>
         
         

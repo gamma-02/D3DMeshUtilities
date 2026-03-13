@@ -45,4 +45,22 @@ public partial class Converting : Window
 
         Console.Out.WriteLine("Read mesh data from ttarchive!");
     }
+
+    private void Back_OnClick(object sender, RoutedEventArgs e)
+    {
+        ArchiveModelList list = new ArchiveModelList()
+        {
+            Owner = this
+        };
+
+        list.Show();
+
+        this.Hide();
+
+        Application.Current.MainWindow = list;
+
+        list.Owner = null;
+
+        this.Close();
+    }
 }
