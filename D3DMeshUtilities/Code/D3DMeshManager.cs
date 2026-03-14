@@ -27,6 +27,15 @@ namespace D3DMeshUtilities.Code;
 
 public class D3DMeshManager(List<string> file, string outputPath)
 {
+    //todo: meshes A-E
+    //todo: birthday banner
+    //todo: arcade game meshes (materials?)
+    //todo: poker booster seat (textures?)
+    //todo: elevatorshaft, exterior, grotien bar case, poker card (armature/skinning?)
+    //todo: obj_cellPhoneHomestar (armature/skinning?)
+    //todo: computerSinistar301 (armature/skinning?)
+    //todo: disguiseGlassesDangeresqueToo tangents??
+    
     public List<string> Files = file;
 
     public bool MeshRead = false;
@@ -56,6 +65,8 @@ public class D3DMeshManager(List<string> file, string outputPath)
             D3DMesh? mesh = TttkInit.Instance.Workspace?.TryOpenObject<D3DMesh>(stream, out var config);
             
             stream.Close();
+            
+            Console.Out.WriteLine($"Attemtping to decode {meshFile}");
 
             if (mesh == null)
                 continue;
@@ -64,13 +75,6 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             var meshData = mesh.MeshData;
             
-            //data to look for:
-            // map_badge_nm.d3dtx (CRC: EE6008BD7BBF3D27, Offset: 306299554, Size: 1398591)
-            // map_badge_spec.d3dtx (CRC: 487C9D9EDEF86051, Offset: 307698145, Size: 175233)
-            // obj_badge.d3dtx (CRC: B5FEB46E95390461, Offset: 343975970, Size: 699540)
-            // obj_badge.prop (CRC: E16DED721C14BF35, Offset: 344675510, Size: 193)
-            
-
             var verticesPositionList = GetVertices(meshData, 0);
             var verticesNormalsList = GetNormals(meshData, 0);
             var verticesTangentsList = GetTangents(meshData, 0);
@@ -80,12 +84,28 @@ public class D3DMeshManager(List<string> file, string outputPath)
             
             var indexList = GetIndexBuffer(meshData, 0, 0);
 
-            if (verticesPositionList == null || verticesNormalsList == null || verticesTangentsList == null ||
+            try
+            {
+                ArgumentNullException.ThrowIfNull(verticesPositionList);
+                ArgumentNullException.ThrowIfNull(verticesNormalsList);
+                ArgumentNullException.ThrowIfNull(verticesTangentsList);
+                ArgumentNullException.ThrowIfNull(vertexTextureCoordList);
+            }
+            catch(ArgumentNullException e)
+            {
+                
+                Console.Out.WriteLine($"Failed reading {meshFile}! See: " + e);
+                
+                continue;
+            }
+
+            if (verticesPositionList == null || verticesNormalsList == null || verticesTangentsList == null || vertexTextureCoordList == null ||
                 indexList == null)
             {
                 throw new ArgumentNullException(
-                    $"One of these is null! {verticesPositionList}, {verticesNormalsList}, {verticesTangentsList}, {indexList}");
+                    $"One of these is null! {verticesPositionList}, {verticesNormalsList}, {verticesTangentsList}, {vertexTextureCoordList}, {indexList}");
             }
+            
 
             List<MaterialBuilder> materials = [];
             foreach (T3MeshMaterial mat in meshData.Materials)
@@ -112,15 +132,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
             //todo: make this dynamic! gonna have to do a bunch of variations for different combos :3
             //todo: add back ColorTexture2!!!!!!
             
-            // var material = new MaterialBuilder("material");
-
             var meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>("mesh1");
-            //
-            // var fileStream = File.OpenWrite(Path.Combine(outputPath, "archive-dump.txt"));
-            // LoadedArchive.Instance.CurrentArchive?.FileEntries.ToList().ForEach(fe =>
-            // {
-            //     fileStream.Write(Encoding.ASCII.GetBytes(fe.ToString() + "\n"));
-            // });
             
             List<VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>> verts = [];
 
@@ -172,7 +184,6 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             foreach (T3MeshBatch batch in allBatches)
             {
-                Console.Out.WriteLine(batch.AdjacencyStartIndex);
 
                 for (uint indexI = batch.StartIndex + 2; indexI < (batch.StartIndex + batch.NumIndices); indexI += 3)
                 {
@@ -204,12 +215,12 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             root.SaveGLB(outPath);
 
-            Console.Out.WriteLine($"Saved at: {outPath}");
+            Console.Out.WriteLine($"Succeeded in converting {meshFile}! Saved at: {outPath}");
             
         }
         
-        
         MeshRead = true;
+        
     }
 
     
