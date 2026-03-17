@@ -113,6 +113,22 @@ public partial class Texture
         );
     }
 
+    public void RestoreBC5ZChannel()
+    {
+        for (int i = 0; i < Images.Length; i++)
+        {
+            Images[i] = PixelFormatDecoder.RestoreImageBCXZChannel(Images[i]);
+        }
+        
+        Metadata.PixelFormatInfo = new PixelFormatInfo(
+            PixelFormat.R8G8B8A8,
+            DataType.Unorm,
+            ColorSpace.sRGB
+        );
+        
+        
+    }
+
     public void SwizzleTexture(Platform platform, bool swizzle)
     {
         if (platform == Platform.None)

@@ -6,7 +6,7 @@ using System;
 
 public class PixelFormatDecoder
 {
-    public static Image DecodeImageToRGBA8(Image image)
+    public static Image DecodeImageToRGBA8(Image image, bool expandBCXBlueChannel = false)
     {
         Image newImage = image.PixelFormatInfo.PixelFormat switch
         {
@@ -81,7 +81,44 @@ public class PixelFormatDecoder
 
         if (!image.PixelFormatInfo.Equals(PixelFormats.R8G8B8A8_Unorm_Linear))
         {
-            return DecodeImageToRGBA8(newImage);
+            return DecodeImageToRGBA8(newImage, expandBCXBlueChannel);
+        }
+
+        if (image.PixelFormatInfo.Equals(PixelFormats.R8G8B8A8_Unorm_Linear) && expandBCXBlueChannel)
+        {
+            var directXImage = DirectXTexUtility.GetDirectXImage(newImage);
+
+            byte[] pixels = DirectXTexUtility.GetPixelsFromDirectXImage(directXImage);
+            
+            for (int i = 3; i < pixels.Length; i += 4)
+            {
+                byte r = pixels[i - 3];
+                byte g = pixels[i - 2];
+
+                float red = r / 255.0f;
+                float green = g / 255.0f;
+
+                red = red * 2.0f - 1.0f;
+                green = green * 2.0f - 1.0f;
+
+                float zSq = 1.0f - red * red - green * green;
+
+                float blue = MathF.Sqrt(zSq) * 0.5f + 0.5f;
+                red = red * 0.5f + 0.5f;
+                green = green * 0.5f + 0.5f;
+                
+
+                byte b = (byte)MathF.Round((blue) * 255.0f);
+                r = (byte)MathF.Round((red) * 255.0f);
+                g = (byte)MathF.Round((green) * 255.0f);
+
+                pixels[i - 3] = r;
+                pixels[i - 2] = b;
+                pixels[i - 1] = g;
+                
+            }
+            
+            return Image.GetImage(image.Width, image.Height, newImage.PixelFormatInfo, pixels);
         }
 
         return newImage;
@@ -163,6 +200,89 @@ public class PixelFormatDecoder
         if (!image.PixelFormatInfo.Equals(PixelFormats.R8G8B8A8_Unorm_Linear))
         {
             return DecodeImageToRGBA8(newImage);
+        }
+
+        return newImage;
+    }
+    
+    public static Image RestoreImageBCXZChannel(Image image)
+    {
+        Image newImage = image.PixelFormatInfo.PixelFormat switch
+        {
+            // PixelFormat.R8G8B8A8 => DirectXTexUtility.DecompressBCXImage(image, PixelFormats.Unknown),
+            
+            // PixelFormat.R8G8B8 => ConvertRgbToRgba(image),
+            //
+            // PixelFormat.B8G8R8 => ConvertBgrToRgba(image),
+
+            // PixelFormat.R1
+            // or PixelFormat.A8
+            // or PixelFormat.R8
+            // or PixelFormat.R16
+            // or PixelFormat.R8G8
+            // or PixelFormat.R16G16
+            // or PixelFormat.R9G9B9E5
+            // or PixelFormat.B4G4R4A4
+            // or PixelFormat.A4B4G4R4
+            // or PixelFormat.B5G6R5
+            // or PixelFormat.R11G11B10
+            // or PixelFormat.R10G10B10A2
+            // or PixelFormat.B5G5R5A1
+            // or PixelFormat.B5G5R5X1
+            // or PixelFormat.R8G8B8A8
+            // or PixelFormat.B8G8R8X8
+            // or PixelFormat.B8G8R8A8
+            // or PixelFormat.R32
+            // or PixelFormat.R32G32
+            // or PixelFormat.L16A16
+            // or PixelFormat.R16G16B16
+            // or PixelFormat.R16G16B16A16
+            // or PixelFormat.R32G32B32
+            // or PixelFormat.R32G32B32A32 => DirectXTexUtility.ConvertImageToSRGB(
+            //     PixelFormats.R8G8B8A8_Unorm_Linear,
+            //     image
+            // ),
+
+            PixelFormat.BC1
+            or PixelFormat.BC2
+            or PixelFormat.BC3
+            or PixelFormat.BC4
+            or PixelFormat.BC5
+            or PixelFormat.BC6H
+            or PixelFormat.BC7 => DirectXTexUtility.DecompressBCXImage(image, PixelFormats.Unknown),
+
+            // PixelFormat.ATC_RGB // BCn
+            // or PixelFormat.ATC_RGBA_EXPLICIT_ALPHA
+            // or PixelFormat.ATC_RGBA_INTERPOLATED_ALPHA => ATC_Master.Decode(image), //  BCn
+            //
+            // PixelFormat.PVRTC1_2BPP_RGB
+            // or PixelFormat.PVRTC1_4BPP_RGB
+            // or PixelFormat.PVRTC1_2BPP_RGBA
+            // or PixelFormat.PVRTC1_4BPP_RGBA
+            // or PixelFormat.ETC1
+            // or PixelFormat.ETC2_RGB
+            // or PixelFormat.ETC2_RGBA
+            // or PixelFormat.ETC2_RGB_A1
+            // or PixelFormat.ETC2_R11
+            // or PixelFormat.ETC2_RG11
+            // or PixelFormat.EAC_R11
+            // or PixelFormat.EAC_RG11
+            // or PixelFormat.ASTC_4x4 => PVR_Main.DecodeTexture(image), // PVRTC
+
+            PixelFormat.B10G10R10A2 => throw new NotImplementedException(), // REQUIRES SWIZZLING
+            PixelFormat.D16 => throw new NotImplementedException(), // Depth (ignore)
+            PixelFormat.D24S8 => throw new NotImplementedException(), // Depth (ignore)
+            PixelFormat.D24X8 => throw new NotImplementedException(), // Depth (ignore)
+            PixelFormat.D32 => throw new NotImplementedException(), // Depth (ignore)
+            PixelFormat.D32S8 => throw new NotImplementedException(), // Depth (ignore)
+            PixelFormat.CTX1 => throw new NotImplementedException(), // Custom Decoder
+
+            _ => throw new NotSupportedException("Unsupported pixel format"),
+        };
+
+        if (!image.PixelFormatInfo.Equals(PixelFormats.R8G8B8A8_Unorm_Linear))
+        {
+            return DecodeImageToRGBA8(newImage, true);
         }
 
         return newImage;
