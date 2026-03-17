@@ -172,6 +172,64 @@ public static class DirectXTexUtility
             scratchImage.Release();
         }
     }
+    
+    public static unsafe Image DecompressBCXImage(Image image, PixelFormatInfo pixelFormatInfo)
+    {
+        if (!PixelFormatUtility.IsFormatCompressed(image.PixelFormatInfo.PixelFormat))
+        {
+            throw new InvalidOperationException("Image is not compressed");
+        }
+
+        var dxImage = GetDirectXImage(image);
+        var dxgiFormat = GetDXGIFormat(pixelFormatInfo);
+        ScratchImage scratchImage = DirectXTex.CreateScratchImage();
+        try
+        {
+            // scratchImage.Ima
+            DirectXTex.Decompress(&dxImage, (int)dxgiFormat, &scratchImage).ThrowIf();
+            // var rect = new Rect(0, 0, image.Width, image.Height);
+            // DirectXTex.CopyRectangle(&dxImage, ref rect, scratchImage.GetImage(0, 0, 0),
+            //     TexFilterFlags.Default, 0, 0).ThrowIf();
+
+            var pixels = GetPixelsFromDirectXScratchImage(scratchImage);
+            
+            TransformLinearRGBToSRGB(pixels);
+            
+            var newPixelFormatInfo = GetPixelFormatInfo(
+                (DXGIFormat)scratchImage.GetMetadata().Format
+            );
+
+            return Image.GetImage(image.Width, image.Height, newPixelFormatInfo, pixels);
+
+            // var directXImage = GetDirectXImage(nImg);
+            //
+            // pixels = GetPixelsFromDirectXImage(directXImage);
+            
+            // for (int i = 3; i < pixels.Length; i += 4)
+            // {
+            //     byte r = pixels[i - 3];
+            //     byte g = pixels[i - 2];
+            //
+            //     float red = r / 255.0f;
+            //     float green = g / 255.0f;
+            //
+            //     float zSq = 1 - (red * red + green * green);
+            //
+            //     float blue = MathF.Sqrt(zSq);
+            //
+            //     byte b = (byte)MathF.Round((blue) * 255);
+            //
+            //     pixels[i - 1] = b;
+            //
+            // }
+            
+            // return Image.GetImage(image.Width, image.Height, newPixelFormatInfo, pixels);
+        }
+        finally
+        {
+            scratchImage.Release();
+        }
+    }
 
     public static unsafe Image CompressImage(PixelFormatInfo pixelFormatInfo, Image image)
     {

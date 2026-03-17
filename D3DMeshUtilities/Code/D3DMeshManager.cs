@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Numerics;
 using System.Text;
 using Accessibility;
+using D3DMeshUtilities.Code.D3DMeshFormats;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
 using SharpGLTF.Geometry;
 using SharpGLTF.Geometry.VertexTypes;
@@ -17,8 +18,10 @@ using TelltaleToolKit.Serialization.Binary;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
+using TelltaleToolKit.T3Types.Properties;
 using TelltaleToolKit.T3Types.Textures;
 using TelltaleToolKit.TelltaleArchives;
+using AlphaMode = SharpGLTF.Materials.AlphaMode;
 using Image = SharpGLTF.Schema2.Image;
 using Texture = D3DMeshUtilities.Code.ImageStuffAUGH.Texture;
 using Toolkit = SharpGLTF.Schema2.Toolkit;
@@ -29,8 +32,8 @@ public class D3DMeshManager(List<string> file, string outputPath)
 {
     //todo: meshes A-E
     //todo: birthday banner
-    //todo: arcade game meshes (materials?)
-    //todo: poker booster seat (textures?)
+    //done: arcade game meshes (materials?)
+    //done: poker booster seat (textures?)
     //todo: elevatorshaft, exterior, grotien bar case, poker card (armature/skinning?)
     //todo: obj_cellPhoneHomestar (armature/skinning?)
     //todo: computerSinistar301 (armature/skinning?)
@@ -43,6 +46,72 @@ public class D3DMeshManager(List<string> file, string outputPath)
     public readonly List<D3DMesh?> ReadMeshes = [];
 
     public void LoadMeshes()
+    {
+        ReadMeshes.Clear();
+        
+        if (!Directory.Exists(outputPath))
+            return;
+
+        foreach (var meshFile in Files)
+        {
+            MemoryStream? stream = LoadedArchive.Instance.CurrentArchive?.ExtractFile(meshFile);
+
+            if (stream == null)
+                continue;
+
+            if (stream.Length < 4)
+                continue;
+
+            if (stream.Position != 0)
+                stream.Position = 0;
+
+            D3DMesh? mesh = TttkInit.Instance.Workspace?.TryOpenObject<D3DMesh>(stream, out var config);
+
+            stream.Close();
+
+            Console.Out.WriteLine($"Attemtping to decode {meshFile}");
+            
+            if (mesh == null)
+                continue;
+
+            ReadMeshes.Add(mesh);
+            
+            bool succeeded =
+                NormalModelIntermediate.Read(mesh, meshFile, out NormalModelIntermediate? intermediateMesh);
+
+            if (!succeeded || intermediateMesh == null)
+                continue;
+
+
+            bool savingSucceeded = intermediateMesh.SaveToMeshBuilder(out var meshBuilder);
+
+            if (!savingSucceeded)
+            {
+                Console.Out.WriteLine("Failed to create mesh!");
+            }
+            
+            
+            SceneBuilder scene = new SceneBuilder();
+
+            var rootNode = new NodeBuilder(meshFile.Remove(meshFile.Length - ".d3dmesh".Length));
+            
+            rootNode.WithLocalScale(new Vector3(10.0f));
+            
+            scene.AddRigidMesh(meshBuilder, rootNode);
+
+            ModelRoot root = scene.ToGltf2();
+            
+            string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "glb"));
+
+            root.SaveGLB(outPath);
+
+            Console.Out.WriteLine($"Succeeded in converting {meshFile}! Saved at: {outPath}");
+
+        }
+
+    }
+    
+    public void LoadMeshesOld()
     {
         ReadMeshes.Clear();
 
@@ -75,14 +144,18 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             var meshData = mesh.MeshData;
             
-            var verticesPositionList = GetVertices(meshData, 0);
-            var verticesNormalsList = GetNormals(meshData, 0);
-            var verticesTangentsList = GetTangents(meshData, 0);
-            var secondNormalsList = GetNormals(meshData, 0, 1);
-            var vertexColorList = GetVertexColors(meshData, 0);
-            var vertexTextureCoordList = GetVertexTextureCoords(meshData, 0, 0);
+            List<Vector4>? verticesPositionList = MeshUtils.GetVertices(meshData, 0);
+            List<Vector4>? verticesNormalsList = MeshUtils.GetNormals(meshData, 0);
+            List<Vector4>? verticesTangentsList = MeshUtils.GetTangents(meshData, 0);
+            List<Vector4>? secondNormalsList = MeshUtils.GetNormals(meshData, 0, 1);
+            List<Vector4>? vertexColorList = MeshUtils.GetVertexColors(meshData, 0);
+            List<Vector2>? vertexTextureCoordList = MeshUtils.GetVertexTextureCoords(meshData, 0, 0);
+            List<Vector2>? vertexTextureCoordList2 = MeshUtils.GetVertexTextureCoords(meshData, 0, 1);
+            List<Vector2>? vertexTextureCoordList3 = MeshUtils.GetVertexTextureCoords(meshData, 0, 2);
+            List<Vector2>? vertexTextureCoordList4 = MeshUtils.GetVertexTextureCoords(meshData, 0, 3);
+
             
-            var indexList = GetIndexBuffer(meshData, 0, 0);
+            List<uint>? indexList = MeshUtils.GetIndexBuffer(meshData, 0, 0);
 
             try
             {
@@ -111,21 +184,54 @@ public class D3DMeshManager(List<string> file, string outputPath)
             foreach (T3MeshMaterial mat in meshData.Materials)
             {
                 var materialName = mat.Material.ObjectInfo.ObjectName.Crc64.ToString();
-                var mb = new MaterialBuilder(materialName).WithDoubleSide(false);
+
+                bool doubleSided = true;
+
+                if (mesh.InternalResources.Find(res => res.ObjectInfo.ObjectName == mat.Material.ObjectInfo.ObjectName)?
+                        .ObjectInfo.HandleObject is PropertySet p)
+                {
+                    TttkInit.Instance.Workspace!.ResolveSymbols(p.Properties.Keys);
+
+                    // foreach (Symbol s in p.Properties.Keys)
+                    // {
+                    //     Console.Out.WriteLine($"{s} : {p.Properties[s].MetaType!.FullTypeName} ; {p.Properties[s].Value}");
+                    // }
+                    
+                    //the property '5971B48CE79829D9' corresponds to if a model should render double sided
+                    bool? sided = p.GetProperty<bool>(new Symbol(0x5971B48CE79829D9));
+
+                    if (sided != null)
+                    {
+                        doubleSided = sided.Value;
+                    }
+                    
+                }
+                
+                
+                var mb = new MaterialBuilder(materialName).WithDoubleSide(doubleSided);
 
                 Handle<T3Texture>? materialBaseColor = mesh.GetDiffuseTexture(mat.Material);
-                ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor);
+                MeshUtils.ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor);
 
                 Handle<T3Texture>? normalMap = mesh.GetNormalMapTexture(mat.Material);
-                ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal);
+                MeshUtils.ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal);
 
                 Handle<T3Texture>? specularMap = mesh.GetSpecularTexture(mat.Material);
-                ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor);
+                MeshUtils.ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor);
                 
-                //unknown: what is detail texture and how is it used
+                //todo: detail texture, used for lines and stuff on models
+                Handle<T3Texture>? detailMap = mesh.GetDetailTexture(mat.Material);
+                // ProcessTexture(detailMap, TttkInit.Instance.Workspace!, mb, KnownChannel);
 
+                if (detailMap != null)
+                {
+                    Console.Out.WriteLine("OOH, detail map! " + detailMap);
+                    
+                }
+                
                 materials.Add(mb);
             }
+            
             
             
             
@@ -141,28 +247,38 @@ public class D3DMeshManager(List<string> file, string outputPath)
                 Vector4 pos = verticesPositionList[vertexIndex];
                 Vector4 normal = verticesNormalsList[vertexIndex];
                 Vector4 tanget = verticesTangentsList[vertexIndex];
-                Vector2 texCoord = vertexTextureCoordList[vertexIndex];
+
+                Vector2 texCoord1 = vertexTextureCoordList[vertexIndex];
                 
-                Vector3 scaledPos = new Vector3(
+                if(meshData.TexCoordTransform[0] != null && meshData.TexCoordTransform[0].Scale != null)
+                { 
+                    texCoord1 *= meshData.TexCoordTransform[0].Scale;
+                }else if (meshData.TexCoordTransform[0] != null && meshData.TexCoordTransform[0].Offset != null)
+                {
+                    texCoord1 += meshData.TexCoordTransform[0].Offset;
+                }
+                
+                var scaledPos = new Vector3(
                     pos.X * meshData.PositionScale.X,
                     pos.Y * meshData.PositionScale.Y,
                     pos.Z * meshData.PositionScale.Z
                 );
 
-                Vector3 finalPos = new Vector3(
+                var finalPos = new Vector3(
                     scaledPos.X + meshData.PositionOffset.X + pos.W * meshData.PositionWScale.X,
                     scaledPos.Y + meshData.PositionOffset.Y + pos.W * meshData.PositionWScale.Y,
-                    scaledPos.Z + meshData.PositionOffset.Z + pos.W * meshData.PositionWScale.Z);
+                    scaledPos.Z + meshData.PositionOffset.Z + pos.W * meshData.PositionWScale.Z
+                );
                 
                 var vertex = new VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>
                 {
                     Geometry = new VertexPositionNormalTangent(
-                        finalPos,
+                        finalPos, 
                         Vector3.Normalize(new Vector3(normal.X, normal.Y, normal.Z)),
                         Vector4.Normalize(tanget)
                     ),
                     Material = new VertexTexture1(
-                        texCoord
+                        texCoord1
                     )
                 };
                 
@@ -178,12 +294,11 @@ public class D3DMeshManager(List<string> file, string outputPath)
             allBatches.AddRange(lod.Batches);
             allBatches.AddRange(lod.Batches1);
             allBatches.AddRange(lod.Batches2);
-
-            //todo: also working with just one material, will change later 
-            MaterialBuilder material = materials[0];
-
+            
             foreach (T3MeshBatch batch in allBatches)
             {
+
+                MaterialBuilder mat = materials[batch.MaterialIndex];
 
                 for (uint indexI = batch.StartIndex + 2; indexI < (batch.StartIndex + batch.NumIndices); indexI += 3)
                 {
@@ -197,7 +312,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
                     var vertTwo = verts[vertITwo];
                     var vertThree = verts[vertIThree];
                     
-                    meshBuilder.UsePrimitive(material).AddTriangle(vertOne, vertTwo, vertThree);
+                    meshBuilder.UsePrimitive(mat).AddTriangle(vertOne, vertTwo, vertThree);
                 }
             }
             
@@ -226,282 +341,9 @@ public class D3DMeshManager(List<string> file, string outputPath)
     
 
 
-    private static List<Vector4>? GetVertices(T3MeshData meshData, int vertexStateIndex)
-    {
+    
 
-        var vertexState = meshData.VertexStates[vertexStateIndex];
-
-        T3GFXBuffer? vertexPositionBuffer = null;
-
-        for (uint index = 0; index < vertexState.AttributeCount; index++)
-        {
-            var vertexAttribute = vertexState.Attributes[(int)index];
-
-            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.Position)
-            {
-                vertexPositionBuffer = vertexState.VertexBuffer[(int)index];
-                break;
-            }
-            
-        }
-
-        if (vertexPositionBuffer == null)
-            return null;
-
-
-        if (vertexPositionBuffer.BufferFormat != GFXPlatformFormat.UN10x3_UN2)
-            return null;
-
-        ReadOnlySpan<byte> vertexBuffer = vertexPositionBuffer.Buffer;
-
-        List<Vector4> vertices = new List<Vector4>();
-
-        uint readerIndex = 0;
-
-        while (readerIndex < vertexBuffer.Length)
-        {
-            vertices.Add(ConvertFromGfxPlatformFormat.ReadUN10x3_UN2(vertexBuffer.Slice((int)readerIndex)));
-
-            readerIndex += vertexPositionBuffer.Stride;
-
-        }
-
-        return vertices;
-    }
-    
-    private static List<Vector4>? GetNormals(T3MeshData meshData, int vertexStateIndex, int normalsToSkip = 0)
-    {
-    
-        var vertexState = meshData.VertexStates[vertexStateIndex];
-    
-        T3GFXBuffer? vertexNormalBuffer = null;
-
-        GFXPlatformFormat format = GFXPlatformFormat.None;
-
-        //get just the one normal for now -- don't know what the second does
-        for (uint index = 0; index < vertexState.AttributeCount; index++)
-        {
-            var vertexAttribute = vertexState.Attributes[(int)index];
-    
-            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.Normal)
-            {
-                if (normalsToSkip > 0)
-                {
-                    normalsToSkip -= 1;
-                    continue;
-                }
-                
-                vertexNormalBuffer = vertexState.VertexBuffer[(int)index];
-                format = vertexAttribute.Format;
-                break;
-            }
-            
-        }
-    
-        if (vertexNormalBuffer == null)
-            return null;
-
-        if (ConvertFromGfxPlatformFormat.IsFormatVector4(vertexNormalBuffer.BufferFormat))
-            format = vertexNormalBuffer.BufferFormat;
-        else if (!ConvertFromGfxPlatformFormat.IsFormatVector4(format))
-            return null;
-    
-        ReadOnlySpan<byte> vertexBuffer = vertexNormalBuffer.Buffer;
-    
-        List<Vector4> normals = new List<Vector4>();
-    
-        uint readerIndex = 0;
-    
-        while (readerIndex < vertexBuffer.Length)
-        {
-            normals.Add((Vector4)ConvertFromGfxPlatformFormat.ReadVector4FromSpanAndFormat(vertexBuffer.Slice((int)readerIndex), format)!);
-    
-            readerIndex += vertexNormalBuffer.Stride;
-    
-        }
-    
-        return normals;
-    }
-    
-    private static List<Vector4>? GetTangents(T3MeshData meshData, int vertexStateIndex)
-    {
-    
-        var vertexState = meshData.VertexStates[vertexStateIndex];
-    
-        T3GFXBuffer? vertexTangentBuffer = null;
-
-        GFXPlatformFormat format = GFXPlatformFormat.None;
-
-        //get just the one normal for now -- don't know what the second does
-        for (uint index = 0; index < vertexState.AttributeCount; index++)
-        {
-            var vertexAttribute = vertexState.Attributes[(int)index];
-    
-            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.Tangent)
-            {
-                vertexTangentBuffer = vertexState.VertexBuffer[(int)index];
-                format = vertexAttribute.Format;
-                break;
-            }
-            
-        }
-    
-        if (vertexTangentBuffer == null)
-            return null;
-
-        if (ConvertFromGfxPlatformFormat.IsFormatVector4(vertexTangentBuffer.BufferFormat))
-            format = vertexTangentBuffer.BufferFormat;
-        else if (!ConvertFromGfxPlatformFormat.IsFormatVector4(format))
-            return null;
-    
-        ReadOnlySpan<byte> vertexBuffer = vertexTangentBuffer.Buffer;
-    
-        List<Vector4> tangents = new List<Vector4>();
-    
-        uint readerIndex = 0;
-    
-        while (readerIndex < vertexBuffer.Length)
-        {
-            tangents.Add((Vector4)ConvertFromGfxPlatformFormat.ReadVector4FromSpanAndFormat(vertexBuffer.Slice((int)readerIndex), format)!);
-    
-            readerIndex += vertexTangentBuffer.Stride;
-    
-        }
-    
-        return tangents;
-    }
-    
-    private List<Vector4>? GetVertexColors(T3MeshData meshData, int vertexStateIndex)
-    {
-        var vertexState = meshData.VertexStates[vertexStateIndex];
-    
-        T3GFXBuffer? vertexColorBuffer = null;
-
-        GFXPlatformFormat format = GFXPlatformFormat.None;
-
-        //get just the one normal for now -- don't know what the second does
-        for (uint index = 0; index < vertexState.AttributeCount; index++)
-        {
-            var vertexAttribute = vertexState.Attributes[(int)index];
-    
-            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.Color)
-            {
-                vertexColorBuffer = vertexState.VertexBuffer[(int)index];
-                format = vertexAttribute.Format;
-                break;
-            }
-            
-        }
-    
-        if (vertexColorBuffer == null)
-            return null;
-
-        if (ConvertFromGfxPlatformFormat.IsFormatVector4(vertexColorBuffer.BufferFormat))
-            format = vertexColorBuffer.BufferFormat;
-        else if (!ConvertFromGfxPlatformFormat.IsFormatVector4(format))
-            return null;
-    
-        ReadOnlySpan<byte> colorBuffer = vertexColorBuffer.Buffer;
-    
-        List<Vector4> colors = new List<Vector4>();
-    
-        uint readerIndex = 0;
-    
-        while (readerIndex < colorBuffer.Length)
-        {
-            colors.Add((Vector4)ConvertFromGfxPlatformFormat.ReadVector4FromSpanAndFormat(colorBuffer.Slice((int)readerIndex), format)!);
-    
-            readerIndex += vertexColorBuffer.Stride;
-    
-        }
-    
-        return colors;
-    }
-    
-    private List<Vector2>? GetVertexTextureCoords(T3MeshData meshData, int vertexStateIndex, int texture = 0)
-    {
-        var vertexState = meshData.VertexStates[vertexStateIndex];
-    
-        T3GFXBuffer? texCoordBuffer = null;
-
-        GFXPlatformFormat format = GFXPlatformFormat.None;
-
-        //get just the one normal for now -- don't know what the second does
-        for (uint index = 0; index < vertexState.AttributeCount; index++)
-        {
-            var vertexAttribute = vertexState.Attributes[(int)index];
-    
-            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.TexCoord)
-            {
-                if (texture > 0)
-                {
-                    texture -= 1;
-                    continue;
-                }
-                
-                texCoordBuffer = vertexState.VertexBuffer[(int)index];
-                format = vertexAttribute.Format;
-                break;
-            }
-            
-        }
-    
-        if (texCoordBuffer == null)
-            return null;
-
-        if (ConvertFromGfxPlatformFormat.IsFormatVector2(texCoordBuffer.BufferFormat))
-            format = texCoordBuffer.BufferFormat;
-        else if (!ConvertFromGfxPlatformFormat.IsFormatVector2(format))
-            return null;
-    
-        ReadOnlySpan<byte> colorBuffer = texCoordBuffer.Buffer;
-    
-        List<Vector2> textureCoords = new List<Vector2>();
-    
-        uint readerIndex = 0;
-    
-        while (readerIndex < colorBuffer.Length)
-        {
-            textureCoords.Add((Vector2)ConvertFromGfxPlatformFormat.ReadVector2FromSpanAndFormat(colorBuffer.Slice((int)readerIndex), format)!);
-    
-            readerIndex += texCoordBuffer.Stride;
-    
-        }
-    
-        return textureCoords;
-    }
-
-
-    private static List<uint>? GetIndexBuffer(T3MeshData meshData, int vertexStateIndex, int vertexPositionBufferIndex)
-    {
-        var vertexState = meshData.VertexStates[vertexStateIndex];
-
-        T3GFXBuffer indexBuffer = vertexState.IndexBuffer[vertexPositionBufferIndex];
-
-        GFXPlatformFormat format = indexBuffer.BufferFormat;
-
-        if (!ConvertFromGfxPlatformFormat.IsFormatScalarUnsignedInteger(format))
-            return null;
-
-        ReadOnlySpan<byte> vertexBuffer = indexBuffer.Buffer;
-
-        List<uint> vertices = new List<uint>();
-
-        uint readerIndex = 0;
-
-        while (readerIndex < vertexBuffer.Length)
-        {
-            vertices.Add((uint)ConvertFromGfxPlatformFormat.ReadUIntFromSpanAndFormat(vertexBuffer.Slice((int)readerIndex), format)!);
-
-            readerIndex += indexBuffer.Stride;
-
-        }
-
-        return vertices;
-    }
-
-
-    public void ProcessTexture(Handle<T3Texture>? textureHandle, Workspace workspace, MaterialBuilder mb, KnownChannel channel)
+    public void SaveTexture(Handle<T3Texture>? textureHandle, Workspace workspace)
     {
         //Make sure the texture exists :D
         if (textureHandle == null || !workspace.ResolveSymbol(textureHandle.ObjectInfo.ObjectName)) return;
@@ -529,18 +371,9 @@ public class D3DMeshManager(List<string> file, string outputPath)
         
         byte[] pngData = PngCodec.Codec.SaveToMemory(intermediateTexture, new CodecOptions(), true);
         
-        // File.WriteAllBytes(Path.Combine(outputPath, textureHandle.ObjectInfo.ObjectName + ".dds"), ddsData);
+        File.WriteAllBytes(Path.Combine(outputPath, textureHandle.ObjectInfo.ObjectName + ".png"), pngData);
         
-        MemoryImage memImage = new MemoryImage(pngData);
-        
-        // memImage.SaveToFile(Path.Combine(outputPath, textureHandle.ObjectInfo.ObjectName + "-memImage.dds"));
-        
-        
-        ImageBuilder image = ImageBuilder.From(memImage, textureHandle.ObjectInfo.ObjectName.ToString());
-
-        mb.WithChannelImage(channel, image);
-        
-        Console.Out.WriteLine("Loaded texture: " + textureHandle.ObjectInfo.ObjectName);
+        Console.Out.WriteLine("Saved texture: " + textureHandle.ObjectInfo.ObjectName);
     }
     
     
