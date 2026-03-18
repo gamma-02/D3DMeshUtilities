@@ -105,18 +105,6 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
-
-    - name: Log project assets file
-      uses: actions/upload-artifact@v4
-      with:
-        # Name of the artifact to upload.
-        # Optional. Default is 'artifact'
-        name: Project-Assets
-    
-        # A file, directory or wildcard pattern that describes what to upload
-        # Required.
-        path: D:\a\D3DMeshUtilities\D3DMeshUtilities\D3DMeshUtilities\obj\project.assets.json
-
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     # - name: Decode the pfx
     #   run: |
