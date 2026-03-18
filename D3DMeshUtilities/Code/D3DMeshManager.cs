@@ -6,6 +6,7 @@ using System.Text;
 using Accessibility;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
+using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Geometry;
 using SharpGLTF.Geometry.VertexTypes;
 using SharpGLTF.Materials;
@@ -22,6 +23,7 @@ using TelltaleToolKit.T3Types.Properties;
 using TelltaleToolKit.T3Types.Textures;
 using TelltaleToolKit.TelltaleArchives;
 using AlphaMode = SharpGLTF.Materials.AlphaMode;
+using Codecs = D3DMeshUtilities.Code.MeshHandling.Codecs;
 using Image = SharpGLTF.Schema2.Image;
 using Texture = D3DMeshUtilities.Code.ImageStuffAUGH.Texture;
 using Toolkit = SharpGLTF.Schema2.Toolkit;
@@ -30,14 +32,29 @@ namespace D3DMeshUtilities.Code;
 
 public class D3DMeshManager(List<string> file, string outputPath)
 {
-    //todo: meshes A-E
-    //todo: birthday banner
+    
+    // these were erroring because I was only parsing UN10x3_UN2
+    //now I'm parsing all Vector4 formats
+    //done: meshes A-E
+    //done: birthday banner 
+    
+    //These were wierd because I hadn't set up texture coordinate transformations
     //done: arcade game meshes (materials?)
     //done: poker booster seat (textures?)
+    
     //todo: elevatorshaft, exterior, grotien bar case, poker card (armature/skinning?)
     //todo: obj_cellPhoneHomestar (armature/skinning?)
     //todo: computerSinistar301 (armature/skinning?)
-    //todo: disguiseGlassesDangeresqueToo tangents??
+    
+    // This was missing per-vertex tangents, which I implemented in the NormalModelIntermediate
+    //along with more generalizaitons and abstractions :3
+    //done: disguiseGlassesDangeresqueToo tangents?? - This was missing the per-vertex tangents
+    
+    //todo: obj_skyGeneric (allowing for direct encoding of vertex positions)
+    
+    //todo: make sure normals are actually being correct
+    
+    //todo: why wasn't heavy mesh as table working?
     
     public List<string> Files = file;
 
@@ -48,6 +65,12 @@ public class D3DMeshManager(List<string> file, string outputPath)
     public void LoadMeshes()
     {
         ReadMeshes.Clear();
+
+        if (!Codecs.Registered)
+        {
+            Codecs.RegisterCodecs();
+        }
+        
         
         if (!Directory.Exists(outputPath))
             return;
@@ -75,19 +98,30 @@ public class D3DMeshManager(List<string> file, string outputPath)
                 continue;
 
             ReadMeshes.Add(mesh);
-            
-            bool succeeded =
-                NormalModelIntermediate.Read(mesh, meshFile, out NormalModelIntermediate? intermediateMesh);
+
+            MeshInfo info = new MeshInfo(mesh);
+
+            IMeshCodec? codec = info.GetMeshRepresentation(mesh);
+
+            if (codec == null)
+            {
+                Console.Out.WriteLine($"Failed to find a mesh codec that can decode {meshFile}, skipping!");
+                
+                continue;
+            }
+
+            bool succeeded = codec.Read(mesh, info, meshFile, out IMeshRepresentation? intermediateMesh);
+                // NormalModelIntermediate.Read(mesh, meshFile, out NormalModelIntermediate? intermediateMesh);
 
             if (!succeeded || intermediateMesh == null)
                 continue;
 
 
-            bool savingSucceeded = intermediateMesh.SaveToMeshBuilder(out var meshBuilder);
-
-            if (!savingSucceeded)
+            if (!intermediateMesh .SaveToMeshBuilder(out var meshBuilder))
             {
                 Console.Out.WriteLine("Failed to create mesh!");
+                
+                continue;
             }
             
             
@@ -105,12 +139,13 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             root.SaveGLB(outPath);
 
-            Console.Out.WriteLine($"Succeeded in converting {meshFile}! Saved at: {outPath}");
+            Console.Out.WriteLine($"Succeeded in converting {meshFile}! \n\tSaved at: {outPath}");
 
         }
 
     }
     
+    #region old mesh loading
     public void LoadMeshesOld()
     {
         ReadMeshes.Clear();
@@ -337,12 +372,9 @@ public class D3DMeshManager(List<string> file, string outputPath)
         MeshRead = true;
         
     }
-
     
-
-
+    #endregion
     
-
     public void SaveTexture(Handle<T3Texture>? textureHandle, Workspace workspace)
     {
         //Make sure the texture exists :D

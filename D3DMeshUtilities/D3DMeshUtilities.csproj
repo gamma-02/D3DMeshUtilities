@@ -7,10 +7,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>14</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Code\MeshHandling\" />
+      <Folder Include="bin\Debug\net9.0-windows\" />
       <Folder Include="Resources\" />
     </ItemGroup>
 
@@ -211,8 +212,6 @@
 <!--    </ItemGroup>-->
   
     <Target Name="CopyOverData" AfterTargets="AfterBuild">
-      
-      <Message Text="Build Dir: $(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" Importance="high"/>
       
       <ItemGroup>
         <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" />        
