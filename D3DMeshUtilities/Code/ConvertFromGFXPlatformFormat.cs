@@ -187,6 +187,24 @@ public static class ConvertFromGfxPlatformFormat
         };
     }
     
+    //implied "format" of this is UN10x3_UN2, but Telltale does some Interesting Things here...
+    public static Vector4 ReadTelltaleBoneWeights(ReadOnlySpan<byte> data)
+    {
+        uint packed = ReadUInt32(data);
+
+        uint additiveBits = (packed >> 30);
+        uint weight2Raw = packed & 0x3FF;
+        uint weight3Raw = (packed >> 10) & 0x3FF;
+        uint weight4Raw = (packed >> 20) & 0x3FF;
+
+        float weight2 = ((weight2Raw / 1023.0f) / 8.0f) + (additiveBits / 8.0f);
+        float weight3 = (weight3Raw / 1023.0f) / 3.0f;
+        float weight4 = (weight4Raw / 1023.0f) / 4.0f;
+        float weight1 = 1.0f - weight2 - weight3 - weight4;
+
+        return new Vector4(weight1, weight2, weight3, weight4);
+    }
+    
     /// <summary>
     /// This will safely read the vertex from the first few elements of span,
     /// and will return null if it can't convert

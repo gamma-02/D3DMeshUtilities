@@ -22,7 +22,7 @@ public static class MeshUtils
     
     #region Vertex State Handling
     
-    public static List<Vector4>? GetVertices(T3MeshData meshData, int vertexStateIndex)
+    public static List<Vector4>? GetVertices(T3MeshData meshData, MeshInfo info, int vertexStateIndex)
     {
 
         var vertexState = meshData.VertexStates[vertexStateIndex];
@@ -47,12 +47,22 @@ public static class MeshUtils
         if (vertexPositionBuffer == null || bufferParam == null)
             return null;
 
-        bool validFormatFromBuffer = ConvertFromGfxPlatformFormat.IsFormatVector4(vertexPositionBuffer.BufferFormat);
-        if (!validFormatFromBuffer && !ConvertFromGfxPlatformFormat.IsFormatVector4(bufferParam.Format))
+        bool vector4Format = ConvertFromGfxPlatformFormat.IsFormatVector4(vertexPositionBuffer.BufferFormat);
+        bool vector3Format = ConvertFromGfxPlatformFormat.IsFormatVector3(vertexPositionBuffer.BufferFormat);
+        
+        if (!info.Has3DVertexBuffer && (!vector4Format || vector3Format) &&
+            !ConvertFromGfxPlatformFormat.IsFormatVector4(bufferParam.Format))
+            return null;
+        
+        if (info.Has3DVertexBuffer && (vector4Format || !vector3Format) &&
+            !ConvertFromGfxPlatformFormat.IsFormatVector3(bufferParam.Format))
             return null;
 
         GFXPlatformFormat vertexFormat = vertexPositionBuffer.BufferFormat;
-        if (!validFormatFromBuffer)
+        
+        //if the vertexFormat isn't valid from the buffer, use it from the bufferParam
+        if ((!vector4Format && !info.Has3DVertexBuffer) 
+            || (!vector3Format && info.Has3DVertexBuffer))
             vertexFormat = bufferParam.Format;
 
         ReadOnlySpan<byte> vertexBuffer = vertexPositionBuffer.Buffer;
@@ -65,8 +75,14 @@ public static class MeshUtils
         {
             // vertices.Add(ConvertFromGfxPlatformFormat.ReadUN10x3_UN2(vertexBuffer.Slice((int)readerIndex)));
 
-            vertices.Add(ConvertFromGfxPlatformFormat.ReadVector4FromSpanAndFormat(vertexBuffer.Slice((int)readerIndex),
-                vertexFormat)!.Value);
+            if(!info.Has3DVertexBuffer)
+                vertices.Add(ConvertFromGfxPlatformFormat.ReadVector4FromSpanAndFormat(
+                    vertexBuffer.Slice((int)readerIndex), vertexFormat)!.Value
+                );
+            else if(info.Has3DVertexBuffer)
+                vertices.Add(ConvertFromGfxPlatformFormat.ReadVector3FromSpanAndFormat(
+                    vertexBuffer.Slice((int)readerIndex), vertexFormat)!.Value.AsVector4()
+                );
             
             readerIndex += vertexPositionBuffer.Stride;
         }
@@ -426,12 +442,6 @@ public static class MeshUtils
     {
         //Make sure the texture exists :D
         if (textureHandle == null || !workspace.ResolveSymbol(textureHandle.ObjectInfo.ObjectName)) return;
-        
-        // Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
-
-        // IFileProvider? textureEntry = workspace.GetFileProviderForResource(textureHandle.ObjectInfo.ObjectName.Crc64);
-        //
-        // Stream? file = textureEntry?.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
 
         Stream? file = workspace.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
                     

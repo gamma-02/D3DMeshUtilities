@@ -64,7 +64,7 @@ public class NormalModelIntermediate : IMeshRepresentation
     {
         var meshData = mesh.MeshData;
             
-        List<Vector4>? rawPositionList = MeshUtils.GetVertices(meshData, 0);
+        List<Vector4>? rawPositionList = MeshUtils.GetVertices(meshData, info, 0);
         List<Vector4>? rawNormalsList = MeshUtils.GetNormals(meshData, 0);
         List<Vector4>? tangentsList = MeshUtils.GetTangents(meshData, 0);
         
@@ -207,7 +207,21 @@ public class NormalModelIntermediate : IMeshRepresentation
 
             MaterialBuilder mat = Materials[batch.MaterialIndex];
 
-            for (uint indexI = batch.StartIndex + 2; indexI < (batch.StartIndex + batch.NumIndices); indexI += 3)
+            //limit validation -- we need to decide between two limits:
+            //      StartIndex + NumIndices and MaxVertIndex
+            uint limit = 0;
+            uint numIndicesLimit = batch.StartIndex + batch.NumIndices;
+            uint MaxVertIndexLimit = batch.MaxVertIndex;
+            
+            //first make the choice of numIndicesLimit (it worked until obj_skyGeneric.d3dmesh) (have i talked about obj_skyGeneric.d3dmesh?) (it's evil. I am this world's number one obj_skyGeneric hater) (it was the only thing preventing me from saying that i can load every model) (and then I though adding support for it would be easy but NOOOO it had to be fucked up didn't it)
+            limit = numIndicesLimit;
+
+            if (limit % 3 != 0 || limit >= indexList.Count)
+            {
+                limit = MaxVertIndexLimit;
+            }
+
+            for (uint indexI = batch.StartIndex + 2; indexI < limit; indexI += 3)
             {
                 int i = (int)indexI;
                     

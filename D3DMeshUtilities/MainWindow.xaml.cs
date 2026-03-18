@@ -32,7 +32,20 @@ public partial class MainWindow : Window
             GameDropdown.Items.Add(key.GetGameName());
         }
 
-        GameDropdown.SelectedIndex = 79;
+        if (App.StartupGame != null)
+            GameDropdown.SelectedIndex = (int)App.StartupGame;
+        else
+            GameDropdown.SelectedIndex = 79;
+
+        if (string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory)) return;
+        GameDataPath.Text = App.StartupGameArchivesDirectory;
+
+        if (!App.StartupLoadGameDir || string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory)) return;
+        Dispatcher.InvokeAsync(LoadResources);
+
+        if (!App.StartupChooseArchive || string.IsNullOrWhiteSpace(App.StartupArchive)) return;
+        LoadArchive(App.StartupArchive);
+        
     }
 
 
@@ -160,6 +173,21 @@ public partial class MainWindow : Window
         {
             OpenArchiveGrid.Visibility = Visibility.Visible;
         }
+    }
+    
+    private void LoadArchive(string archive)
+    {
+        LoadedArchive.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text, archive), GameDropdown.Text);
+
+        ArchiveModelList list = new ArchiveModelList();
+
+        list.Show();
+
+        this.Hide();
+
+        Application.Current.MainWindow = list;
+
+        this.Close();
     }
 
     private void LoadArchive(object sender, RoutedEventArgs e)

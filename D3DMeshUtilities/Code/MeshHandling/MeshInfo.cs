@@ -26,13 +26,19 @@ public class MeshInfo
         private set;
     }
 
+    public bool Has3DVertexBuffer
+    {
+        get;
+
+        private set;
+    }
+
     public int NumberOfTextureCoords
     {
         get;
 
         private set;
     }
-    
     
     
     
@@ -55,6 +61,9 @@ public class MeshInfo
                     numberOfTexCoords += 1;
                     break;
                 case GFXPlatformVertexAttribute.Position:
+                    if (ConvertFromGfxPlatformFormat.IsFormatVector3(attribute.Format))
+                        Has3DVertexBuffer = true;
+                    break;
                 case GFXPlatformVertexAttribute.Normal:
                 case GFXPlatformVertexAttribute.BlendWeight:
                 case GFXPlatformVertexAttribute.BlendIndex:

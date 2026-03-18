@@ -11,50 +11,120 @@ public partial class ArchiveModelList : Window
     {
         InitializeComponent();
 
-        Dispatcher.InvokeAsync(FillModelList);
+        // ModelList.SelectionMode = SelectionMode.Extended;
+        
+        if (App.StartupChooseModels && App.StartupModels.Length <= 0)
+        {
+            Dispatcher.InvokeAsync(FillModelList);
+        }
+        else if (!App.StartupChooseArchive && App.StartupModels.Length > 0)
+        {
+            Dispatcher.InvokeAsync(FillModelList);
+            Dispatcher.InvokeAsync(SelectModels);
+        }
+        else if (App.StartupChooseArchive && App.StartupModels.Length > 0)
+        {
+            Dispatcher.InvokeAsync(ConvertInstantly);
+        }
+
 
 
     }
 
-    private void FillModelList()
+    private async void SelectModels()
     {
-        // while (!LoadedArchive.SetArchive)
-        // {
-        //     Thread.Yield();
-        // }
 
-        LoadedArchive.ArchiveLocationLock.TryEnter();
-        
-        ModelList.Items.Clear();
 
-        foreach (var element in LoadedArchive.Instance.CurrentArchive?.FileEntries!)
+        try
         {
-            if (element.Name.EndsWith("d3dmesh"))
+            await Task.Delay(100);
+
+            LoadedArchive.ArchiveLocationLock.TryEnter();
+
+            foreach (string model in App.StartupModels)
             {
-                var li = new ListViewItem();
-                var text = new TextBlock();
+                foreach (var item in ModelList.SelectedItems)
+                {
+                    if (item == null)
+                        continue;
 
-                text.Text = element.Name;
-                li.Content = text;
+                    ListViewItem? i = item as ListViewItem;
 
-                ModelList.Items.Add(li);
+                    if (i == null)
+                        continue;
+
+                    TextBlock? b = i.Content as TextBlock;
+
+                    if (b == null)
+                        continue;
+
+                    if (b.Text.Equals(model))
+                        i.IsSelected = true;
+                }
             }
         }
-
-        Color lg = Brushes.LightGray.Color;
-        Brush backgroundB = new SolidColorBrush(Color.FromRgb((byte)(lg.R - 25), (byte)(lg.G - 25), (byte)(lg.B -  25)));
-        for (int i = 0; i < ModelList.Items.Count; i++)
+        catch (Exception e)
         {
-            ListViewItem? li = ModelList.Items[i] as ListViewItem;
-            
-            if(li == null)
-                continue;
-            
-            if (i % 2 == 0)
-                li.Background = Brushes.LightGray;
-            else
-                li.Background = backgroundB;
+            //ignored
+        }
+        finally
+        {
+            if(LoadedArchive.ArchiveLocationLock.IsHeldByCurrentThread)
+                LoadedArchive.ArchiveLocationLock.Exit();
+        }
+    }
 
+    private void ConvertInstantly()
+    {
+        LoadedArchive.ArchiveLocationLock.TryEnter();
+        
+        BeginConversion(App.StartupModels);
+    }
+
+    private void FillModelList()
+    {
+
+        LoadedArchive.ArchiveLocationLock.TryEnter();
+
+        try
+        {
+
+            ModelList.Items.Clear();
+
+            foreach (var element in LoadedArchive.Instance.CurrentArchive?.FileEntries!)
+            {
+                if (element.Name.EndsWith("d3dmesh"))
+                {
+                    var li = new ListViewItem();
+                    var text = new TextBlock();
+
+                    text.Text = element.Name;
+                    li.Content = text;
+
+                    ModelList.Items.Add(li);
+                }
+            }
+
+            Color lg = Brushes.LightGray.Color;
+            Brush backgroundB =
+                new SolidColorBrush(Color.FromRgb((byte)(lg.R - 25), (byte)(lg.G - 25), (byte)(lg.B - 25)));
+            for (int i = 0; i < ModelList.Items.Count; i++)
+            {
+                ListViewItem? li = ModelList.Items[i] as ListViewItem;
+
+                if (li == null)
+                    continue;
+
+                if (i % 2 == 0)
+                    li.Background = Brushes.LightGray;
+                else
+                    li.Background = backgroundB;
+
+            }
+        }
+        finally
+        {
+            LoadedArchive.ArchiveLocationLock.Exit();
         }
     }
 
@@ -70,6 +140,27 @@ public partial class ArchiveModelList : Window
         {
             ConvertButtonGrid.Visibility = Visibility.Visible;
         }
+    }
+    
+    void BeginConversion(string[] modelArray)
+    {
+
+        List<string> models = modelArray.ToList();
+
+        Converting converting = new Converting(models)
+        {
+            Owner = this
+        };
+
+        converting.Show();
+        
+        this.Hide();
+
+        Application.Current.MainWindow = converting;
+
+        converting.Owner = null;
+        
+        this.Close();
     }
 
     void BeginConversion(object sender, RoutedEventArgs routedEventArgs)
