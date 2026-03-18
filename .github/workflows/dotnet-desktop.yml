@@ -146,7 +146,7 @@ jobs:
     
         # A file, directory or wildcard pattern that describes what to upload
         # Required.
-        path: .\publish
+        path: .\D3DMeshUtilities\publish
     
         # The desired behavior if no files are found using the provided path.
         # Available Options:
