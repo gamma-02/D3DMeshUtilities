@@ -209,5 +209,21 @@
 <!--    <ItemGroup>-->
 <!--        <ProjectReference Include="..\TelltaleToolKit\TelltaleToolKit.csproj" />-->
 <!--    </ItemGroup>-->
+  
+    <Target Name="CopyOverData" AfterTargets="AfterBuild">
+      
+      <Message Text="Build Dir: $(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" Importance="high"/>
+      
+      <ItemGroup>
+        <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" />        
+      </ItemGroup>
+
+      <Copy
+            SourceFiles="@(SourceFiles)"
+            DestinationFolder="$(TargetDir)data/%(RecursiveDir)"
+            SkipUnchangedFiles="True"
+      />
+      
+    </Target>
     
 </Project>
