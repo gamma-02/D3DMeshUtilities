@@ -382,9 +382,11 @@ public class D3DMeshManager(List<string> file, string outputPath)
         
         // Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
 
-        IFileProvider? textureEntry = workspace.GetFileProviderForResource(textureHandle.ObjectInfo.ObjectName.Crc64);
-
-        Stream? file = textureEntry?.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
+        // IFileProvider? textureEntry = workspace.GetFileProviderForResource(textureHandle.ObjectInfo.ObjectName.Crc64);
+        //
+        // Stream? file = textureEntry?.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
+        
+        Stream? file = workspace.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
                     
         if(file == null || file.Length < 4)
             return;
