@@ -1,12 +1,7 @@
-﻿using System.Windows;
-using TelltaleToolKit;
-using TelltaleToolKit.GamesDatabase;
-using TelltaleToolKit.Serialization.Binary;
-using TelltaleToolKit.T3Types.Textures;
-using TelltaleToolKit.T3Types.Textures.T3Types;
-using TelltaleToolKit.Utility;
+﻿using TelltaleToolKit;
+using Path = System.IO.Path;
 
-namespace D3DMeshUtilities.Code;
+namespace D3DMeshUtilities;
 
 public class TttkInit
 {
@@ -22,7 +17,10 @@ public class TttkInit
     {
 
         Toolkit.Configuration config = new Toolkit.Configuration();
-        config.DataFolder = "./data";
+
+        string dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
+        config.DataFolder = Path.Combine(dataDir);
+        Console.Out.WriteLine($"Looking for Telltale Tool Kit data directory at {dataDir}");
         
         
         Toolkit.Initialize(config);
