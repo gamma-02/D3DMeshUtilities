@@ -101,7 +101,7 @@ jobs:
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /p:TargetFramework=net9.0-windows /p:RuntimeIdentifier=win-x64 /p:SelfContained=false /p:_IsPortable=true /p:PublishSingleFile=true /p:PublishReadyToRun=true -property:PublishTrimmed=false /p:IncludeNativeLibrariesForSelfExtract=false /p:IncludeAllContentForSelfExtract=false 
       env:
         Configuration: ${{ matrix.configuration }}
 
