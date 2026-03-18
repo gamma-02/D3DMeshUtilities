@@ -198,9 +198,9 @@
       <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-season-4-2018.vdb.json" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-at-the-inventory-remastered-2026.json" />
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--      <Content Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-at-the-inventory-remastered-2026.json" />-->
+<!--    </ItemGroup>-->
 
     <ItemGroup>
       <ProjectReference Include="..\TelltaleToolKit-Contribs\src\TelltaleToolKit\TelltaleToolKit.csproj" />
@@ -210,8 +210,19 @@
 <!--    <ItemGroup>-->
 <!--        <ProjectReference Include="..\TelltaleToolKit\TelltaleToolKit.csproj" />-->
 <!--    </ItemGroup>-->
+
+<!--    <ItemGroup>-->
+<!--      <Content Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data">-->
+<!--        <CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
+<!--      </Content>-->
+<!--    </ItemGroup>-->
   
-    <Target Name="CopyOverData" AfterTargets="AfterBuild">
+    <Target Name="CopyOverDataBuild" AfterTargets="AfterBuild"><!-- BeforeTargets="Publish">-->
+      
+      <Message Text="Copied data directory!" Importance="high"/>
+      <Message Text="MSBuild dir: $(MSBuildProjectDirectory)" Importance="high"/>
+      <Message Text="Target dir: $(TargetDir)"/>
+      <Message Text="Output Path: $(OutputPath)" Importance="high"/>
       
       <ItemGroup>
         <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" />        
@@ -220,9 +231,27 @@
       <Copy
             SourceFiles="@(SourceFiles)"
             DestinationFolder="$(TargetDir)data/%(RecursiveDir)"
-            SkipUnchangedFiles="True"
+            SkipUnchangedFiles="False"
       />
       
+    </Target>
+
+    <Target Name="CopyOverData" AfterTargets="Publish">
+  
+      <Message Text="Copied data directory into publish directory!" Importance="high"/>
+      <Message Text="MSBuild dir: $(MSBuildProjectDirectory)"/>
+      <Message Text="Publish dir: $(PublishDir)" Importance="high"/>
+  
+      <ItemGroup>
+        <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" />
+      </ItemGroup>
+  
+      <Copy
+              SourceFiles="@(SourceFiles)"
+              DestinationFolder="$(PublishDir)data/%(RecursiveDir)"
+              SkipUnchangedFiles="False"
+      />
+  
     </Target>
     
 </Project>
