@@ -91,7 +91,9 @@ jobs:
       # You may pin to the exact commit or the version.
       # uses: NuGet/setup-nuget@d105a947828025cd7a980103c35ba2bfae586d0f
       uses: NuGet/setup-nuget@v2.0.2
-    - run: nuget restore $env:Solution_Name.sln
+      
+    - name: Restore nuget
+      run: nuget restore $env:Solution_Name.sln
 
     # Execute all unit tests in the solution
     # - name: Execute unit tests
@@ -102,6 +104,18 @@ jobs:
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
+
+
+    - name: Log project assets file
+      uses: actions/upload-artifact@v4
+      with:
+        # Name of the artifact to upload.
+        # Optional. Default is 'artifact'
+        name: Release
+    
+        # A file, directory or wildcard pattern that describes what to upload
+        # Required.
+        path: .\obj\project.assets.json
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     # - name: Decode the pfx
