@@ -12,6 +12,20 @@ public partial class Converting : Window
     {
         this.modelsToConvert = modelsToConvert;
         InitializeComponent();
+
+
+        if (string.IsNullOrWhiteSpace(App.StartupOutputDir)) return;
+        FilePath.Text = App.StartupOutputDir;
+
+        if (!App.StartupConvertModels) return;
+        
+        D3DMeshManager manager = new D3DMeshManager(modelsToConvert, App.StartupOutputDir);
+
+        manager.LoadMeshes();
+
+        Console.Out.WriteLine("Read mesh data from ttarchive!");
+
+
     }
 
 

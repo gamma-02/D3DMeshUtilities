@@ -23,7 +23,7 @@
         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"> Select Mesh To Export </TextBlock>
         
         <Grid Grid.Row="1" Background="LightGray">
-            <ListView Name="ModelList" SelectionChanged="ModelList_SelectionChanged" >
+            <ListView Name="ModelList" SelectionChanged="ModelList_SelectionChanged" SelectionMode="Extended">
                 <ListViewItem>
                     <TextBlock HorizontalAlignment="Center" FontStretch="Expanded"> Loading... </TextBlock>
                 </ListViewItem>
