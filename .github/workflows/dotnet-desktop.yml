@@ -65,6 +65,7 @@ jobs:
       # Solution_File_Name: D3DMeshUtilities.sln                    # Specific solution file name
       Solution_Directory: .\
       Publish_Directory: .\publish
+      CS_Project_File: .\D3DMeshUtilities\D3DMeshUtilities.csproj
       # Test_Project_Path: your-test-project-path                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       # Wap_Project_Directory: your-wap-project-directory-name    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       # Wap_Project_Path: your-wap-project-path                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
@@ -111,7 +112,7 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: msbuild -property:TargetFramework=net9.0-windows -property:RuntimeIdentifier=win-x64 -property:SelfContained=false -property:_IsPortable=true -property:PublishSingleFile=true -property:PublishReadyToRun=true -property:PublishTrimmed=false -property:IncludeNativeLibrariesForSelfExtract=false -property:IncludeAllContentForSelfExtract=false -property:Configuration=Release -property:Platform=AnyCPU -property:PublishDir=$env:Publish_Directory -property:SolutionExt=.sln -property:SolutionName=$env:Solution_Name -property:SolutionFileName=$env:Solution_Name.sln -property:SolutionPath=.\$env:Solution_Name.sln -property:SolutionDir=$env:Solution_Directory -t:Publish -m:14 C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\D3DMeshUtilities.csproj
+      run: msbuild -property:TargetFramework=net9.0-windows -property:RuntimeIdentifier=win-x64 -property:SelfContained=false -property:_IsPortable=true -property:PublishSingleFile=true -property:PublishReadyToRun=true -property:PublishTrimmed=false -property:IncludeNativeLibrariesForSelfExtract=false -property:IncludeAllContentForSelfExtract=false -property:Configuration=Release -property:Platform=AnyCPU -property:PublishDir=$env:Publish_Directory -property:SolutionExt=.sln -property:SolutionName=$env:Solution_Name -property:SolutionFileName=$env:Solution_Name.sln -property:SolutionPath=.\$env:Solution_Name.sln -property:SolutionDir=$env:Solution_Directory -t:Publish -m:14 $env:CS_Project_File
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x86|x64
