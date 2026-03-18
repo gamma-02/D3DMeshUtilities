@@ -23,6 +23,8 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
+        App.AllocConsole();
+        
         InitializeComponent();
 
         foreach (T3BlowfishKey key in Enum.GetValues<T3BlowfishKey>())
