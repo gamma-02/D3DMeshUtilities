@@ -2,6 +2,7 @@
 using System.IO;
 using System.Numerics;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
+using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Materials;
 using SharpGLTF.Memory;
 using TelltaleToolKit;
@@ -26,6 +27,8 @@ public static class MeshUtils
 
         var vertexState = meshData.VertexStates[vertexStateIndex];
 
+        GFXPlatformAttributeParams? bufferParam = null;
+
         T3GFXBuffer? vertexPositionBuffer = null;
 
         for (uint index = 0; index < vertexState.AttributeCount; index++)
@@ -35,17 +38,22 @@ public static class MeshUtils
             if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.Position)
             {
                 vertexPositionBuffer = vertexState.VertexBuffer[(int)index];
+                bufferParam = vertexAttribute;
                 break;
             }
             
         }
 
-        if (vertexPositionBuffer == null)
+        if (vertexPositionBuffer == null || bufferParam == null)
             return null;
 
-
-        if (vertexPositionBuffer.BufferFormat != GFXPlatformFormat.UN10x3_UN2)
+        bool validFormatFromBuffer = ConvertFromGfxPlatformFormat.IsFormatVector4(vertexPositionBuffer.BufferFormat);
+        if (!validFormatFromBuffer && !ConvertFromGfxPlatformFormat.IsFormatVector4(bufferParam.Format))
             return null;
+
+        GFXPlatformFormat vertexFormat = vertexPositionBuffer.BufferFormat;
+        if (!validFormatFromBuffer)
+            vertexFormat = bufferParam.Format;
 
         ReadOnlySpan<byte> vertexBuffer = vertexPositionBuffer.Buffer;
 
@@ -55,10 +63,12 @@ public static class MeshUtils
 
         while (readerIndex < vertexBuffer.Length)
         {
-            vertices.Add(ConvertFromGfxPlatformFormat.ReadUN10x3_UN2(vertexBuffer.Slice((int)readerIndex)));
+            // vertices.Add(ConvertFromGfxPlatformFormat.ReadUN10x3_UN2(vertexBuffer.Slice((int)readerIndex)));
 
+            vertices.Add(ConvertFromGfxPlatformFormat.ReadVector4FromSpanAndFormat(vertexBuffer.Slice((int)readerIndex),
+                vertexFormat)!.Value);
+            
             readerIndex += vertexPositionBuffer.Stride;
-
         }
 
         return vertices;
