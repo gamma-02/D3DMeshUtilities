@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Geometry;
 using SharpGLTF.Geometry.VertexTypes;
 using SharpGLTF.Materials;
@@ -11,11 +12,13 @@ using TelltaleToolKit.T3Types.Textures;
 
 namespace D3DMeshUtilities.Code.D3DMeshFormats;
 
-public class NormalModelIntermediate
+public class NormalModelIntermediate : IMeshRepresentation
 {
+    public MeshInfo Info { get; private set; }
+    
     public List<Vector3> VertexPositions;
     public List<Vector3> VertexNormals;
-    public List<Vector4> VertexTangents;
+    public List<Vector4>? VertexTangents;
     
     //unusued/unknown:
     //public List<Vector4>? SecondVertexNormalsList;
@@ -30,11 +33,13 @@ public class NormalModelIntermediate
 
     public List<T3MeshLOD> LODs;
     
+    
     // public List<IVertexBuilder> vertices
 
     
-    public NormalModelIntermediate(List<Vector3> vertexPositionList, List<Vector3> vertexNormalList, List<Vector4> vertexTangentsList, List<List<Vector2>?> textureCoords, List<List<uint>?> indexBuffers, List<MaterialBuilder> materials, List<T3MeshLOD> loDs)
+    public NormalModelIntermediate(MeshInfo info, List<Vector3> vertexPositionList, List<Vector3> vertexNormalList, List<Vector4>? vertexTangentsList, List<List<Vector2>?> textureCoords, List<List<uint>?> indexBuffers, List<MaterialBuilder> materials, List<T3MeshLOD> loDs)
     {
+        Info = info;
         
         VertexPositions = vertexPositionList;
         VertexNormals = vertexNormalList;
@@ -55,7 +60,7 @@ public class NormalModelIntermediate
     }
 
 
-    public static bool Read(D3DMesh mesh, string meshFile, out NormalModelIntermediate? readMesh)
+    public static bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out NormalModelIntermediate? readMesh)
     {
         var meshData = mesh.MeshData;
             
@@ -84,7 +89,9 @@ public class NormalModelIntermediate
         {
             ArgumentNullException.ThrowIfNull(rawPositionList);
             ArgumentNullException.ThrowIfNull(rawNormalsList);
-            ArgumentNullException.ThrowIfNull(tangentsList);
+            
+            if(info.HasVertexTangents)
+                ArgumentNullException.ThrowIfNull(tangentsList);
             
             //the other texture coord lists are optional, but we need the first one
             ArgumentNullException.ThrowIfNull(vertexTextureCoordList1);
@@ -102,7 +109,7 @@ public class NormalModelIntermediate
             return false;
         }
         
-        if (rawPositionList == null || rawNormalsList == null || tangentsList == null || vertexTextureCoordList1 == null ||
+        if (rawPositionList == null || rawNormalsList == null || (tangentsList == null && info.HasVertexTangents) || vertexTextureCoordList1 == null ||
             indexList == null)
         {
             throw new ArgumentNullException(
@@ -120,15 +127,15 @@ public class NormalModelIntermediate
             var normal = rawNormalsList[vertexIndex].AsVector3();
             
             normals.Add(Vector3.Normalize(normal));
-            tangentsList[vertexIndex] = Vector4.Normalize(tangentsList[vertexIndex]);
+            if(info.HasVertexTangents)
+                tangentsList![vertexIndex] = Vector4.Normalize(tangentsList[vertexIndex]);
 
         }
-
         
         // List<MaterialBuilder> materials = [];
-        MeshUtils.GetMaterials(mesh, meshData, out List<MaterialBuilder> materials);
+        MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
 
-        readMesh = new NormalModelIntermediate(vertexPositions, normals, tangentsList,
+        readMesh = new NormalModelIntermediate(info, vertexPositions, normals, tangentsList,
             textureCoords, [indexList], materials, meshData.LODs);
 
         return true;
@@ -136,29 +143,50 @@ public class NormalModelIntermediate
     }
 
     //todo: look into exporting LODs as seprate meshBuilders
-    public bool SaveToGLTF(out MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty> meshBuilder)
+    public bool SaveToGLTF(out IMeshBuilder<MaterialBuilder> meshBuilder)
     {
-        meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>("mainMesh");
+        if (!Info.HasVertexTangents)
+            meshBuilder = new MeshBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>("mainMesh");
+        else
+            meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>("mainMesh");
         
         //build list of vertices
-        List<VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>> verts = new(VertexPositions.Count);
+        List<IVertexBuilder> verts = new(VertexPositions.Count);
 
         for (int i = 0; i < VertexPositions.Count; i++)
         {
+            // IVertexBuilder vertex;
             //no skinning data :D
-            var vertex = new VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>
+            if (Info.HasVertexTangents)
             {
-                Geometry = new VertexPositionNormalTangent(
-                    VertexPositions[i], 
-                    VertexNormals[i],
-                    VertexTangents[i]
-                ),
-                Material = new VertexTexture1(
-                    TextureCoordLists[0]![i]
-                )
-            };
-
-            verts.Add(vertex);
+                var vertex = new VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>
+                {
+                    Geometry = new VertexPositionNormalTangent(
+                        VertexPositions[i],
+                        VertexNormals[i],
+                        VertexTangents![i]
+                    ),
+                    Material = new VertexTexture1(
+                        TextureCoordLists[0]![i]
+                    )
+                };
+                
+                verts.Add(vertex);
+            }
+            else
+            {
+                var vertex = new VertexBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>
+                {
+                    Geometry = new VertexPositionNormal(
+                        VertexPositions[i],
+                        VertexNormals[i]
+                    ),
+                    Material = new VertexTexture1(
+                        TextureCoordLists[0]![i]
+                    )
+                };
+                verts.Add(vertex);
+            }
         }
         
         
@@ -197,6 +225,11 @@ public class NormalModelIntermediate
 
         return true;
 
+    }
+
+    public MeshInfo GetMeshInfo()
+    {
+        return Info;
     }
 
     public bool SaveToMeshBuilder(out IMeshBuilder<MaterialBuilder> meshBuilder)

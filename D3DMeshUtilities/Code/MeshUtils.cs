@@ -344,6 +344,7 @@ public static class MeshUtils
 
     }
 
+    //todo: document these too
     [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract")]
     [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
     public static Vector2 ApplyTexCoordTransform(T3MeshData meshData, int texCoordIndex, Vector2 texCoord)
@@ -364,8 +365,9 @@ public static class MeshUtils
     }
 
 
-    public static void GetMaterials(D3DMesh mesh, T3MeshData meshData, out List<MaterialBuilder> materials)
+    public static void GetMaterials(D3DMesh mesh, MeshInfo info, out List<MaterialBuilder> materials)
     {
+        T3MeshData meshData = mesh.MeshData;
         materials = new List<MaterialBuilder>();
         
         foreach (T3MeshMaterial mat in meshData.Materials)
