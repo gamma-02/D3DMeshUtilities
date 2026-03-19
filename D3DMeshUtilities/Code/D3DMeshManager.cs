@@ -20,6 +20,7 @@ using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
 using TelltaleToolKit.T3Types.Properties;
+using TelltaleToolKit.T3Types.Skeletons;
 using TelltaleToolKit.T3Types.Textures;
 using TelltaleToolKit.TelltaleArchives;
 using AlphaMode = SharpGLTF.Materials.AlphaMode;
@@ -50,7 +51,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
     //along with more generalizaitons and abstractions :3
     //done: disguiseGlassesDangeresqueToo tangents?? - This was missing the per-vertex tangents
     
-    //todo: obj_skyGeneric (allowing for direct encoding of vertex positions)
+    //done: obj_skyGeneric (allowing for direct encoding of vertex positions)
     
     //todo: make sure normals are actually being correct
     
@@ -64,12 +65,17 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
     public void LoadMeshes()
     {
+        Task.Run(() => AsyncSerachForSkeletonFiles.BuildAgentMeshDictionary(LoadedArchive.Instance));
+        
         ReadMeshes.Clear();
 
         if (!Codecs.Registered)
         {
             Codecs.RegisterCodecs();
         }
+
+
+        // List<PropertySet> propertySets = skeletonProperties.ToList();
         
         
         if (!Directory.Exists(outputPath))
@@ -99,7 +105,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             ReadMeshes.Add(mesh);
 
-            MeshInfo info = new MeshInfo(mesh);
+            MeshInfo info = new MeshInfo(mesh, meshFile);
 
             IMeshCodec? codec = info.GetMeshRepresentation(mesh);
 

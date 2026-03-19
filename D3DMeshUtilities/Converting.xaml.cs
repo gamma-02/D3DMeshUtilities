@@ -3,14 +3,21 @@ using D3DMeshUtilities.Code;
 
 namespace D3DMeshUtilities;
 
-public partial class Converting : Window
+public partial class Converting : BaseProjectWindow
 {
 
-    private List<string> modelsToConvert;
+    public List<string> ModelsToConvert
+    {
+        get => _modelsToConvert;
+
+        set => _modelsToConvert = value;
+    }
+
+    private List<string> _modelsToConvert;
     
     public Converting(List<string> modelsToConvert)
     {
-        this.modelsToConvert = modelsToConvert;
+        _modelsToConvert = modelsToConvert;
         InitializeComponent();
 
 
@@ -26,6 +33,11 @@ public partial class Converting : Window
         Console.Out.WriteLine("Read mesh data from ttarchive!");
 
 
+    }
+
+    public Converting()
+    {
+        _modelsToConvert = new List<string>();
     }
 
 
@@ -53,7 +65,13 @@ public partial class Converting : Window
 
     private void Convert_OnClick(object sender, RoutedEventArgs e)
     {
-        D3DMeshManager manager = new D3DMeshManager(modelsToConvert, FilePath.Text);
+
+        if (_modelsToConvert.Count == 0)
+        {
+            Console.Out.WriteLine("No models provided!");
+        }
+        
+        D3DMeshManager manager = new D3DMeshManager(_modelsToConvert, FilePath.Text);
 
         manager.LoadMeshes();
 
@@ -76,5 +94,10 @@ public partial class Converting : Window
         list.Owner = null;
 
         this.Close();
+    }
+    
+    public override Window GetWindow()
+    {
+        return Window.ConvertModels;
     }
 }

@@ -1,11 +1,11 @@
-﻿<Window x:Class="D3DMeshUtilities.Converting"
+﻿<local:BaseProjectWindow x:Class="D3DMeshUtilities.Converting"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:D3DMeshUtilities"
         mc:Ignorable="d"
-        Title="Converting" Height="450" Width="800"
+        Title="Converting" Height="480" Width="800"
         WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.Resources>
@@ -15,16 +15,23 @@
         </Grid.Resources>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
 
         </Grid.RowDefinitions>
         
-        <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24">Choose ouput directory</TextBlock>
+        <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header">
+            <TabItem Header="Load Resources" FontSize="16"></TabItem>
+            <TabItem Header="List Models" FontSize="16"></TabItem>
+            <TabItem Header="Convert Models" FontSize="16" IsSelected="True"></TabItem>
+        </TabControl>
         
-        <Grid Grid.Row="1">
+        <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24">Choose ouput directory</TextBlock>
+        
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -37,7 +44,7 @@
         </Grid>
         
         
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -48,7 +55,7 @@
             "> Convert! </Button>
         </Grid>
         
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -61,4 +68,4 @@
         
         <!-- <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="56">Converting... </TextBox> -->
     </Grid>
-</Window>
+</local:BaseProjectWindow>

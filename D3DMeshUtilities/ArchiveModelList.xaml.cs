@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace D3DMeshUtilities;
 
-public partial class ArchiveModelList : Window
+public partial class ArchiveModelList : BaseProjectWindow
 {
     public ArchiveModelList()
     {
@@ -202,5 +202,10 @@ public partial class ArchiveModelList : Window
         this.Close();
     }
     
+    
+    public override Window GetWindow()
+    {
+        return Window.ListModels;
+    }
     
 }

@@ -1,4 +1,5 @@
 ﻿using D3DMeshUtilities.Code.D3DMeshFormats;
+using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
 
@@ -10,6 +11,13 @@ namespace D3DMeshUtilities.Code.MeshHandling;
 /// </summary>
 public class MeshInfo
 {
+
+    public ulong? Crc64
+    {
+        get;
+
+        private set;
+    }
     
     
     public bool IsSkinnedModel
@@ -81,14 +89,20 @@ public class MeshInfo
 
 
     }
+
+    public MeshInfo(D3DMesh mesh, string meshName) : this(mesh)
+    {
+
+        Crc64 = Symbol.GetCrc64(meshName);
+    }
     
     
 
     public IMeshCodec? GetMeshRepresentation(D3DMesh mesh)
     {
-        //todo: skinned model parsing lol
-        if (IsSkinnedModel)
-            return null;
+        //doing: skinned model parsing lol
+        // if (IsSkinnedModel)
+        //     return null;
         
         
         //properly detect these kinds of things

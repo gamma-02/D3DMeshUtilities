@@ -19,7 +19,7 @@ namespace D3DMeshUtilities;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : BaseProjectWindow
 {
     public MainWindow()
     {
@@ -214,4 +214,11 @@ public partial class MainWindow : Window
 
         this.Close();
     }
+
+    public override Window GetWindow()
+    {
+        return Window.LoadResources;
+    }
+
+    
 }

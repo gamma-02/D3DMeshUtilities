@@ -125,7 +125,7 @@ public static class ConvertFromGfxPlatformFormat
         };
     }
 
-    public static bool IsTemplatedVector(GFXPlatformFormat format)
+    public static bool IsIntegerTemplatedVector(GFXPlatformFormat format)
     {
         return format switch
         {
@@ -143,6 +143,44 @@ public static class ConvertFromGfxPlatformFormat
             GFXPlatformFormat.U8x2 => true,
             GFXPlatformFormat.S8x4 => true,
             GFXPlatformFormat.U8x4 => true,
+            _ => false
+        };
+    }
+
+    public static bool IsIntegerVector3(GFXPlatformFormat format)
+    {
+        return format switch
+        {
+            GFXPlatformFormat.S32x3 => true,
+            GFXPlatformFormat.U32x3 => true,
+            _ => false
+        };
+    }
+    
+    public static bool IsIntegerVector4(GFXPlatformFormat format)
+    {
+        return format switch
+        {
+            GFXPlatformFormat.S32x4 => true,
+            GFXPlatformFormat.U32x4 => true,
+            GFXPlatformFormat.S16x4 => true,
+            GFXPlatformFormat.U16x4 => true,
+            GFXPlatformFormat.S8x4 => true,
+            GFXPlatformFormat.U8x4 => true,
+            _ => false
+        };
+    }
+    
+    public static bool IsIntegerVector2(GFXPlatformFormat format)
+    {
+        return format switch
+        {
+            GFXPlatformFormat.S32x2 => true,
+            GFXPlatformFormat.U32x2 => true,
+            GFXPlatformFormat.S16x2 => true,
+            GFXPlatformFormat.U16x2 => true,
+            GFXPlatformFormat.S8x2 => true,
+            GFXPlatformFormat.U8x2 => true,
             _ => false
         };
     }
@@ -316,6 +354,13 @@ public static class ConvertFromGfxPlatformFormat
             return null;
 
         return ret;
+    }
+
+    public static Vector<int>? ReadIntegerVector4FromSpanAndFormat(ReadOnlySpan<byte> span, GFXPlatformFormat format)
+    {
+        object? vert = ReadVertexFromFormat(span, format);
+
+        return vert is Vector<int> v ? v : null;
     }
     
     //todo: check that this will work...
