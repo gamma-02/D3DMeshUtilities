@@ -22,10 +22,45 @@ public partial class App : Application
     public static string? StartupArchive { get; private set; }
     public static string[] StartupModels { get; private set; } = [];
     public static string? StartupOutputDir { get; private set; }
-    public static bool StartupLoadGameDir { get; private set; } = true;
-    public static bool StartupChooseArchive { get; private set; } = true;
-    public static bool StartupChooseModels { get; private set; } = true;
-    public static bool StartupConvertModels { get; private set; } = true;
+
+    public static bool StartupLoadGameDir
+    {
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set;
+    } = true;
+
+    public static bool StartupChooseArchive {
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set; 
+    } = true;
+    public static bool StartupChooseModels {
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set; 
+    } = true;
+    public static bool StartupConvertModels { 
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set; 
+    } = true;
 
     protected override void OnExit(ExitEventArgs e)
     {

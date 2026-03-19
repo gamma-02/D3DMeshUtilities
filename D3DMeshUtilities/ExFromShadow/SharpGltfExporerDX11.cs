@@ -67,14 +67,14 @@ public static class SharpGltfExporterDX11
         // Skeleton
         Skeleton? skeleton = null;
         var handleSkeleton = propertySet.GetProperty<Handle<Skeleton>>("Skeleton File");
-        // if (handleSkeleton is not null)
-        // {
-        //     MemoryStream? skeletonStream =
-        //         ArchiveManager.TryExtractWithIndex(index, handleSkeleton.ObjectInfo.ObjectName.Crc64, out _, out _);
-        //     skeleton = Toolkit.Instance.LoadObject<Skeleton>(skeletonStream, out MetaStreamConfiguration sklConfig);
-        //     Toolkit.Instance.ResolveSymbols(sklConfig.SerializedSymbols);
-        //     Console.WriteLine($"Found skeleton {handleSkeleton.ObjectInfo.ObjectName} for {agentName}!");
-        // }
+        if (handleSkeleton is not null)
+        {
+            MemoryStream? skeletonStream =
+                ArchiveManager.TryExtractWithIndex(index, handleSkeleton.ObjectInfo.ObjectName.Crc64, out _, out _);
+            skeleton = Toolkit.Instance.LoadObject<Skeleton>(skeletonStream, out MetaStreamConfiguration sklConfig);
+            Toolkit.Instance.ResolveSymbols(sklConfig.SerializedSymbols);
+            Console.WriteLine($"Found skeleton {handleSkeleton.ObjectInfo.ObjectName} for {agentName}!");
+        }
 
         // Meshes
         List<D3DMesh> meshes = [];

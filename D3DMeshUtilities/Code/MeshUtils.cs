@@ -321,6 +321,108 @@ public static class MeshUtils
         return vertices;
     }
     
+    public static List<Vector<int>>? GetVertexBlendIndices(T3MeshData meshData, int vertexStateIndex)
+    {
+        //todo: fix
+        return null;
+        
+        var vertexState = meshData.VertexStates[vertexStateIndex];
+    
+        T3GFXBuffer? vertexBlendIndexBuffer = null;
+
+        GFXPlatformFormat format = GFXPlatformFormat.None;
+
+        //get just the one normal for now -- don't know what the second does
+        for (uint index = 0; index < vertexState.AttributeCount; index++)
+        {
+            var vertexAttribute = vertexState.Attributes[(int)index];
+    
+            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.BlendIndex)
+            {
+                vertexBlendIndexBuffer = vertexState.VertexBuffer[(int)index];
+                format = vertexAttribute.Format;
+                break;
+            }
+            
+        }
+    
+        if (vertexBlendIndexBuffer == null)
+            return null;
+
+        if (ConvertFromGfxPlatformFormat.IsIntegerVector4(vertexBlendIndexBuffer.BufferFormat))
+            format = vertexBlendIndexBuffer.BufferFormat;
+        else if (!ConvertFromGfxPlatformFormat.IsFormatVector4(format))
+            return null;
+    
+        ReadOnlySpan<byte> indexBuffer = vertexBlendIndexBuffer.Buffer;
+    
+        var indices = new List<Vector<int>>();
+    
+        uint readerIndex = 0;
+    
+        while (readerIndex < indexBuffer.Length)
+        {
+            indices.Add((Vector<int>)ConvertFromGfxPlatformFormat.ReadIntegerVector4FromSpanAndFormat(indexBuffer.Slice((int)readerIndex), format)!);
+    
+            readerIndex += vertexBlendIndexBuffer.Stride;
+    
+        }
+    
+        return indices;
+    }
+    
+    public static List<Vector4>? GetVertexBlendWeights(T3MeshData meshData, int vertexStateIndex)
+    {
+        
+        
+        var vertexState = meshData.VertexStates[vertexStateIndex];
+    
+        T3GFXBuffer? vertexBlendWeightBuffer = null;
+
+        GFXPlatformFormat format = GFXPlatformFormat.None;
+
+        //get just the one normal for now -- don't know what the second does
+        for (uint index = 0; index < vertexState.AttributeCount; index++)
+        {
+            var vertexAttribute = vertexState.Attributes[(int)index];
+    
+            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.BlendIndex)
+            {
+                vertexBlendWeightBuffer = vertexState.VertexBuffer[(int)index];
+                format = vertexAttribute.Format;
+                break;
+            }
+            
+        }
+    
+        if (vertexBlendWeightBuffer == null)
+            return null;
+
+        if (vertexBlendWeightBuffer.BufferFormat != GFXPlatformFormat.UN10x3_UN2 &&
+            format != GFXPlatformFormat.UN10x3_UN2)
+            return null;
+        
+        ReadOnlySpan<byte> indexBuffer = vertexBlendWeightBuffer.Buffer;
+    
+        var weights = new List<Vector4>();
+    
+        uint readerIndex = 0;
+    
+        while (readerIndex < indexBuffer.Length)
+        {
+            weights.Add(
+                ConvertFromGfxPlatformFormat.ReadTelltaleBoneWeights(
+                    indexBuffer.Slice((int)readerIndex)
+                    )
+                );
+    
+            readerIndex += vertexBlendWeightBuffer.Stride;
+    
+        }
+    
+        return weights;
+    }
+    
     #endregion
     
     
@@ -458,8 +560,6 @@ public static class MeshUtils
 
         Texture intermediateTexture = D3dtxCodec.Codec.LoadFromMemory(texture, new CodecOptions());
         
-        // intermediateTexture.ConvertToRGBA8sRGB();
-        
         if (channel == KnownChannel.Normal)
         {
             //regenerate Z channel
@@ -472,18 +572,12 @@ public static class MeshUtils
         
         byte[] pngData = PngCodec.Codec.SaveToMemory(intermediateTexture, new CodecOptions(), true);
         
-        // File.WriteAllBytes(Path.Combine(outputPath, textureHandle.ObjectInfo.ObjectName + ".dds"), ddsData);
-
         MemoryImage memImage = new MemoryImage(pngData);
-        
-        // memImage.SaveToFile(Path.Combine(outputPath, textureHandle.ObjectInfo.ObjectName + "-memImage.dds"));
         
         ImageBuilder image = ImageBuilder.From(memImage, textureHandle.ObjectInfo.ObjectName.ToString());
 
         mb.WithChannelImage(channel, image);
         mb.AlphaMode = AlphaMode.MASK;
-        
-        // mb.WithChannelImage(KnownChannel)
         
         Console.Out.WriteLine("Loaded texture: " + textureHandle.ObjectInfo.ObjectName);
     }
