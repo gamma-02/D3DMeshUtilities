@@ -28,9 +28,9 @@ public partial class Converting : BaseProjectWindow
         
         D3DMeshManager manager = new D3DMeshManager(modelsToConvert, App.StartupOutputDir);
 
-        manager.LoadMeshes();
+        Dispatcher.InvokeAsync(manager.LoadMeshes);
 
-        Console.Out.WriteLine("Read mesh data from ttarchive!");
+        // Console.Out.WriteLine("Read mesh data from ttarchive!");
 
 
     }

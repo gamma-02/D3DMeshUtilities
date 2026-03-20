@@ -323,8 +323,6 @@ public static class MeshUtils
     
     public static List<Vector<int>>? GetVertexBlendIndices(T3MeshData meshData, int vertexStateIndex)
     {
-        //todo: fix
-        return null;
         
         var vertexState = meshData.VertexStates[vertexStateIndex];
     
@@ -373,8 +371,6 @@ public static class MeshUtils
     
     public static List<Vector4>? GetVertexBlendWeights(T3MeshData meshData, int vertexStateIndex)
     {
-        
-        
         var vertexState = meshData.VertexStates[vertexStateIndex];
     
         T3GFXBuffer? vertexBlendWeightBuffer = null;
@@ -386,7 +382,7 @@ public static class MeshUtils
         {
             var vertexAttribute = vertexState.Attributes[(int)index];
     
-            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.BlendIndex)
+            if (vertexAttribute.Attribute == GFXPlatformVertexAttribute.BlendWeight)
             {
                 vertexBlendWeightBuffer = vertexState.VertexBuffer[(int)index];
                 format = vertexAttribute.Format;

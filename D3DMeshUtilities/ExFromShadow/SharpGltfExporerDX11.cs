@@ -216,16 +216,15 @@ public static class SharpGltfExporterDX11
                 {
                     foreach (T3MeshBatch batch in lod.Batches2)
                     {
-                        // // var meshBuilder =
-                        // //     new MeshBuilder<VertexPositionNormalTangent, VertexTexture4, VertexJoints4>("Submesh_Shadow_" +
-                        // //         batchNum);
-                        //
-                        // AddBatchAsPrimitive(meshBuilder, d3dMesh, batch, materialBuilders, true);
-                        // batchNum++;
-                        //
-                        //
-                        // // Rigid mesh - no skeleton
-                        // scene.AddRigidMesh(meshBuilder, Matrix4x4.Identity);
+                        // var meshBuilder =
+                      	//     new MeshBuilder<VertexPositionNormalTangent, VertexTexture4, VertexJoints4>("Submesh_Shadow_" +
+                        //         batchNum);
+                        
+                        AddBatchAsPrimitive(meshBuilder, d3dMesh, batch, materialBuilders, true);
+                        batchNum++;
+                        
+                        // Rigid mesh - no skeleton
+                        scene.AddRigidMesh(meshBuilder, Matrix4x4.Identity);
                     }
                 }
 

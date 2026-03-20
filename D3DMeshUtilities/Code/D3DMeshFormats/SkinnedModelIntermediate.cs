@@ -4,6 +4,7 @@ using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Geometry;
 using SharpGLTF.Geometry.VertexTypes;
 using SharpGLTF.Materials;
+using SharpGLTF.Scenes;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
@@ -34,10 +35,13 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
     public List<T3MeshLOD> LODs;
 
-    public Skeleton Skeleton;
+    //todo: make skeleton actually optional
+    public Skeleton? Skeleton;
 
     public List<Vector<int>> BlendIndices;
     public List<Vector4> BlendWeights;
+
+    public List<T3MeshBoneEntry> MeshDataBones;
     
     
     // public List<IVertexBuilder> vertices
@@ -54,7 +58,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         List<T3MeshLOD> loDs, 
         Skeleton skeleton, 
         List<Vector<int>> blendIndices, 
-        List<Vector4> blendWeights)
+        List<Vector4> blendWeights, List<T3MeshBoneEntry> bones)
     {
         Info = info;
         
@@ -77,32 +81,34 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         Skeleton = skeleton;
         BlendIndices = blendIndices;
         BlendWeights = blendWeights;
+        MeshDataBones = bones;
     }
 
 
-    public static async Task<(bool success, SkinnedModelIntermediate? readMesh)> Read(D3DMesh mesh, MeshInfo info, string meshFile)
+    public static bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out SkinnedModelIntermediate? readMesh)
     {
+        readMesh = null;
         var meshData = mesh.MeshData;
-        
+    
         if(AsyncSerachForSkeletonFiles.BuildDictionaryTask != null && !AsyncSerachForSkeletonFiles.BuildDictionaryTask.IsCompleted)
             AsyncSerachForSkeletonFiles.BuildDictionaryTask.GetAwaiter().GetResult();
-        
+    
         AsyncSerachForSkeletonFiles.AgentMeshDictionaryLock.Enter();
-        
+    
         PropertySet? agentProp = null;
 
         if (info.Crc64.HasValue)
         {
             agentProp = AsyncSerachForSkeletonFiles.AgentPropertiesByMeshFile[info.Crc64.Value];
         }
-        
+    
         AsyncSerachForSkeletonFiles.AgentMeshDictionaryLock.Exit();
 
         Handle<Skeleton>? skeletonReference = agentProp?.GetProperty<Handle<Skeleton>>("Skeleton File");
 
         if (skeletonReference == null)
         {
-            return (false, null);
+            return false;
         }
 
         Skeleton? skeleton = skeletonReference.ObjectInfo.HandleObject as Skeleton;
@@ -113,35 +119,35 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
             if (skeleton == null)
             {
-                return (false, null);
+                return false;
             }
         }
-        
+    
         List<Vector4>? rawPositionList = MeshUtils.GetVertices(meshData, info, 0);
         List<Vector4>? rawNormalsList = MeshUtils.GetNormals(meshData, 0);
         List<Vector4>? tangentsList = MeshUtils.GetTangents(meshData, 0);
-        
+    
         //unusued, I think, but keeping them here because they're on everything
         // List<Vector4>? secondNormalsList = MeshUtils.GetNormals(meshData, 0, 1);
         // List<Vector4>? vertexColorList = MeshUtils.GetVertexColors(meshData, 0);
-        
-        
+    
+    
         List<Vector<int>>? vertexBlendIndices = MeshUtils.GetVertexBlendIndices(meshData, 0);
         List<Vector4>? vertexBlendWeights = MeshUtils.GetVertexBlendWeights(meshData, 0);
-        
-        
+    
+    
         List<Vector2>? vertexTextureCoordList1 = MeshUtils.GetVertexTextureCoords(meshData, 0);
         List<Vector2>? vertexTextureCoordList2 = MeshUtils.GetVertexTextureCoords(meshData, 0, 1);
         List<Vector2>? vertexTextureCoordList3 = MeshUtils.GetVertexTextureCoords(meshData, 0, 2);
         List<Vector2>? vertexTextureCoordList4 = MeshUtils.GetVertexTextureCoords(meshData, 0, 3);
 
-        
+    
 
         List<Vector2>?[] textureCoordArray = [vertexTextureCoordList1, vertexTextureCoordList2, vertexTextureCoordList3, vertexTextureCoordList4];
-        
+    
         List<List<Vector2>?> textureCoords =
             [vertexTextureCoordList1, vertexTextureCoordList2, vertexTextureCoordList3, vertexTextureCoordList4];
-        
+    
         //todo: how are multiple index buffers used?
         List<uint>? indexList = MeshUtils.GetIndexBuffer(meshData, 0, 0);
 
@@ -149,24 +155,28 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         {
             ArgumentNullException.ThrowIfNull(rawPositionList);
             ArgumentNullException.ThrowIfNull(rawNormalsList);
-            
+        
             if(info.HasVertexTangents)
                 ArgumentNullException.ThrowIfNull(tangentsList);
-            
+        
             //the other texture coord lists are optional, but we need the first one
             ArgumentNullException.ThrowIfNull(vertexTextureCoordList1);
 
             //and we need the index list
             ArgumentNullException.ThrowIfNull(indexList);
+        
+            //we need both bone indices and blend weights for skinned models
+            ArgumentNullException.ThrowIfNull(vertexBlendIndices);
+            ArgumentNullException.ThrowIfNull(vertexBlendWeights);
         }
         catch(ArgumentNullException e)
         {
-                
+            
             Console.Out.WriteLine($"Failed reading {meshFile}! See: " + e);
 
-            return (false, null);
+            return false;
         }
-        
+    
         if (rawPositionList == null || rawNormalsList == null || (tangentsList == null && info.HasVertexTangents) || vertexTextureCoordList1 == null ||
             indexList == null)
         {
@@ -176,75 +186,66 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
         List<Vector3> vertexPositions = new List<Vector3>(rawPositionList.Count);
         List<Vector3> normals = new List<Vector3>(rawNormalsList.Count);
-        
+    
         for (int vertexIndex = 0; vertexIndex < rawPositionList.Count; vertexIndex++)
         {
             MeshUtils.ApplyTransforms(meshData, vertexIndex, rawPositionList[vertexIndex], vertexPositions, textureCoordArray);
 
             //normalize, because the interpreted 
             var normal = rawNormalsList[vertexIndex].AsVector3();
-            
+        
             normals.Add(Vector3.Normalize(normal));
             if(info.HasVertexTangents)
                 tangentsList![vertexIndex] = Vector4.Normalize(tangentsList[vertexIndex]);
 
         }
-        
+    
         // List<MaterialBuilder> materials = [];
         MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
 
+        foreach (T3MeshBoneEntry bone in meshData.Bones)
+        {
+            TttkInit.Instance.Workspace!.ResolveSymbol(bone.BoneName);
+        }
+        
         //todo: null check blend stuff
-        SkinnedModelIntermediate readMesh = new SkinnedModelIntermediate(info, vertexPositions, normals, tangentsList,
-            textureCoords, [indexList], materials, meshData.LODs, skeleton, vertexBlendIndices!, vertexBlendWeights!);
+        readMesh = new SkinnedModelIntermediate(info, vertexPositions, normals, tangentsList,
+            textureCoords, [indexList], materials, meshData.LODs, skeleton, vertexBlendIndices!, vertexBlendWeights!, meshData.Bones);
 
-        return (true, readMesh);
+        return true;
     }
 
     //todo: look into exporting LODs as seprate meshBuilders
-    public bool SaveToGLTF(out IMeshBuilder<MaterialBuilder> meshBuilder)
+    public bool SaveToGLTF(out IMeshBuilder<MaterialBuilder> meshBuilder, List<Vector<int>>? blendIndices = null)
     {
-        if (!Info.HasVertexTangents)
-            meshBuilder = new MeshBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>("mainMesh");
+        if(blendIndices == null)
+        {
+            if (!Info.HasVertexTangents)
+                meshBuilder = new MeshBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>("mainMesh");
+            else
+                meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>("mainMesh");
+        }
         else
-            meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>("mainMesh");
+        {
+            if (!Info.HasVertexTangents)
+                meshBuilder = new MeshBuilder<VertexPositionNormal, VertexTexture1, VertexJoints4>("mainMesh");
+            else
+                meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexJoints4>("mainMesh");
+        }
         
         //build list of vertices
         List<IVertexBuilder> verts = new(VertexPositions.Count);
 
         for (int i = 0; i < VertexPositions.Count; i++)
         {
-            // IVertexBuilder vertex;
-            //no skinning data :D
-            if (Info.HasVertexTangents)
+            if( blendIndices == null)
             {
-                var vertex = new VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>
-                {
-                    Geometry = new VertexPositionNormalTangent(
-                        VertexPositions[i],
-                        VertexNormals[i],
-                        VertexTangents![i]
-                    ),
-                    Material = new VertexTexture1(
-                        TextureCoordLists[0]![i]
-                    )
-                };
-                
-                verts.Add(vertex);
+                AddVertexNoSkinning(i, verts);
+                continue;
             }
-            else
-            {
-                var vertex = new VertexBuilder<VertexPositionNormal, VertexTexture1, VertexJoints4>
-                {
-                    Geometry = new VertexPositionNormal(
-                        VertexPositions[i],
-                        VertexNormals[i]
-                    ),
-                    Material = new VertexTexture1(
-                        TextureCoordLists[0]![i]
-                    )
-                };
-                verts.Add(vertex);
-            }
+            
+            AddVertexWithSkinning(i, verts, blendIndices);
+            
         }
         
         
@@ -299,6 +300,122 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
     }
 
+    private void AddVertexNoSkinning(int vertexIndex, List<IVertexBuilder> vertexList)
+    {
+        // IVertexBuilder vertex;
+        //no skinning data :D
+        if (Info.HasVertexTangents)
+        {
+            var vertex = new VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexEmpty>
+            {
+                Geometry = new VertexPositionNormalTangent(
+                    VertexPositions[vertexIndex],
+                    VertexNormals[vertexIndex],
+                    VertexTangents![vertexIndex]
+                ),
+                Material = new VertexTexture1(
+                    TextureCoordLists[0]![vertexIndex]
+                )
+            };
+                
+            vertexList.Add(vertex);
+        }
+        else
+        {
+            var vertex = new VertexBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>
+            {
+                Geometry = new VertexPositionNormal(
+                    VertexPositions[vertexIndex],
+                    VertexNormals[vertexIndex]
+                ),
+                Material = new VertexTexture1(
+                    TextureCoordLists[0]![vertexIndex]
+                )
+            };
+            vertexList.Add(vertex);
+        }
+    }
+    
+    private void AddVertexWithSkinning(int vertexIndex, List<IVertexBuilder> vertexList, List<Vector<int>> blendIndices)
+    {
+        
+        // Create skinning data
+        VertexJoints4 skinning = default;
+        
+        Vector<int> indices = blendIndices[vertexIndex];
+        Vector4 weights = BlendWeights[vertexIndex];
+        // Normalize weights first
+        float sum = weights.X + weights.Y + weights.Z + weights.W;
+
+        if (sum <= 0f || (indices[0] == 0 && indices[1] == 0 && indices[2] == 0 && indices[3] == 0))
+        {
+            // Case 1: No valid skinning data - bind to root bone (bone 0) with weight 1
+            skinning.SetBindings((1, 1.0f), (0, 0), (0, 0), (0, 0));
+        }
+        else
+        {
+            // Case 2: Valid skinning data - normalize and use as-is
+            if (Math.Abs(sum - 1.0f) > 0.0001f)
+            {
+                weights = new Vector4(
+                    weights.X / sum,
+                    weights.Y / sum,
+                    weights.Z / sum,
+                    weights.W / sum
+                );
+            }
+
+            
+
+            skinning.SetBindings(
+                (indices[0], weights.X),
+                (indices[1], weights.Y),
+                (indices[2], weights.Z),
+                (indices[3], weights.W)
+            );
+        }
+        
+        // sum = weights.X + weights.Y + weights.Z + weights.W;
+        //     
+        // Console.WriteLine($"Sum: {sum}");
+        //
+        // Console.WriteLine($"VtxSum: {skinning.Weights.X + skinning.Weights.Y + skinning.Weights.Z + skinning.Weights.W}");
+        //
+        
+        if (Info.HasVertexTangents)
+        {
+            var vertex = new VertexBuilder<VertexPositionNormalTangent, VertexTexture1, VertexJoints4>
+            {
+                Geometry = new VertexPositionNormalTangent(
+                    VertexPositions[vertexIndex],
+                    VertexNormals[vertexIndex],
+                    VertexTangents![vertexIndex]
+                ),
+                Material = new VertexTexture1(
+                    TextureCoordLists[0]![vertexIndex]
+                ),
+                Skinning = skinning
+            };
+                
+            vertexList.Add(vertex);
+        }
+        else
+        {
+            var vertex = new VertexBuilder<VertexPositionNormal, VertexTexture1, VertexJoints4>
+            {
+                Geometry = new VertexPositionNormal(
+                    VertexPositions[vertexIndex],
+                    VertexNormals[vertexIndex]
+                ),
+                Material = new VertexTexture1(
+                    TextureCoordLists[0]![vertexIndex]
+                ),
+                Skinning = skinning
+            };
+            vertexList.Add(vertex);
+        }
+    }
+
     public MeshInfo GetMeshInfo()
     {
         return Info;
@@ -313,5 +430,128 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         return succeeded;
     }
 
+    public bool SaveToScene(SceneBuilder scene, NodeBuilder modelRoot)
+    {
+        List<NodeBuilder> jointNodeBuilders = [];
+        
+        Skeleton? skeleton = Skeleton;
+
+        IMeshBuilder<MaterialBuilder> meshBuilder;
+        
+        int camera = 0;
+        if (skeleton != null)
+        {
+            // First create all nodes
+            foreach (Skeleton.Entry bone in skeleton.Entries)
+            {
+                TttkInit.Instance.Workspace!.ResolveSymbol(bone.JointName);
+                
+                var nodeBuilder = new NodeBuilder(bone.JointName.ToString());
+
+                // Set local transform
+                nodeBuilder.WithLocalTranslation(new Vector3(bone.LocalPosition.X, bone.LocalPosition.Y,
+                    bone.LocalPosition.Z));
+
+                var originalRotation =
+                    new Quaternion(bone.LocalQuat.X, bone.LocalQuat.Y, bone.LocalQuat.Z, bone.LocalQuat.W);
+
+                nodeBuilder.WithLocalRotation(originalRotation);
+                nodeBuilder.WithLocalScale(Vector3.One);
+
+                if (bone.ParentIndex == -1 && bone.JointName.ToString() != "Root")
+                {
+                    modelRoot.AddNode(nodeBuilder);
+                    camera++;
+                }
+                else
+                {
+                    jointNodeBuilders.Add(nodeBuilder);
+                }
+            }
+
+            // Then build hierarchy
+            for (var i = 0; i < jointNodeBuilders.Count; i++)
+            {
+                Skeleton.Entry bone = skeleton.Entries[i + camera];
+                if (bone.ParentIndex >= 0 && bone.ParentIndex < jointNodeBuilders.Count)
+                {
+                    jointNodeBuilders[bone.ParentIndex - camera].AddNode(jointNodeBuilders[i]);
+                }
+                else if (bone.JointName.ToString() is "Root")
+                {
+                    modelRoot.AddNode(jointNodeBuilders[i]);
+                }
+            }
+            
+            Dictionary<string, int> boneNameToJointIndex = [];
+            for (int i = 0; i < jointNodeBuilders.Count; i++)
+            {
+                // Assuming jointNodeBuilders[i].Name is the bone name (or you can extract it)
+                string boneName = jointNodeBuilders[i].Name;
+                boneNameToJointIndex[boneName] = i;
+            }
+
+            List<Vector<int>> blendIndices = BlendIndices;
+        
+            List<T3MeshBoneEntry> d3dMeshBones = MeshDataBones;
+            for (var i = 0; i < blendIndices.Count; i++)
+            {
+                var index1 = blendIndices[i][0];
+                var index2 = blendIndices[i][1];
+                var index3 = blendIndices[i][2];
+                var index4 = blendIndices[i][3];
+
+                T3MeshBoneEntry bone1 = d3dMeshBones[index1];
+                T3MeshBoneEntry bone2 = d3dMeshBones[index2];
+                T3MeshBoneEntry bone3 = d3dMeshBones[index3];
+                T3MeshBoneEntry bone4 = d3dMeshBones[index4];
+
+                int remappedIndex1 = RemapBoneIndex(bone1, boneNameToJointIndex);
+                int remappedIndex2 = RemapBoneIndex(bone2, boneNameToJointIndex);
+                int remappedIndex3 = RemapBoneIndex(bone3, boneNameToJointIndex);
+                int remappedIndex4 = RemapBoneIndex(bone4, boneNameToJointIndex);
+
+                blendIndices[i] = new Vector<int>([remappedIndex1, remappedIndex2, remappedIndex3, remappedIndex4, 0, 0, 0, 0]);
+            }
+
+            if (!SaveToGLTF(out IMeshBuilder<MaterialBuilder> skinnedMesh, blendIndices))
+            {
+                return false;
+            }
+
+
+            scene.AddSkinnedMesh(skinnedMesh, modelRoot.WorldMatrix, jointNodeBuilders.ToArray());
+            return true;
+
+        }
+        
+        if (!SaveToGLTF(out IMeshBuilder<MaterialBuilder> nonSkinnedMesh))
+        {
+            return false;
+        }
+        
+        scene.AddRigidMesh(nonSkinnedMesh, modelRoot);
+        return true;
+        
+    }
     
+    
+    private static int RemapBoneIndex(T3MeshBoneEntry meshBone,
+        Dictionary<string, int> boneNameToJointIndex)
+    {
+        var boneName = meshBone.BoneName.ToString(); // Use whatever property has the bone name
+
+        if (string.IsNullOrEmpty(boneName))
+        {
+            // Console.WriteLine(d3dmesh.Name);
+            throw new Exception($"Invalid {meshBone.BoneName.Crc64} bone name");
+        }
+
+        if (boneNameToJointIndex.TryGetValue(boneName, out int jointIndex))
+        {
+            return jointIndex;
+        }
+
+        throw new Exception($"Bone {boneName} not found!");
+    }
 }

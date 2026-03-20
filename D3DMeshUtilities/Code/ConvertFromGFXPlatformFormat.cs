@@ -652,9 +652,9 @@ public static class ConvertFromGfxPlatformFormat
         }
     }
 
-    public static Vector<byte> ReadU8x2(ReadOnlySpan<byte> data)
+    public static Vector<int> ReadU8x2(ReadOnlySpan<byte> data)
     {
-        return new Vector<byte>(data[..2]);
+        return new Vector<int>(new [] {data[0], data[1], 0, 0, 0, 0, 0, 0});
     }
 
     public static Vector<sbyte> ReadS8x4(ReadOnlySpan<byte> data)
@@ -671,9 +671,9 @@ public static class ConvertFromGfxPlatformFormat
         }
     }
 
-    public static Vector<byte> ReadU8x4(ReadOnlySpan<byte> data)
+    public static Vector<int> ReadU8x4(ReadOnlySpan<byte> data)
     {
-        return new Vector<byte>(data[..4]);
+        return new Vector<int>(new int[] { data[0], data[1], data[2], data[3], 0, 0, 0, 0});
     }
 
     public static float ReadSN8(ReadOnlySpan<byte> data)

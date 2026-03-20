@@ -15,6 +15,7 @@ public static class AsyncSerachForSkeletonFiles
     public const int NumSearchThreads = 2;
 
     public static Dictionary<ulong, PropertySet> AgentPropertiesByMeshFile = new Dictionary<ulong, PropertySet>();
+    private static bool BuiltDictionary = false;
 
     public static Lock AgentMeshDictionaryLock = new Lock();
 
@@ -87,6 +88,8 @@ public static class AsyncSerachForSkeletonFiles
             }
 
         }
+
+        // BuiltDictionary = true;
         // bool referencesThisMesh = ps.Properties.Values.Any(pe =>
         //     (pe.Value is Handle<D3DMesh> meshHandle) && meshHandle.ObjectInfo.ObjectName.Crc64 == meshHash);
     }
@@ -97,6 +100,9 @@ public static class AsyncSerachForSkeletonFiles
         try
         {
             AgentMeshDictionaryLock.Enter();
+
+            if (BuiltDictionary)
+                return;
 
 
             IEnumerable<TelltaleFileEntry> skeletonEntries = [];
@@ -119,6 +125,10 @@ public static class AsyncSerachForSkeletonFiles
                 AsyncSerachForSkeletonFiles.GetPropertySetsReferencingSkeletonFiles(propSets, skeletons);
 
             AsyncSerachForSkeletonFiles.FillAgentMeshProperties(skeletonProperties);
+
+            BuiltDictionary = true;
+
+
         }
         catch (Exception e)
         {
