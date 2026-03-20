@@ -12,17 +12,19 @@ public partial class ArchiveModelList : BaseProjectWindow
         InitializeComponent();
 
         // ModelList.SelectionMode = SelectionMode.Extended;
+
+        bool startupChooseModels = App.StartupChooseModels;
         
-        if (App.StartupChooseModels && App.StartupModels.Length <= 0)
+        if (startupChooseModels && App.StartupModels.Length <= 0)
         {
             Dispatcher.InvokeAsync(FillModelList);
         }
-        else if (!App.StartupChooseArchive && App.StartupModels.Length > 0)
+        else if (!startupChooseModels && App.StartupModels.Length > 0)
         {
             Dispatcher.InvokeAsync(FillModelList);
             Dispatcher.InvokeAsync(SelectModels);
         }
-        else if (App.StartupChooseArchive && App.StartupModels.Length > 0)
+        else if (startupChooseModels && App.StartupModels.Length > 0)
         {
             Dispatcher.InvokeAsync(ConvertInstantly);
         }
@@ -74,11 +76,25 @@ public partial class ArchiveModelList : BaseProjectWindow
         }
     }
 
-    private void ConvertInstantly()
+    private async void ConvertInstantly()
     {
-        LoadedArchive.ArchiveLocationLock.TryEnter();
-        
-        BeginConversion(App.StartupModels);
+        try
+        {
+            await Task.Delay(100);
+
+            LoadedArchive.ArchiveLocationLock.Enter();
+            
+            BeginConversion(App.StartupModels);
+        }
+        catch (Exception e)
+        {
+            //ignored
+        }
+        finally
+        {
+            if(LoadedArchive.ArchiveLocationLock.IsHeldByCurrentThread)
+                LoadedArchive.ArchiveLocationLock.Exit();
+        }
     }
 
     private void FillModelList()
