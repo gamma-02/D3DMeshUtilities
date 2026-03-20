@@ -85,6 +85,7 @@ public partial class ArchiveModelList : BaseProjectWindow
             LoadedArchive.ArchiveLocationLock.Enter();
             
             BeginConversion(App.StartupModels);
+            // Dispatcher.
         }
         catch (Exception e)
         {

@@ -4,6 +4,7 @@ using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Geometry;
 using SharpGLTF.Geometry.VertexTypes;
 using SharpGLTF.Materials;
+using SharpGLTF.Scenes;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
@@ -254,5 +255,15 @@ public class NormalModelIntermediate : IMeshRepresentation
 
         return succeeded;
     }
-    
+
+    public bool SaveToScene(SceneBuilder scene, NodeBuilder modelRoot)
+    {
+        if (!SaveToGLTF(out IMeshBuilder<MaterialBuilder> meshBuilder))
+        {
+            return false;
+        }
+
+        scene.AddRigidMesh(meshBuilder, modelRoot);
+        return true;
+    }
 }

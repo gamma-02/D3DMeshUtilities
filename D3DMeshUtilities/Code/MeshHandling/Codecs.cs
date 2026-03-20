@@ -124,11 +124,11 @@ public class SkinnedIntermediateCodec : IMeshCodec
 {
     public bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out IMeshRepresentation? readMesh)
     {
-        (bool success, SkinnedModelIntermediate? readMesh) sucessMeshPair = SkinnedModelIntermediate.Read(mesh, info, meshFile).GetAwaiter().GetResult();
+        bool success = SkinnedModelIntermediate.Read(mesh, info, meshFile, out SkinnedModelIntermediate? intermediate);
         
-        readMesh = sucessMeshPair.readMesh;
+        readMesh = intermediate;
 
-        return sucessMeshPair.success;
+        return success;
     }
 
     public bool CanRead(D3DMesh mesh, MeshInfo info, out string? reason)

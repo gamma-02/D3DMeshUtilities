@@ -65,6 +65,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
     public void LoadMeshes()
     {
+        // if(!AsyncSerachForSkeletonFiles.BuiltDictionary)
         AsyncSerachForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSerachForSkeletonFiles.BuildAgentMeshDictionary(LoadedArchive.Instance));
         
         ReadMeshes.Clear();
@@ -98,7 +99,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             stream.Close();
 
-            Console.Out.WriteLine($"Attemtping to decode {meshFile}");
+            Console.Out.WriteLine($"Attempting to decode {meshFile}");
             
             if (mesh == null)
                 continue;
@@ -123,21 +124,28 @@ public class D3DMeshManager(List<string> file, string outputPath)
                 continue;
 
 
-            if (!intermediateMesh .SaveToMeshBuilder(out var meshBuilder))
-            {
-                Console.Out.WriteLine("Failed to create mesh!");
-                
-                continue;
-            }
-            
+            // if (!intermediateMesh .SaveToMeshBuilder(out var meshBuilder))
+            // {
+            //     Console.Out.WriteLine("Failed to create mesh!");
+            //     
+            //     continue;
+            // }
+            //
             
             SceneBuilder scene = new SceneBuilder();
 
             var rootNode = new NodeBuilder(meshFile.Remove(meshFile.Length - ".d3dmesh".Length));
             
             rootNode.WithLocalScale(new Vector3(10.0f));
+
+            if (!intermediateMesh.SaveToScene(scene, rootNode))
+            {
+                Console.Out.WriteLine("Failed to create mesh!");
+                
+                continue;
+            }
             
-            scene.AddRigidMesh(meshBuilder, rootNode);
+            // scene.AddRigidMesh(meshBuilder, rootNode);
 
             ModelRoot root = scene.ToGltf2();
             
