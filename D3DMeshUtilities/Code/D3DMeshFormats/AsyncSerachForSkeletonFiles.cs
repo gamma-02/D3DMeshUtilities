@@ -18,6 +18,8 @@ public static class AsyncSerachForSkeletonFiles
 
     public static Lock AgentMeshDictionaryLock = new Lock();
 
+    public static Task? BuildDictionaryTask = null;
+
     public static HashSet<ulong> FindSkeletons(IEnumerable<TelltaleFileEntry> entries)
     {
         return entries.Where(entry => entry.Name.EndsWith("skl")).Select(fe => fe.Crc64).ToHashSet();
@@ -89,7 +91,7 @@ public static class AsyncSerachForSkeletonFiles
         //     (pe.Value is Handle<D3DMesh> meshHandle) && meshHandle.ObjectInfo.ObjectName.Crc64 == meshHash);
     }
 
-    public static async void BuildAgentMeshDictionary(LoadedArchive archive)
+    public static void BuildAgentMeshDictionary(LoadedArchive archive)
     {
 
         try
@@ -118,9 +120,9 @@ public static class AsyncSerachForSkeletonFiles
 
             AsyncSerachForSkeletonFiles.FillAgentMeshProperties(skeletonProperties);
         }
-        catch (Exception _)
+        catch (Exception e)
         {
-            //ignored
+            Console.WriteLine(e);
         }
         finally
         {

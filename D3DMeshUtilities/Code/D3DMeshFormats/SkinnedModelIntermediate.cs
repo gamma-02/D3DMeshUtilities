@@ -80,9 +80,12 @@ public class SkinnedModelIntermediate : IMeshRepresentation
     }
 
 
-    public static bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out SkinnedModelIntermediate? readMesh)
+    public static async Task<(bool success, SkinnedModelIntermediate? readMesh)> Read(D3DMesh mesh, MeshInfo info, string meshFile)
     {
         var meshData = mesh.MeshData;
+        
+        if(AsyncSerachForSkeletonFiles.BuildDictionaryTask != null && !AsyncSerachForSkeletonFiles.BuildDictionaryTask.IsCompleted)
+            AsyncSerachForSkeletonFiles.BuildDictionaryTask.GetAwaiter().GetResult();
         
         AsyncSerachForSkeletonFiles.AgentMeshDictionaryLock.Enter();
         
@@ -99,8 +102,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
         if (skeletonReference == null)
         {
-            readMesh = null;
-            return false;
+            return (false, null);
         }
 
         Skeleton? skeleton = skeletonReference.ObjectInfo.HandleObject as Skeleton;
@@ -111,8 +113,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
             if (skeleton == null)
             {
-                readMesh = null;
-                return false;
+                return (false, null);
             }
         }
         
@@ -163,9 +164,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
                 
             Console.Out.WriteLine($"Failed reading {meshFile}! See: " + e);
 
-            readMesh = null;
-                
-            return false;
+            return (false, null);
         }
         
         if (rawPositionList == null || rawNormalsList == null || (tangentsList == null && info.HasVertexTangents) || vertexTextureCoordList1 == null ||
@@ -195,11 +194,10 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
 
         //todo: null check blend stuff
-        readMesh = new SkinnedModelIntermediate(info, vertexPositions, normals, tangentsList,
+        SkinnedModelIntermediate readMesh = new SkinnedModelIntermediate(info, vertexPositions, normals, tangentsList,
             textureCoords, [indexList], materials, meshData.LODs, skeleton, vertexBlendIndices!, vertexBlendWeights!);
 
-        return true;
-
+        return (true, readMesh);
     }
 
     //todo: look into exporting LODs as seprate meshBuilders

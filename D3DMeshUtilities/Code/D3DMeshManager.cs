@@ -65,7 +65,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
     public void LoadMeshes()
     {
-        Task.Run(() => AsyncSerachForSkeletonFiles.BuildAgentMeshDictionary(LoadedArchive.Instance));
+        AsyncSerachForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSerachForSkeletonFiles.BuildAgentMeshDictionary(LoadedArchive.Instance));
         
         ReadMeshes.Clear();
 
