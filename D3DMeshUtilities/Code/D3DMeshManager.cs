@@ -122,15 +122,6 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             if (!succeeded || intermediateMesh == null)
                 continue;
-
-
-            // if (!intermediateMesh .SaveToMeshBuilder(out var meshBuilder))
-            // {
-            //     Console.Out.WriteLine("Failed to create mesh!");
-            //     
-            //     continue;
-            // }
-            //
             
             SceneBuilder scene = new SceneBuilder();
 
