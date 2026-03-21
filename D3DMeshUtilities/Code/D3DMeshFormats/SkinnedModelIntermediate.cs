@@ -21,6 +21,8 @@ public class SkinnedModelIntermediate : IMeshRepresentation
     public List<Vector3> VertexPositions;
     public List<Vector3> VertexNormals;
     public List<Vector4>? VertexTangents;
+
+    private int tris = 0;
     
     //unusued/unknown:
     //public List<Vector4>? SecondVertexNormalsList;
@@ -94,15 +96,23 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             AsyncSerachForSkeletonFiles.BuildDictionaryTask.GetAwaiter().GetResult();
     
         AsyncSerachForSkeletonFiles.AgentMeshDictionaryLock.Enter();
-    
+        
         PropertySet? agentProp = null;
-
-        if (info.Crc64.HasValue)
+        
+        lock(AsyncSerachForSkeletonFiles.AgentPropertiesByMeshFile)
         {
-            agentProp = AsyncSerachForSkeletonFiles.AgentPropertiesByMeshFile[info.Crc64.Value];
+            
+            if (info.Crc64.HasValue)
+            {
+                AsyncSerachForSkeletonFiles.AgentPropertiesByMeshFile.TryGetValue(info.Crc64.Value,
+                    out PropertySet? set);
+                agentProp = set;
+            }
+
         }
-    
+        
         AsyncSerachForSkeletonFiles.AgentMeshDictionaryLock.Exit();
+
 
         Handle<Skeleton>? skeletonReference = agentProp?.GetProperty<Handle<Skeleton>>("Skeleton File");
 
@@ -208,9 +218,8 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             TttkInit.Instance.Workspace!.ResolveSymbol(bone.BoneName);
         }
         
-        //todo: null check blend stuff
         readMesh = new SkinnedModelIntermediate(info, vertexPositions, normals, tangentsList,
-            textureCoords, [indexList], materials, meshData.LODs, skeleton, vertexBlendIndices!, vertexBlendWeights!, meshData.Bones);
+            textureCoords, [indexList], materials, meshData.LODs, skeleton, vertexBlendIndices, vertexBlendWeights, meshData.Bones);
 
         return true;
     }
@@ -273,11 +282,11 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             uint MaxVertIndexLimit = batch.MaxVertIndex;
             
             //first make the choice of numIndicesLimit (it worked until obj_skyGeneric.d3dmesh) (have i talked about obj_skyGeneric.d3dmesh?) (it's evil. I am this world's number one obj_skyGeneric hater) (it was the only thing preventing me from saying that i can load every model) (and then I though adding support for it would be easy but NOOOO it had to be fucked up didn't it)
-            limit = numIndicesLimit;
+            limit = MaxVertIndexLimit;
 
             if (limit % 3 != 0 || limit >= indexList.Count)
             {
-                limit = MaxVertIndexLimit;
+                limit = numIndicesLimit;
             }
 
             for (uint indexI = batch.StartIndex + 2; indexI < limit; indexI += 3)
@@ -291,6 +300,8 @@ public class SkinnedModelIntermediate : IMeshRepresentation
                 var vertOne = verts[vertIOne];
                 var vertTwo = verts[vertITwo];
                 var vertThree = verts[vertIThree];
+
+                tris += 1;
                     
                 meshBuilder.UsePrimitive(mat).AddTriangle(vertOne, vertTwo, vertThree);
             }
@@ -364,9 +375,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
                     weights.W / sum
                 );
             }
-
             
-
             skinning.SetBindings(
                 (indices[0], weights.X),
                 (indices[1], weights.Y),
@@ -519,7 +528,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
                 return false;
             }
 
-
+            // scene.AddRigidMesh(skinnedMesh, modelRoot);
             scene.AddSkinnedMesh(skinnedMesh, modelRoot.WorldMatrix, jointNodeBuilders.ToArray());
             return true;
 
