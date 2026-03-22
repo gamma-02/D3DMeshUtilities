@@ -10,7 +10,7 @@ using TelltaleToolKit.TelltaleArchives;
 
 namespace D3DMeshUtilities.Code.D3DMeshFormats;
 
-public static class AsyncSerachForSkeletonFiles
+public static class AsyncSearchForSkeletonFiles
 {
     public const int NumSearchThreads = 2;
 
@@ -62,31 +62,34 @@ public static class AsyncSerachForSkeletonFiles
     public static void FillAgentMeshProperties(IEnumerable<PropertySet> sets)
     {
 
-        foreach (PropertySet set in sets)
+        lock(ResourceLoader.ResourceLock)
         {
-            
-            //resolve all of the property set stuff
-            if (TttkInit.Instance.Workspace != null)
+            foreach (PropertySet set in sets)
             {
-                TttkInit.Instance.Workspace!.ResolveSymbols(set.Properties.Keys);
-            }
-            
-            Handle<D3DMesh>? meshHandle = set.GetProperty<Handle<D3DMesh>>("D3D Mesh");
-            
-            if(meshHandle != null)
-            {
-                AgentPropertiesByMeshFile[meshHandle.ObjectInfo.ObjectName.Crc64] = set;
-                continue;
-            }
 
-            List<Handle<D3DMesh>>? meshHandles = set.GetProperty<List<Handle<D3DMesh>>>("D3D Mesh List");
-            
-            if(meshHandles != null)
-            {
-                foreach(Handle<D3DMesh> handle in meshHandles)
-                    AgentPropertiesByMeshFile[handle.ObjectInfo.ObjectName.Crc64] = set;
-            }
+                //resolve all of the property set stuff
+                if (TttkInit.Instance.Workspace != null)
+                {
+                    TttkInit.Instance.Workspace!.ResolveSymbols(set.Properties.Keys);
+                }
 
+                Handle<D3DMesh>? meshHandle = set.GetProperty<Handle<D3DMesh>>("D3D Mesh");
+
+                if (meshHandle != null)
+                {
+                    AgentPropertiesByMeshFile[meshHandle.ObjectInfo.ObjectName.Crc64] = set;
+                    continue;
+                }
+
+                List<Handle<D3DMesh>>? meshHandles = set.GetProperty<List<Handle<D3DMesh>>>("D3D Mesh List");
+
+                if (meshHandles != null)
+                {
+                    foreach (Handle<D3DMesh> handle in meshHandles)
+                        AgentPropertiesByMeshFile[handle.ObjectInfo.ObjectName.Crc64] = set;
+                }
+
+            }
         }
 
         // BuiltDictionary = true;
@@ -94,7 +97,7 @@ public static class AsyncSerachForSkeletonFiles
         //     (pe.Value is Handle<D3DMesh> meshHandle) && meshHandle.ObjectInfo.ObjectName.Crc64 == meshHash);
     }
 
-    public static void BuildAgentMeshDictionary(LoadedArchive archive)
+    public static void BuildAgentMeshDictionary(ResourceLoader archive)
     {
 
         try
@@ -114,17 +117,17 @@ public static class AsyncSerachForSkeletonFiles
                 otherOne = otherOne.Concat(rc.GetAllEntries());
             }
 
-            HashSet<ulong> skeletons = AsyncSerachForSkeletonFiles.FindSkeletons(skeletonEntries);
+            HashSet<ulong> skeletons = AsyncSearchForSkeletonFiles.FindSkeletons(skeletonEntries);
 
-            var propFiles = AsyncSerachForSkeletonFiles.GetPropFiles(otherOne);
+            var propFiles = AsyncSearchForSkeletonFiles.GetPropFiles(otherOne);
 
             var propSets =
-                AsyncSerachForSkeletonFiles.GetPropertySetsFromPropFiles(propFiles, TttkInit.Instance.Workspace);
+                AsyncSearchForSkeletonFiles.GetPropertySetsFromPropFiles(propFiles, TttkInit.Instance.Workspace);
 
             var skeletonProperties =
-                AsyncSerachForSkeletonFiles.GetPropertySetsReferencingSkeletonFiles(propSets, skeletons);
+                AsyncSearchForSkeletonFiles.GetPropertySetsReferencingSkeletonFiles(propSets, skeletons);
 
-            AsyncSerachForSkeletonFiles.FillAgentMeshProperties(skeletonProperties);
+            AsyncSearchForSkeletonFiles.FillAgentMeshProperties(skeletonProperties);
 
             BuiltDictionary = true;
 

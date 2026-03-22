@@ -23,7 +23,7 @@
 
         </Grid.RowDefinitions>
         
-        <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header">
+        <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header" SelectionChanged="Header_OnSelectionChanged">
             <TabItem Header="Load Resources" FontSize="16"></TabItem>
             <TabItem Header="List Models" FontSize="16"></TabItem>
             <TabItem Header="Convert Models" FontSize="16" IsSelected="True"></TabItem>
@@ -51,8 +51,7 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
                 
-            <Button Grid.Column="1" FontSize="20" Click="Convert_OnClick
-            "> Convert! </Button>
+            <Button Grid.Column="1" FontSize="20" Click="Convert_OnClick" Name="ConvertButton"> Convert! </Button>
         </Grid>
         
         <Grid Grid.Row="4">
