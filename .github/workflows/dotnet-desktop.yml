@@ -44,9 +44,6 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-  # This can be used to automatically publish nightlies at UTC nighttime
-  schedule:
-    - cron: '0 10 * * *' # run at 10 AM UTC / 2 AM PST
 
 jobs:
 
