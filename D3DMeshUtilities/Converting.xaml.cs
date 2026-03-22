@@ -19,8 +19,7 @@ public partial class Converting : BaseProjectWindow
     {
         _modelsToConvert = modelsToConvert;
         InitializeComponent();
-
-
+        
         if (string.IsNullOrWhiteSpace(App.StartupOutputDir)) return;
         FilePath.Text = App.StartupOutputDir;
 
@@ -38,6 +37,16 @@ public partial class Converting : BaseProjectWindow
     public Converting()
     {
         _modelsToConvert = new List<string>();
+        InitializeComponent();
+
+        ConvertButton.IsEnabled = false;
+    }
+
+    public void SetModelsToConvert(List<string> models)
+    {
+        _modelsToConvert = models;
+
+        ConvertButton.IsEnabled = true;
     }
 
 

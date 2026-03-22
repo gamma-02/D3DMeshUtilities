@@ -21,6 +21,12 @@ namespace D3DMeshUtilities;
 /// </summary>
 public partial class MainWindow : BaseProjectWindow
 {
+
+    public static int? GameCache;
+    public static string? SingleArchivePathCache;
+    public static string? GameDataDirectoryCache;
+    public static List<string>? LoadedArchivesCache;
+    
     public MainWindow()
     {
         App.AllocConsole();
@@ -34,8 +40,43 @@ public partial class MainWindow : BaseProjectWindow
 
         if (App.StartupGame != null)
             GameDropdown.SelectedIndex = (int)App.StartupGame;
+        else if (GameCache.HasValue)
+            GameDropdown.SelectedIndex = GameCache.Value;
         else
             GameDropdown.SelectedIndex = 79;
+
+        if (SingleArchivePathCache != null)
+        {
+            filePath.Text = SingleArchivePathCache;
+        }
+
+        if (GameDataDirectoryCache != null)
+        {
+            GameDataPath.Text = GameDataDirectoryCache;
+        }
+
+        if (LoadedArchivesCache != null)
+        {
+            ArchiveList.Items.Clear();
+            //assume the resource context is loaded
+            foreach (string archivePath in LoadedArchivesCache)
+            {
+                var li = new ListViewItem();
+                var text = new TextBlock();
+
+                int seperator = archivePath.LastIndexOfAny(['\\', '/']);
+
+                string archiveName = archivePath.Substring(seperator + 1);
+
+                text.Text = archiveName;
+                text.HorizontalAlignment = HorizontalAlignment.Right;
+                li.Content = text;
+
+                ArchiveList.Items.Add(li);
+            }
+            
+            ArchiveListGrid.Visibility = Visibility.Visible;
+        }
 
         if (string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory)) return;
         GameDataPath.Text = App.StartupGameArchivesDirectory;
@@ -94,13 +135,12 @@ public partial class MainWindow : BaseProjectWindow
         if (!File.Exists(filePath.Text))
             return;
 
-        LoadedArchive.Instance.LoadArchive(Dispatcher, filePath.Text, GameDropdown.Text);
+        ResourceLoader.Instance.LoadArchive(Dispatcher, filePath.Text, GameDropdown.Text);
 
         ArchiveModelList list = new ArchiveModelList()
         {
             Owner = this
         };
-
 
         list.Show();
 
@@ -132,7 +172,7 @@ public partial class MainWindow : BaseProjectWindow
             await Task.Delay(100);
 
             var pathTask =
-                LoadedArchive.Instance.LoadResourceContexts(Dispatcher, GameDataPath.Text, GameDropdown.Text);
+                ResourceLoader.Instance.LoadResourceContexts(Dispatcher, GameDataPath.Text, GameDropdown.Text);
         
             await pathTask;
         
@@ -177,7 +217,7 @@ public partial class MainWindow : BaseProjectWindow
     
     private void LoadArchive(string archive)
     {
-        LoadedArchive.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text, archive), GameDropdown.Text);
+        ResourceLoader.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text, archive), GameDropdown.Text);
 
         ArchiveModelList list = new ArchiveModelList();
 
@@ -197,7 +237,7 @@ public partial class MainWindow : BaseProjectWindow
 
         var archiveName = ((TextBlock)selectedItem.Content).Text;
 
-        LoadedArchive.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text, archiveName), GameDropdown.Text);
+        ResourceLoader.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text, archiveName), GameDropdown.Text);
 
         ArchiveModelList list = new ArchiveModelList()
         {
@@ -220,5 +260,39 @@ public partial class MainWindow : BaseProjectWindow
         return Window.LoadResources;
     }
 
-    
+
+    private void MainWindow_OnClosed(object? sender, EventArgs e)
+    {
+        if (GameDropdown.SelectedIndex != 79)
+        {
+            GameCache = GameDropdown.SelectedIndex;
+        }
+
+        if (!filePath.Text.Contains("Archive containing mesh to extract"))
+        {
+            SingleArchivePathCache = filePath.Text;
+        }
+
+        if (!GameDataPath.Text.Contains("Game Data Directory"))
+        {
+            GameDataDirectoryCache = GameDataPath.Text;
+        }
+
+        if (!(ArchiveList.Items[0] is ListViewItem lvi && lvi.Content is TextBox box &&
+              box.Text.Contains("Loading...")))
+        {
+            List<string> archives = new List<string>();
+            foreach (var item in ArchiveList.Items)
+            {
+                if(!(item is ListViewItem listItem))
+                    continue;
+                
+                var archiveName = ((TextBlock)listItem.Content).Text;
+
+                archives.Add(Path.Combine(GameDataPath.Text, archiveName));
+            }
+
+            LoadedArchivesCache = archives;
+        }
+    }
 }

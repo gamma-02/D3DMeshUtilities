@@ -21,7 +21,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header">
+        <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header" SelectionChanged="Header_OnSelectionChanged">
             <TabItem Header="Load Resources" FontSize="16"></TabItem>
             <TabItem Header="List Models" FontSize="16" IsSelected="True"></TabItem>
             <TabItem Header="Convert Models" FontSize="16"></TabItem>

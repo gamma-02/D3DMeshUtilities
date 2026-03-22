@@ -18,8 +18,8 @@ namespace D3DMeshUtilities.Code;
 
 public static class MeshUtils
 {
-    
-    
+
+    public const bool LogTextures = true;
     #region Vertex State Handling
     
     public static List<Vector4>? GetVertices(T3MeshData meshData, MeshInfo info, int vertexStateIndex)
@@ -508,23 +508,17 @@ public static class MeshUtils
             var mb = new MaterialBuilder(materialName).WithDoubleSide(doubleSided);
 
             Handle<T3Texture>? materialBaseColor = mesh.GetDiffuseTexture(mat.Material);
-            MeshUtils.ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor);
+            ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor);
 
             Handle<T3Texture>? normalMap = mesh.GetNormalMapTexture(mat.Material);
-            MeshUtils.ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal);
+            ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal);
 
             Handle<T3Texture>? specularMap = mesh.GetSpecularTexture(mat.Material);
-            MeshUtils.ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor);
+            ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor);
             
             //todo: detail texture, used for lines and stuff on models
-            Handle<T3Texture>? detailMap = mesh.GetDetailTexture(mat.Material);
+            // Handle<T3Texture>? detailMap = mesh.GetDetailTexture(mat.Material);
             // ProcessTexture(detailMap, TttkInit.Instance.Workspace!, mb, KnownChannel);
-
-            if (detailMap != null)
-            {
-                Console.Out.WriteLine("OOH, detail map! " + detailMap);
-                
-            }
             
             materials.Add(mb);
         }
@@ -541,7 +535,15 @@ public static class MeshUtils
         //Make sure the texture exists :D
         if (textureHandle == null || !workspace.ResolveSymbol(textureHandle.ObjectInfo.ObjectName)) return;
 
-        Stream? file = workspace.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
+        
+        if ((textureHandle.ObjectInfo.ObjectName.ToString().Contains("normalxy_000.d3dtx")) && channel == KnownChannel.Normal) return;
+        if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("color_000.d3dtx")) return;
+
+        Stream? file = null;
+        lock(ResourceLoader.ResourceLock)
+        {
+            file = workspace.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
+        }
                     
         if(file == null || file.Length < 4)
             return;
@@ -555,6 +557,8 @@ public static class MeshUtils
             return;
 
         Texture intermediateTexture = D3dtxCodec.Codec.LoadFromMemory(texture, new CodecOptions());
+        
+        file.Close();
         
         if (channel == KnownChannel.Normal)
         {

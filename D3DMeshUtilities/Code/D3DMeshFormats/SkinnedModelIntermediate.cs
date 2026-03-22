@@ -92,26 +92,26 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         readMesh = null;
         var meshData = mesh.MeshData;
     
-        if(AsyncSerachForSkeletonFiles.BuildDictionaryTask != null && !AsyncSerachForSkeletonFiles.BuildDictionaryTask.IsCompleted)
-            AsyncSerachForSkeletonFiles.BuildDictionaryTask.GetAwaiter().GetResult();
+        if(AsyncSearchForSkeletonFiles.BuildDictionaryTask != null && !AsyncSearchForSkeletonFiles.BuildDictionaryTask.IsCompleted)
+            AsyncSearchForSkeletonFiles.BuildDictionaryTask.GetAwaiter().GetResult();
     
-        AsyncSerachForSkeletonFiles.AgentMeshDictionaryLock.Enter();
+        AsyncSearchForSkeletonFiles.AgentMeshDictionaryLock.Enter();
         
         PropertySet? agentProp = null;
         
-        lock(AsyncSerachForSkeletonFiles.AgentPropertiesByMeshFile)
+        lock(AsyncSearchForSkeletonFiles.AgentPropertiesByMeshFile)
         {
             
             if (info.Crc64.HasValue)
             {
-                AsyncSerachForSkeletonFiles.AgentPropertiesByMeshFile.TryGetValue(info.Crc64.Value,
+                AsyncSearchForSkeletonFiles.AgentPropertiesByMeshFile.TryGetValue(info.Crc64.Value,
                     out PropertySet? set);
                 agentProp = set;
             }
 
         }
         
-        AsyncSerachForSkeletonFiles.AgentMeshDictionaryLock.Exit();
+        AsyncSearchForSkeletonFiles.AgentMeshDictionaryLock.Exit();
 
 
         Handle<Skeleton>? skeletonReference = agentProp?.GetProperty<Handle<Skeleton>>("Skeleton File");
@@ -125,7 +125,11 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
         if (skeleton == null)
         {
-            skeleton = TttkInit.Instance.Workspace!.LoadAsset<Skeleton>(skeletonReference.ObjectInfo.ObjectName.Crc64);
+            lock(ResourceLoader.ResourceLock)
+            {
+                skeleton = TttkInit.Instance.Workspace!.LoadAsset<Skeleton>(skeletonReference.ObjectInfo.ObjectName
+                    .Crc64);
+            }
 
             if (skeleton == null)
             {

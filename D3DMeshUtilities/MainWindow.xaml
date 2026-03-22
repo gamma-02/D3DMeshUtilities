@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:D3DMeshUtilities"
         mc:Ignorable="d"
         Title="MainWindow" Height="650" Width="800"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Closed="MainWindow_OnClosed">
         
     
     <StackPanel>

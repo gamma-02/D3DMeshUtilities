@@ -2,11 +2,15 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using TelltaleToolKit.TelltaleArchives;
 
 namespace D3DMeshUtilities;
 
 public partial class ArchiveModelList : BaseProjectWindow
 {
+    public static readonly Dictionary<string, List<string>> ArchiveMeshListDictionary =
+        new Dictionary<string, List<string>>();
+    
     public ArchiveModelList()
     {
         InitializeComponent();
@@ -15,19 +19,19 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         bool startupChooseModels = App.StartupChooseModels;
         
-        if (startupChooseModels && App.StartupModels.Length <= 0)
-        {
-            Dispatcher.InvokeAsync(FillModelList);
-        }
-        else if (!startupChooseModels && App.StartupModels.Length > 0)
-        {
-            Dispatcher.InvokeAsync(FillModelList);
-            Dispatcher.InvokeAsync(SelectModels);
-        }
-        else if (startupChooseModels && App.StartupModels.Length > 0)
+        if (startupChooseModels && App.StartupModels.Length > 0)
         {
             Dispatcher.InvokeAsync(ConvertInstantly);
+            return;
         }
+        
+        Dispatcher.InvokeAsync(FillModelList);
+        
+        if (!startupChooseModels && App.StartupModels.Length > 0)
+        {
+            Dispatcher.InvokeAsync(SelectModels);
+        }
+        
 
 
 
@@ -41,7 +45,7 @@ public partial class ArchiveModelList : BaseProjectWindow
         {
             await Task.Delay(100);
 
-            LoadedArchive.ArchiveLocationLock.TryEnter();
+            ResourceLoader.ArchiveLocationLock.TryEnter();
 
             foreach (string model in App.StartupModels)
             {
@@ -71,8 +75,8 @@ public partial class ArchiveModelList : BaseProjectWindow
         }
         finally
         {
-            if(LoadedArchive.ArchiveLocationLock.IsHeldByCurrentThread)
-                LoadedArchive.ArchiveLocationLock.Exit();
+            if(ResourceLoader.ArchiveLocationLock.IsHeldByCurrentThread)
+                ResourceLoader.ArchiveLocationLock.Exit();
         }
     }
 
@@ -82,7 +86,7 @@ public partial class ArchiveModelList : BaseProjectWindow
         {
             await Task.Delay(100);
 
-            LoadedArchive.ArchiveLocationLock.Enter();
+            ResourceLoader.ArchiveLocationLock.Enter();
             
             BeginConversion(App.StartupModels);
             // Dispatcher.
@@ -93,33 +97,49 @@ public partial class ArchiveModelList : BaseProjectWindow
         }
         finally
         {
-            if(LoadedArchive.ArchiveLocationLock.IsHeldByCurrentThread)
-                LoadedArchive.ArchiveLocationLock.Exit();
+            if(ResourceLoader.ArchiveLocationLock.IsHeldByCurrentThread)
+                ResourceLoader.ArchiveLocationLock.Exit();
         }
     }
 
     private void FillModelList()
     {
 
-        LoadedArchive.ArchiveLocationLock.TryEnter();
+        ResourceLoader.ArchiveLocationLock.TryEnter();
 
         try
         {
 
-            ModelList.Items.Clear();
-
-            foreach (var element in LoadedArchive.Instance.CurrentArchive?.FileEntries!)
+            if (string.IsNullOrWhiteSpace(ResourceLoader.Instance.ArchiveLocation))
             {
-                if (element.Name.EndsWith("d3dmesh"))
-                {
-                    var li = new ListViewItem();
-                    var text = new TextBlock();
+                return;
+            }
 
-                    text.Text = element.Name;
-                    li.Content = text;
+            ModelList.Items.Clear();
+            
+            if(!ArchiveMeshListDictionary.ContainsKey(ResourceLoader.Instance.ArchiveLocation))
+            {
+                List<string> entries = ResourceLoader.Instance.GetEntriesInCurrentArchive()
+                    .Where(entry => entry.Name.EndsWith("d3dmesh"))
+                    .Select(fe => fe.Name)
+                    .ToList();
 
-                    ModelList.Items.Add(li);
-                }
+                entries.Sort();
+
+                ArchiveMeshListDictionary[ResourceLoader.Instance.ArchiveLocation] = entries;
+            }
+
+            foreach (string element in ArchiveMeshListDictionary[ResourceLoader.Instance.ArchiveLocation])
+            {
+                
+                var li = new ListViewItem();
+                var text = new TextBlock();
+
+                text.Text = element;
+                li.Content = text;
+
+                ModelList.Items.Add(li);
+                
             }
 
             Color lg = Brushes.LightGray.Color;
@@ -141,7 +161,7 @@ public partial class ArchiveModelList : BaseProjectWindow
         }
         finally
         {
-            LoadedArchive.ArchiveLocationLock.Exit();
+            ResourceLoader.ArchiveLocationLock.Exit();
         }
     }
 
@@ -223,6 +243,31 @@ public partial class ArchiveModelList : BaseProjectWindow
     public override Window GetWindow()
     {
         return Window.ListModels;
+    }
+
+    public List<string> GetModelsToConvert()
+    {
+        List<string> models = [];
+
+        foreach (var item in ModelList.SelectedItems)
+        {
+            if (item == null)
+                continue;
+            
+            ListViewItem? i = item as ListViewItem;
+            
+            if(i == null)
+                continue;
+            
+            TextBlock? b = i.Content as TextBlock;
+            
+            if(b == null)
+                continue;
+            
+            models.Add(b.Text);
+        }
+
+        return models;
     }
     
 }
