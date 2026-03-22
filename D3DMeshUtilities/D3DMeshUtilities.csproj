@@ -3,7 +3,7 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net9.0-windows</TargetFramework>
-<!--        <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>-->
+        <!--        <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>-->
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -13,65 +13,93 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="bin\Debug\net9.0-windows\" />
-      <Folder Include="Resources\" />
+        <Folder Include="bin\Debug\net9.0-windows\"/>
+    </ItemGroup>
+
+<!--    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">-->
+<!--        <Copy SourceFiles="foo.txt" DestinationFolder="$(OutDir)" />-->
+<!--    </Target>-->
+<!--    <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">-->
+<!--        <Copy SourceFiles="foo.txt" DestinationFolder="$(PublishDir)" />-->
+<!--    </Target>-->
+
+    <ItemGroup>
+        <!-- Exclude all .cs files in a specific directory -->
+        <Compile Remove="ExFromShadow\*.cs"/>
+<!--        <None Remove="Resources\bones\Bone.glb" />-->
+<!--        <Compile Include="Resources\bones\Bone.glb">-->
+<!--          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+<!--        </Compile>-->
     </ItemGroup>
 
     <ItemGroup>
-      <!-- Exclude all .cs files in a specific directory -->
-      <Compile Remove="ExFromShadow\*.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="DrSwizzler" Version="1.1.1" />
-      <PackageReference Include="Hexa.NET.DirectXTex" Version="2.0.4" />
-      <PackageReference Include="Hexa.NET.ImGui" Version="2.2.10-prerelease" />
-      <PackageReference Include="LuaCSharp" Version="0.5.3" />
-      <PackageReference Include="SharpGLTF.Core" Version="1.0.6" />
-      <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.6" />
+        <PackageReference Include="DrSwizzler" Version="1.1.1"/>
+        <PackageReference Include="Hexa.NET.DirectXTex" Version="2.0.4"/>
+        <PackageReference Include="Hexa.NET.ImGui" Version="2.2.10-prerelease"/>
+        <PackageReference Include="LuaCSharp" Version="0.5.3"/>
+        <PackageReference Include="SharpGLTF.Core" Version="1.0.6"/>
+        <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.6"/>
     </ItemGroup>
 
 
     <ItemGroup>
-      <ProjectReference Include="..\TelltaleToolKit-Contribs\src\TelltaleToolKit\TelltaleToolKit.csproj" />
+        <ProjectReference Include="..\TelltaleToolKit-Contribs\src\TelltaleToolKit\TelltaleToolKit.csproj"/>
     </ItemGroup>
-  
-  
+
+
     <Target Name="CopyOverDataBuild" AfterTargets="AfterBuild"><!-- BeforeTargets="Publish">-->
-      
-      <Message Text="Copied data directory!" Importance="high"/>
-      <Message Text="MSBuild dir: $(MSBuildProjectDirectory)" Importance="high"/>
-      <Message Text="Target dir: $(TargetDir)"/>
-      <Message Text="Output Path: $(OutputPath)" Importance="high"/>
-      
-      <ItemGroup>
-        <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" />        
-      </ItemGroup>
 
-      <Copy
-            SourceFiles="@(SourceFiles)"
-            DestinationFolder="$(TargetDir)data/%(RecursiveDir)"
-            SkipUnchangedFiles="False"
-      />
-      
+        <Message Text="Copied data directory!" Importance="high"/>
+        <Message Text="MSBuild dir: $(MSBuildProjectDirectory)" Importance="high"/>
+        <Message Text="Target dir: $(TargetDir)" Importance="high"/>
+        <Message Text="Output Path: $(OutputPath)" Importance="high"/>
+
+        <ItemGroup>
+            <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*"/>
+            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/**/*.*"/>
+        </ItemGroup>
+
+        <Copy
+                SourceFiles="@(SourceFiles)"
+                DestinationFolder="$(TargetDir)data/%(RecursiveDir)"
+                SkipUnchangedFiles="False"
+        />
+
     </Target>
+
+<!--    <Target Name="CopyOverResourcesOnBuild" AfterTargets="AfterBuild">&lt;!&ndash; BeforeTargets="Publish">&ndash;&gt;-->
+
+<!--        <Message Text="Copied Resources directory!" Importance="high"/>-->
+
+<!--        <ItemGroup>-->
+<!--            &lt;!&ndash;            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/**/*.*" />&ndash;&gt;-->
+<!--            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/*.*"/>-->
+<!--        </ItemGroup>-->
+
+<!--        <Copy-->
+<!--                SourceFiles="@(SourceFiles)"-->
+<!--                DestinationFolder="$(TargetDir)Resources/%(RecursiveDir)"-->
+<!--                SkipUnchangedFiles="False"-->
+<!--        />-->
+
+<!--    </Target>-->
 
     <Target Name="CopyOverData" AfterTargets="Publish">
-  
-      <Message Text="Copied data directory into publish directory!" Importance="high"/>
-      <Message Text="MSBuild dir: $(MSBuildProjectDirectory)"/>
-      <Message Text="Publish dir: $(PublishDir)" Importance="high"/>
-  
-      <ItemGroup>
-        <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*" />
-      </ItemGroup>
-  
-      <Copy
-              SourceFiles="@(SourceFiles)"
-              DestinationFolder="$(PublishDir)data/%(RecursiveDir)"
-              SkipUnchangedFiles="False"
-      />
-  
+
+        <Message Text="Copied data directory into publish directory!" Importance="high"/>
+        <Message Text="MSBuild dir: $(MSBuildProjectDirectory)"/>
+        <Message Text="Publish dir: $(PublishDir)" Importance="high"/>
+
+        <ItemGroup>
+            <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*"/>
+        </ItemGroup>
+
+        <Copy
+                SourceFiles="@(SourceFiles)"
+                DestinationFolder="$(PublishDir)data/%(RecursiveDir)"
+                SkipUnchangedFiles="False"
+        />
+
     </Target>
-    
+
 </Project>

@@ -263,7 +263,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         List<T3MeshBatch> allBatches = [];
         allBatches.AddRange(lod.Batches);
         allBatches.AddRange(lod.Batches1);
-        allBatches.AddRange(lod.Batches2);
+        // allBatches.AddRange(lod.Batches2);
             
         foreach (T3MeshBatch batch in allBatches)
         {
@@ -280,15 +280,32 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             uint limit;
             uint numIndicesLimit = batch.StartIndex + batch.NumIndices;
             uint MaxVertIndexLimit = batch.MaxVertIndex;
+
+            limit = numIndicesLimit;
             
-            //first make the choice of numIndicesLimit (it worked until obj_skyGeneric.d3dmesh) (have i talked about obj_skyGeneric.d3dmesh?) (it's evil. I am this world's number one obj_skyGeneric hater) (it was the only thing preventing me from saying that i can load every model) (and then I though adding support for it would be easy but NOOOO it had to be fucked up didn't it)
-            limit = MaxVertIndexLimit;
+            //choose whichever has limit / 3 == NumPrimitives
 
-            if (limit % 3 != 0 || limit >= indexList.Count)
-            {
-                limit = numIndicesLimit;
-            }
+            // if (batch.NumIndices / 3 == batch.NumPrimitives)
+            // {
+            //     limit = numIndicesLimit;
+            // }
+            // else if (MaxVertIndexLimit / 3 == batch.NumPrimitives)
+            // {
+            //     limit = MaxVertIndexLimit;
+            // }
+            // else
+            // {
+            //     //first make the choice of numIndicesLimit (it worked until obj_skyGeneric.d3dmesh) (have i talked about obj_skyGeneric.d3dmesh?) (it's evil. I am this world's number one obj_skyGeneric hater) (it was the only thing preventing me from saying that i can load every model) (and then I though adding support for it would be easy but NOOOO it had to be fucked up didn't it)
+            //     limit = MaxVertIndexLimit;
+            //
+            //     if (limit % 3 != 0 || limit >= indexList.Count)
+            //     {
+            //         limit = numIndicesLimit;
+            //     }
+            // }
 
+            uint numIndices = limit - batch.StartIndex;
+            
             for (uint indexI = batch.StartIndex + 2; indexI < limit; indexI += 3)
             {
                 int i = (int)indexI;
@@ -466,6 +483,8 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
                 nodeBuilder.WithLocalRotation(originalRotation);
                 nodeBuilder.WithLocalScale(Vector3.One);
+                
+                // scene.AddRigidMesh(D3DMeshManager.BoneMesh, nodeBuilder);
 
                 if (bone.ParentIndex == -1 && bone.JointName.ToString() != "Root")
                 {

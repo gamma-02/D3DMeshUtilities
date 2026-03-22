@@ -20,7 +20,7 @@ public class LoadedArchive
 
     public static LoadedArchive Instance = new LoadedArchive();
 
-    private string _archiveLocation;
+    private string _archiveLocation = "";
 
     public static Lock ArchiveLocationLock = new Lock();
 
@@ -28,15 +28,11 @@ public class LoadedArchive
 
     public static bool SetArchive = false;
 
-    public async void LoadArchive(Dispatcher dispatcher, string archiveLocation, string game)
+    public void LoadArchive(Dispatcher dispatcher, string archiveLocation, string game)
     {
 
-        if (TttkInit.Instance.Workspace == null)
-        {
-            TttkInit.Instance.Workspace = Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
-                game);
-            
-        }
+        TttkInit.Instance.Workspace ??= Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
+            game);
 
         _archiveLocation = archiveLocation;
         
