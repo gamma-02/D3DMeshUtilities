@@ -56,6 +56,8 @@ public class D3DMeshManager(List<string> file, string outputPath)
     //todo: make sure normals are actually being correct
     
     //todo: why wasn't heavy mesh as table working?
+
+    // public static MeshBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>? BoneMesh = null;
     
     public List<string> Files = file;
 
@@ -67,6 +69,64 @@ public class D3DMeshManager(List<string> file, string outputPath)
     {
         // if(!AsyncSerachForSkeletonFiles.BuiltDictionary)
         AsyncSerachForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSerachForSkeletonFiles.BuildAgentMeshDictionary(LoadedArchive.Instance));
+
+        // if (BoneMesh == null)
+        // {
+        //     //GLTF read bone mesh
+        //     string boneMeshLocation = Path.Combine(TttkInit.DataDir, "Bone.glb");
+        //
+        //     Stream boneStream = File.OpenRead(boneMeshLocation);
+        //     
+        //     if (boneStream.CanRead)
+        //     {
+        //         MeshBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty> builder =
+        //             new MeshBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>();
+        //         List<VertexBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>> verts = [];
+        //
+        //         MaterialBuilder material = new MaterialBuilder("default");
+        //         ModelRoot boneMeshRoot = ModelRoot.ReadGLB(boneStream);
+        //
+        //         Mesh boneMesh = boneMeshRoot.LogicalMeshes[0];
+        //         MeshPrimitive primitive = boneMesh.Primitives[0];
+        //         
+        //         Accessor positionAccessor = primitive.GetVertexAccessor("POSITION");
+        //         Accessor normalAccessor = primitive.GetVertexAccessor("NORMAL");
+        //         Accessor uvAccessor = primitive.GetVertexAccessor("TEXCOORD_0");
+        //
+        //         IAccessorArray<Vector3> positions = positionAccessor.AsVector3Array();
+        //         IAccessorArray<Vector3> normals = normalAccessor.AsVector3Array();
+        //         IAccessorArray<Vector2> uvs = uvAccessor.AsVector2Array();
+        //
+        //         for (int i = 0; i < positionAccessor.Count; i++)
+        //         {
+        //             Vector3 position = positions[i];
+        //             Vector3 normal = normals[i];
+        //             Vector2 uv = uvs[i];
+        //
+        //             var vertex = new VertexBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>()
+        //             {
+        //                 Geometry = new VertexPositionNormal(position, normal),
+        //                 Material = new VertexTexture1(uv)
+        //             };
+        //             
+        //             verts.Add(vertex);
+        //         }
+        //
+        //         var indices = primitive.GetIndices();
+        //         for (int index = 2; index < indices.Count; index++)
+        //         {
+        //             int i1 = (int)indices[index - 2];
+        //             int i2 = (int)indices[index - 1];
+        //             int i3 = (int)indices[index - 0];
+        //
+        //             builder.UsePrimitive(material).AddTriangle(verts[i1], verts[i2], verts[i3]);
+        //
+        //         }
+        //
+        //         BoneMesh = builder;
+        //     }
+        //     
+        // }
         
         ReadMeshes.Clear();
 

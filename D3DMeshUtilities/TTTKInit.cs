@@ -11,16 +11,20 @@ public class TttkInit
 
     public Workspace? Workspace;
     
+    public static string DataDir;
+    
     // Toolkit.Initialize("hello!");
 
     public TttkInit()
     {
 
+        DataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
+
         Toolkit.Configuration config = new Toolkit.Configuration();
 
-        string dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
-        config.DataFolder = Path.Combine(dataDir);
-        Console.Out.WriteLine($"Looking for Telltale Tool Kit data directory at {dataDir}");
+        
+        config.DataFolder = DataDir;
+        Console.Out.WriteLine($"Looking for Telltale Tool Kit data directory at {DataDir}");
         
         
         Toolkit.Initialize(config);
