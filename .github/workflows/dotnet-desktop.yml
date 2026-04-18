@@ -92,14 +92,17 @@ jobs:
       
     - name: Restore nuget
       run: nuget restore $env:Solution_Name.sln
-
-    # Execute all unit tests in the solution
+      env:
+        MSBuildSDKsPath: "" # maybe this too?? idk
+      
+      
+      # Execute all unit tests in the solution
     # - name: Execute unit tests
     #   run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /p:SelfContained=false /p:_IsPortable=true /p:PublishSingleFile=true /p:PublishReadyToRun=true -property:PublishTrimmed=false /p:IncludeNativeLibrariesForSelfExtract=false /p:IncludeAllContentForSelfExtract=false 
+      run: dotnet build $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration /p:SelfContained=false /p:_IsPortable=true /p:PublishSingleFile=true /p:PublishReadyToRun=true -property:PublishTrimmed=false /p:IncludeNativeLibrariesForSelfExtract=false /p:IncludeAllContentForSelfExtract=false 
       env:
         Configuration: ${{ matrix.configuration }}
 
