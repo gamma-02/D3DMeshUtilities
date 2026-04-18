@@ -12,6 +12,7 @@
 
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <ApplicationIcon>Resources\d3dmeshutils-logo.ico</ApplicationIcon>
 
     </PropertyGroup>
 
