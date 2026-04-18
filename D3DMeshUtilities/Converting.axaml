@@ -39,7 +39,7 @@
             <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="16" Name="FilePath" > Folder to store output models
             </TextBox>
                 
-            <Button Grid.Column="1" FontSize="20" Click="Convert_OnClick" Height="40"> Choose Output Folder </Button>
+            <Button Grid.Column="1" FontSize="20" Click="OutFile_OnClick" Height="40"> Choose Output Folder </Button>
         </Grid>
         
         
