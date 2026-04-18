@@ -89,7 +89,7 @@ jobs:
       
       # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: Setup NuGet.exe for use with actions
       # You may pin to the exact commit or the version.
