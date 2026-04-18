@@ -50,28 +50,31 @@ public partial class Converting : BaseProjectWindow
 
         ConvertButton.IsEnabled = true;
     }
-
-
-    
     
     private async void OpenFile()
     {
-        
         IReadOnlyList<IStorageFolder> dialouge = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
         {
             AllowMultiple = false,
-            Title = "Select output directory"
+            Title = "Select Output Directory"
         });
+
+        if (dialouge.Count <= 0) return;
         
+        string? folder = dialouge[0].TryGetLocalPath();
+            
+        if(!string.IsNullOrWhiteSpace(folder))
+            FilePath.Text = folder;
+
         // bool? result = dialouge.ShowDialog();
 
-        if (dialouge.Count > 0)
-        {
-            IStorageFolder file = dialouge[0];
-
-            FilePath.Text = file.TryGetLocalPath();
-
-        }
+        // if (dialouge.Count > 0)
+        // {
+        //     IStorageFolder file = dialouge[0];
+        //
+        //     FilePath.Text = file.TryGetLocalPath();
+        //
+        // }
     }
     
 
