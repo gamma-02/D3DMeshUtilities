@@ -79,9 +79,15 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
-
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+        dotnet-version: 9.0.313
+        global-json-file: .\global.json
+    
+#    - name: Set correct DotNet version
+#      task: UseDotNet@2
+#      inputs:
+#        version: 9.0.313
+      
+      # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
@@ -93,7 +99,9 @@ jobs:
     - name: Restore nuget
       run: nuget restore $env:Solution_Name.sln
       env:
-        MSBuildSDKsPath: "" # maybe this too?? idk
+        DOTNET_ROLL_FORWARD: Disable
+#      env:
+#        MSBuildSDKsPath: "" # maybe this too?? idk
       
       
       # Execute all unit tests in the solution
