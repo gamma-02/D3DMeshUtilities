@@ -17,5 +17,5 @@ public interface IMeshRepresentation
     public bool SaveToScene(SceneBuilder scene, NodeBuilder modelRoot);
 
     //todo: saving to D3DMesh
-    public bool SaveToD3DMesh(out D3DMesh? mesh) => throw new NotImplementedException();
+    public bool SaveToD3DMesh(out D3DMesh? mesh);
 }

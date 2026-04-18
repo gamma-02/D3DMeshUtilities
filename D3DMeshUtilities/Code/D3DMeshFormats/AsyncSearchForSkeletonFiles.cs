@@ -1,5 +1,4 @@
-﻿using System.Windows.Documents;
-using TelltaleToolKit;
+﻿using TelltaleToolKit;
 using TelltaleToolKit.Reflection;
 using TelltaleToolKit.Resource;
 using TelltaleToolKit.T3Types;

@@ -1,8 +1,7 @@
-﻿using System.Configuration;
-using System.Data;
-using System.IO;
-using System.Windows;
-using TelltaleToolKit;
+﻿
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
 using TelltaleToolKit.Utility.Blowfish;
 
 namespace D3DMeshUtilities;
@@ -12,10 +11,30 @@ namespace D3DMeshUtilities;
 /// </summary>
 public partial class App : Application
 {
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool AllocConsole();
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool FreeConsole();
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.MainWindow = new MainWindow();
+        }
+
+        base.OnFrameworkInitializationCompleted();
+    }
+    
+    //todo: find platform independent versions of this!
+// #if WINDOWS7_0_OR_GREATER
+//     [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+//     public static extern bool AllocConsole();
+//
+//     [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+//     public static extern bool FreeConsole();
+// #endif
+
 
     public static string? StartupGameArchivesDirectory { get; private set; }
     public static T3BlowfishKey? StartupGame { get; private set; }
@@ -62,14 +81,11 @@ public partial class App : Application
         set; 
     } = true;
 
-    protected override void OnExit(ExitEventArgs e)
-    {
-        FreeConsole();
-        base.OnExit(e);
-    }
+    
 
-    private void App_OnStartup(object sender, StartupEventArgs e)
+    public static void App_OnStartup(object? sender, ControlledApplicationLifetimeStartupEventArgs e)
     {
+        // Environment.Exit(-1);
         foreach (string arg in e.Args)
         {
             if (arg.StartsWith("-gameDir="))
@@ -143,5 +159,13 @@ public partial class App : Application
                 StartupConvertModels = false;
             }
         }
+    }
+
+    public static void App_OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+    {
+// #if WINDOWS7_0_OR_GREATER
+//         FreeConsole();
+// #endif
+        
     }
 }

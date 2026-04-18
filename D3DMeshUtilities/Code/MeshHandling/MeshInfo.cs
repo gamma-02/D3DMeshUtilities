@@ -9,6 +9,7 @@ namespace D3DMeshUtilities.Code.MeshHandling;
 /// This is designed to be something like a "header" -- holding information about a mesh
 /// 
 /// </summary>
+//todo: add a lot more information about the original mesh format, and allow saving to/loading from glbs
 public class MeshInfo
 {
 

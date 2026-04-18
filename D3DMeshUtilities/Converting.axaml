@@ -1,18 +1,17 @@
-﻿<local:BaseProjectWindow x:Class="D3DMeshUtilities.Converting"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:D3DMeshUtilities"
-        mc:Ignorable="d"
-        Title="Converting" Height="480" Width="800"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="D3DMeshUtilities.Converting"
+        Title="Converting"
         WindowStartupLocation="CenterOwner">
-    <Grid>
-        <Grid.Resources>
-            <Style TargetType="{x:Type Grid}">
-                <Setter Property="Margin" Value="10 10"/>
-            </Style>
-        </Grid.Resources>
+    <Grid Margin="10 10">
+        <!-- <Grid.Resources> -->
+        <!--     <Style> -->
+        <!--         <Setter Property="Margin" Value="10 10"/> -->
+        <!--     </Style> -->
+        <!-- </Grid.Resources> -->
         
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -37,10 +36,10 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
                 
-            <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="20" Name="FilePath" > Folder to store output models
+            <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="16" Name="FilePath" > Folder to store output models
             </TextBox>
                 
-            <Button Grid.Column="1" FontSize="20" Click="OutFile_OnClick"> Choose Output Folder </Button>
+            <Button Grid.Column="1" FontSize="20" Click="Convert_OnClick" Height="40"> Choose Output Folder </Button>
         </Grid>
         
         
@@ -51,20 +50,20 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
                 
-            <Button Grid.Column="1" FontSize="20" Click="Convert_OnClick" Name="ConvertButton"> Convert! </Button>
+            <Button Grid.Column="1" FontSize="20" Click="Convert_OnClick" Name="ConvertButton" Height="40"> Convert! </Button>
         </Grid>
         
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="4" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
                 
-            <Button Grid.Column="1" FontSize="20" Click="Back_OnClick"> Back to Model Select </Button>
+            <Button Grid.Column="1" FontSize="20" Click="Back_OnClick" Height="40"> Back to Model Select </Button>
         </Grid>
         
         
         <!-- <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="56">Converting... </TextBox> -->
     </Grid>
-</local:BaseProjectWindow>
+</Window>
