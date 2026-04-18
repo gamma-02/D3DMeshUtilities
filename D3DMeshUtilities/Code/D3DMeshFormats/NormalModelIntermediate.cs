@@ -34,10 +34,6 @@ public class NormalModelIntermediate : IMeshRepresentation
 
     public List<T3MeshLOD> LODs;
     
-    
-    // public List<IVertexBuilder> vertices
-
-    
     public NormalModelIntermediate(MeshInfo info, List<Vector3> vertexPositionList, List<Vector3> vertexNormalList, List<Vector4>? vertexTangentsList, List<List<Vector2>?> textureCoords, List<List<uint>?> indexBuffers, List<MaterialBuilder> materials, List<T3MeshLOD> loDs)
     {
         Info = info;
@@ -122,7 +118,7 @@ public class NormalModelIntermediate : IMeshRepresentation
         
         for (int vertexIndex = 0; vertexIndex < rawPositionList.Count; vertexIndex++)
         {
-            MeshUtils.ApplyTransforms(meshData, vertexIndex, rawPositionList[vertexIndex], vertexPositions, textureCoordArray);
+            MeshUtils.ApplyTransforms(meshData, vertexIndex, rawPositionList[vertexIndex], vertexPositions, textureCoords);
 
             //normalize, because the interpreted 
             var normal = rawNormalsList[vertexIndex].AsVector3();
@@ -143,7 +139,7 @@ public class NormalModelIntermediate : IMeshRepresentation
 
     }
 
-    //todo: look into exporting LODs as seprate meshBuilders
+    //todo: look into exporting LODs as separate meshBuilders
     public bool SaveToGLTF(out IMeshBuilder<MaterialBuilder> meshBuilder)
     {
         if (!Info.HasVertexTangents)
@@ -265,5 +261,20 @@ public class NormalModelIntermediate : IMeshRepresentation
 
         scene.AddRigidMesh(meshBuilder, modelRoot);
         return true;
+    }
+
+    public bool SaveToD3DMesh(out D3DMesh? mesh)
+    {
+        mesh = new D3DMesh();
+        
+        //todo: materials. I am going to have to make new property sets to do these right
+
+        T3MeshData meshData = new T3MeshData();
+
+
+
+
+        return true;
+
     }
 }

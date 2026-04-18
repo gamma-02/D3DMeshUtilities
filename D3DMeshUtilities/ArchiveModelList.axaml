@@ -1,18 +1,23 @@
-﻿<local:BaseProjectWindow x:Class="D3DMeshUtilities.ArchiveModelList"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:D3DMeshUtilities"
-        mc:Ignorable="d"
-        Title="ArchiveModelList" Height="480" Width="800"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="D3DMeshUtilities.ArchiveModelList"
+        Title="ArchiveModelList"
         WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <Style Selector="Grid">
+            <Setter Property="Margin" Value="10 10"/>
+        </Style>
+    </Window.Styles>
+        
     <Grid>
-        <Grid.Resources>
-            <Style TargetType="{x:Type Grid}">
-                <Setter Property="Margin" Value="10 10"/>
-            </Style>
-        </Grid.Resources>
+        <!-- <Grid.Resources> -->
+        <!--     <Style> -->
+        <!--         <Setter Property="Margin" Value="10 10"/> -->
+        <!--     </Style> -->
+        <!-- </Grid.Resources> -->
         
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -30,15 +35,15 @@
         <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"> Select Mesh To Export </TextBlock>
         
         <Grid Grid.Row="2" Background="LightGray">
-            <ListView Name="ModelList" SelectionChanged="ModelList_SelectionChanged" SelectionMode="Extended">
-                <ListViewItem>
+            <ListBox Name="ModelList" SelectionChanged="ModelList_SelectionChanged" SelectionMode="Multiple">
+                <ListBoxItem>
                     <TextBlock HorizontalAlignment="Center" FontStretch="Expanded"> Loading... </TextBlock>
-                </ListViewItem>
-            </ListView>
+                </ListBoxItem>
+            </ListBox>
         </Grid>
         
-        <Grid Row="3" Visibility="Collapsed" Name="ConvertButtonGrid">
+        <Grid Row="3" IsVisible="False" Name="ConvertButtonGrid">
             <Button FontSize="16" Click="BeginConversion"> Choose output directories >>></Button>
         </Grid>
     </Grid>
-</local:BaseProjectWindow>
+</Window>

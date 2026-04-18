@@ -430,7 +430,7 @@ public static class MeshUtils
         int vertexIndex,
         Vector4 pos, 
         List<Vector3> vertexPositions, 
-        List<Vector2>?[] textureCoordArray
+        List<List<Vector2>?> textureCoordArray
         )
     {
         //todo: document these transformations lol

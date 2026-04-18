@@ -1,33 +1,15 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
-using System.Numerics;
-using System.Text;
-using Accessibility;
+﻿using System.Numerics;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
 using D3DMeshUtilities.Code.MeshHandling;
-using SharpGLTF.Geometry;
-using SharpGLTF.Geometry.VertexTypes;
-using SharpGLTF.Materials;
-using SharpGLTF.Memory;
 using SharpGLTF.Scenes;
 using SharpGLTF.Schema2;
 using TelltaleToolKit;
-using TelltaleToolKit.Resource;
-using TelltaleToolKit.Serialization.Binary;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
-using TelltaleToolKit.T3Types.Meshes.T3Types;
-using TelltaleToolKit.T3Types.Properties;
-using TelltaleToolKit.T3Types.Skeletons;
 using TelltaleToolKit.T3Types.Textures;
-using TelltaleToolKit.TelltaleArchives;
-using AlphaMode = SharpGLTF.Materials.AlphaMode;
 using Codecs = D3DMeshUtilities.Code.MeshHandling.Codecs;
-using Image = SharpGLTF.Schema2.Image;
 using Texture = D3DMeshUtilities.Code.ImageStuffAUGH.Texture;
-using Toolkit = SharpGLTF.Schema2.Toolkit;
 
 namespace D3DMeshUtilities.Code;
 

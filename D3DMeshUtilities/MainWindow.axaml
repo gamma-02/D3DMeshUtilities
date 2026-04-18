@@ -1,22 +1,22 @@
-﻿<local:BaseProjectWindow x:Class="D3DMeshUtilities.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:D3DMeshUtilities"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="800"
-        WindowStartupLocation="CenterOwner"
-        Closed="MainWindow_OnClosed">
-        
-    
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="D3DMeshUtilities.MainWindow"
+        Title="MainWindow"
+        Closed="MainWindow_OnClosed"
+        WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <Style Selector="Grid">
+            <!-- <Setter Property="Margin" Value="10 10"/> -->
+        </Style>
+    </Window.Styles>
     <StackPanel>
-        <Grid>
-            <Grid.Resources>
-                <Style TargetType="{x:Type Grid}">
-                    <Setter Property="Margin" Value="10 10"/>
-                </Style>
-            </Grid.Resources>
+        <Grid Margin="10 10">
+            <!-- <Grid.Resources> -->
+            <!--      -->
+            <!-- </Grid.Resources> -->
             
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
@@ -47,9 +47,9 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 
-                <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="20" Name="filePath" > Archive containing mesh to extract </TextBox>
+                <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="15" Name="filePath" > Archive containing mesh to extract </TextBox>
                 
-                <Button Grid.Column="1" FontSize="20" Click="OpenFile_OnClick"> Open File </Button>
+                <Button Grid.Column="1" FontSize="15" Height="35" Click="OpenFile_OnClick"> Open File </Button>
             </Grid>
             
             <Grid Grid.Row="3">
@@ -59,14 +59,14 @@
                     <ColumnDefinition Width="3*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 
-                <Button Grid.Column="1" Click="OpenArchive_OnClick" Name="OpenArchive" FontSize="20"> Load Archive </Button>
+                <Button Grid.Column="1" Click="OpenArchive_OnClick" Name="OpenArchive" FontSize="15" Height="35"> Load Archive </Button>
             </Grid>
             
             
             <TextBlock Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">OR</TextBlock>
-            <Line Grid.Row="5" Stretch="Fill" Stroke="Black" X2="1" VerticalAlignment="Bottom"></Line>
+            <Line Grid.Row="5" Stretch="Fill" Stroke="Black" VerticalAlignment="Bottom"></Line><!--X2="1"-->
             
-            <Grid Grid.Row="4">
+            <Grid Grid.Row="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -77,26 +77,26 @@
                 <Button Grid.Column="1" FontSize="20" Click="OpenFolder_OnClick"> Open Folder </Button>
             </Grid>
             
-            <Grid Grid.Row="5">
+            <Grid Grid.Row="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"></ColumnDefinition>
                     <ColumnDefinition Width="3*"></ColumnDefinition>
                     <ColumnDefinition Width="3*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 
-                <Button Grid.Column="1" Click="LoadResources_OnClick" Name="OpenGameDir" FontSize="20"> Load Game Resources </Button>
+                <Button Grid.Column="1" Click="LoadResources_OnClick" Name="OpenGameDir" FontSize="20" Height="40"> Load Game Resources </Button>
             </Grid>
             
-            <Grid Grid.Row="6" Background="LightGray" Visibility="Collapsed" Name="ArchiveListGrid">
-                <ListView Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged">
-                    <ListViewItem>
+            <Grid Grid.Row="6" Background="LightGray" IsVisible="False" Name="ArchiveListGrid">
+                <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged">
+                    <ListBoxItem>
                         <TextBlock>Loading...</TextBlock>
-                    </ListViewItem>
-                </ListView>
+                    </ListBoxItem>
+                </ListBox>
             </Grid>
             
             
-            <Grid Grid.Row="7" Visibility="Collapsed" Name="OpenArchiveGrid">
+            <Grid Grid.Row="7" IsVisible="False" Name="OpenArchiveGrid">
                 <Button FontSize="16" Click="LoadArchive"> Load Archive >>></Button>
             </Grid>
 
@@ -105,4 +105,4 @@
             
         </Grid>
     </StackPanel>
-</local:BaseProjectWindow>
+</Window>

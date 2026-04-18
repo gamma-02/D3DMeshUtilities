@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using TelltaleToolKit.TelltaleArchives;
+﻿using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Media;
 
 namespace D3DMeshUtilities;
 
@@ -49,22 +47,14 @@ public partial class ArchiveModelList : BaseProjectWindow
 
             foreach (string model in App.StartupModels)
             {
-                foreach (var item in ModelList.SelectedItems)
+                foreach (object? item in ModelList.SelectedItems)
                 {
-                    if (item == null)
+                    var i = item as ListBoxItem;
+
+                    if (i?.Content is not TextBlock b)
                         continue;
 
-                    ListViewItem? i = item as ListViewItem;
-
-                    if (i == null)
-                        continue;
-
-                    TextBlock? b = i.Content as TextBlock;
-
-                    if (b == null)
-                        continue;
-
-                    if (b.Text.Equals(model))
+                    if (b.Text != null && b.Text.Equals(model))
                         i.IsSelected = true;
                 }
             }
@@ -132,7 +122,7 @@ public partial class ArchiveModelList : BaseProjectWindow
             foreach (string element in ArchiveMeshListDictionary[ResourceLoader.Instance.ArchiveLocation])
             {
                 
-                var li = new ListViewItem();
+                var li = new ListBoxItem();
                 var text = new TextBlock();
 
                 text.Text = element;
@@ -147,7 +137,7 @@ public partial class ArchiveModelList : BaseProjectWindow
                 new SolidColorBrush(Color.FromRgb((byte)(lg.R - 25), (byte)(lg.G - 25), (byte)(lg.B - 25)));
             for (int i = 0; i < ModelList.Items.Count; i++)
             {
-                ListViewItem? li = ModelList.Items[i] as ListViewItem;
+                var li = ModelList.Items[i] as ListBoxItem;
 
                 if (li == null)
                     continue;
@@ -171,11 +161,11 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         if (selectedItems.Count == 0)
         {
-            ConvertButtonGrid.Visibility = Visibility.Collapsed;
+            ConvertButtonGrid.IsVisible = false;
         }
         else
         {
-            ConvertButtonGrid.Visibility = Visibility.Visible;
+            ConvertButtonGrid.IsVisible = true;
         }
     }
     
@@ -186,16 +176,16 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         Converting converting = new Converting(models)
         {
-            Owner = this
+            OverriddenOwner = this
         };
 
         converting.Show();
         
         this.Hide();
 
-        Application.Current.MainWindow = converting;
+        SetMainWindow(converting);
 
-        converting.Owner = null;
+        converting.OverriddenOwner = null;
         
         this.Close();
     }
@@ -210,7 +200,7 @@ public partial class ArchiveModelList : BaseProjectWindow
             if (item == null)
                 continue;
             
-            ListViewItem? i = item as ListViewItem;
+            ListBoxItem? i = item as ListBoxItem;
             
             if(i == null)
                 continue;
@@ -225,16 +215,16 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         Converting converting = new Converting(models)
         {
-            Owner = this
+            OverriddenOwner = this
         };
 
         converting.Show();
         
         this.Hide();
 
-        Application.Current.MainWindow = converting;
+        SetMainWindow(converting);
 
-        converting.Owner = null;
+        converting.OverriddenOwner = null;
         
         this.Close();
     }
@@ -254,7 +244,7 @@ public partial class ArchiveModelList : BaseProjectWindow
             if (item == null)
                 continue;
             
-            ListViewItem? i = item as ListViewItem;
+            ListBoxItem? i = item as ListBoxItem;
             
             if(i == null)
                 continue;
@@ -269,5 +259,4 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         return models;
     }
-    
 }

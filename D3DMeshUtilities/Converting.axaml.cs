@@ -1,11 +1,14 @@
-﻿using System.Windows;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using D3DMeshUtilities.Code;
 
 namespace D3DMeshUtilities;
 
 public partial class Converting : BaseProjectWindow
 {
-
     public List<string> ModelsToConvert
     {
         get => _modelsToConvert;
@@ -30,8 +33,7 @@ public partial class Converting : BaseProjectWindow
         Dispatcher.InvokeAsync(manager.LoadMeshes);
 
         // Console.Out.WriteLine("Read mesh data from ttarchive!");
-
-
+        
     }
 
     public Converting()
@@ -50,35 +52,39 @@ public partial class Converting : BaseProjectWindow
     }
 
 
-    private void OutFile_OnClick(object sender, EventArgs e)
-    {
-        Dispatcher.InvokeAsync(OpenFile);
-
-    }
     
-    private void OpenFile()
+    
+    private async void OpenFile()
     {
-        var dialouge = new Microsoft.Win32.OpenFolderDialog();
         
-        bool? result = dialouge.ShowDialog();
-
-        if (result == true)
+        IReadOnlyList<IStorageFolder> dialouge = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
         {
-            string file = dialouge.FolderName;
+            AllowMultiple = false,
+            Title = "Select output directory"
+        });
+        
+        // bool? result = dialouge.ShowDialog();
 
-            FilePath.Text = file;
+        if (dialouge.Count > 0)
+        {
+            IStorageFolder file = dialouge[0];
+
+            FilePath.Text = file.TryGetLocalPath();
 
         }
     }
     
 
-    private void Convert_OnClick(object sender, RoutedEventArgs e)
+    private void Convert_OnClick(object? sender, RoutedEventArgs e)
     {
 
         if (_modelsToConvert.Count == 0)
         {
             Console.Out.WriteLine("No models provided!");
         }
+
+        if (string.IsNullOrWhiteSpace(FilePath.Text))
+            return;
         
         D3DMeshManager manager = new D3DMeshManager(_modelsToConvert, FilePath.Text);
 
@@ -91,16 +97,16 @@ public partial class Converting : BaseProjectWindow
     {
         ArchiveModelList list = new ArchiveModelList()
         {
-            Owner = this
+            OverriddenOwner = this
         };
 
         list.Show();
 
         this.Hide();
 
-        Application.Current.MainWindow = list;
+        SetMainWindow(list);
 
-        list.Owner = null;
+        list.OverriddenOwner = null;
 
         this.Close();
     }
@@ -108,5 +114,14 @@ public partial class Converting : BaseProjectWindow
     public override Window GetWindow()
     {
         return Window.ConvertModels;
+    }
+    
+    // private void OutFile_OnClick(object? sender, RoutedEventArgs e)
+    // {
+    //     Dispatcher.InvokeAsync(OpenFile);
+    // }
+    private void OutFile_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Dispatcher.InvokeAsync(OpenFile);
     }
 }

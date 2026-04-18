@@ -155,10 +155,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         List<Vector2>? vertexTextureCoordList3 = MeshUtils.GetVertexTextureCoords(meshData, 0, 2);
         List<Vector2>? vertexTextureCoordList4 = MeshUtils.GetVertexTextureCoords(meshData, 0, 3);
 
-    
-
-        List<Vector2>?[] textureCoordArray = [vertexTextureCoordList1, vertexTextureCoordList2, vertexTextureCoordList3, vertexTextureCoordList4];
-    
+        
         List<List<Vector2>?> textureCoords =
             [vertexTextureCoordList1, vertexTextureCoordList2, vertexTextureCoordList3, vertexTextureCoordList4];
     
@@ -203,7 +200,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
     
         for (int vertexIndex = 0; vertexIndex < rawPositionList.Count; vertexIndex++)
         {
-            MeshUtils.ApplyTransforms(meshData, vertexIndex, rawPositionList[vertexIndex], vertexPositions, textureCoordArray);
+            MeshUtils.ApplyTransforms(meshData, vertexIndex, rawPositionList[vertexIndex], vertexPositions, textureCoords);
 
             //normalize, because the interpreted 
             var normal = rawNormalsList[vertexIndex].AsVector3();
@@ -586,4 +583,6 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
         throw new Exception($"Bone {boneName} not found!");
     }
+
+    public bool SaveToD3DMesh(out D3DMesh? mesh) => throw new NotImplementedException();
 }

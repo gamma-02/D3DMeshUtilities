@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Text;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using D3DMeshUtilities.Code;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit;
