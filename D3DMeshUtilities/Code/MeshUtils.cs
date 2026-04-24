@@ -551,7 +551,7 @@ public static class MeshUtils
         if(file == null || file.Length < 4)
             return;
         
-        Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
+        // Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
 
 
         if (file.Position != 0)
@@ -575,18 +575,23 @@ public static class MeshUtils
         {
             intermediateTexture.ConvertToRGBA8sRGB();
         }
+
+        string tempFile = Path.Combine(Path.GetTempPath(), textureHandle.ObjectInfo.ObjectName.SymbolName!.Replace("d3dtx", "png"));
         
-        //this is what's erroring!!! i don't know how else to do that, though.....
-        byte[] pngData = PngCodec.Codec.SaveToMemory(intermediateTexture, new CodecOptions(), true);
+        //...As it turns out, Linux doesnt support WIC memory, so now this should work on Linux
+        PngCodec.Codec.SaveToFile(tempFile, intermediateTexture, new CodecOptions());
         
-        MemoryImage memImage = new MemoryImage(pngData);
-        
+        //also, somehow, Shadow has a method to skip this whole step and just provide
+        //the image path to the mb.WithChannelImage call that I don't. why????
+        MemoryImage memImage = new MemoryImage(tempFile);
         ImageBuilder image = ImageBuilder.From(memImage, textureHandle.ObjectInfo.ObjectName.ToString());
 
         mb.WithChannelImage(channel, image);
         mb.AlphaMode = AlphaMode.MASK;
         
         Console.Out.WriteLine("Loaded texture: " + textureHandle.ObjectInfo.ObjectName);
+        
+        File.Delete(tempFile);
     }
     #endregion
     
