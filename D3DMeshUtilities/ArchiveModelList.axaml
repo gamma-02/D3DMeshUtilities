@@ -35,8 +35,9 @@
         
         <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"> Select Mesh To Export </TextBlock>
         
-        <Grid Grid.Row="2" Background="LightGray">
-            <ListBox Name="ModelList" SelectionChanged="ModelList_SelectionChanged" SelectionMode="Multiple">
+        <Grid Grid.Row="2">
+            <ListBox Name="ModelList" SelectionChanged="ModelList_SelectionChanged" 
+                     SelectionMode="Multiple" Background="#26282C" CornerRadius="5">
                 <ListBoxItem>
                     <TextBlock HorizontalAlignment="Center" FontStretch="Expanded"> Loading... </TextBlock>
                 </ListBoxItem>

@@ -34,15 +34,10 @@ public partial class ArchiveModelList : BaseProjectWindow
             Dispatcher.InvokeAsync(SelectModels);
         }
         
-
-
-
     }
 
     private async void SelectModels()
     {
-
-
         try
         {
             await Task.Delay(100);
@@ -136,9 +131,11 @@ public partial class ArchiveModelList : BaseProjectWindow
                 
             }
 
-            Color lg = Brushes.LightGray.Color;
-            Brush backgroundB =
-                new SolidColorBrush(Color.FromRgb((byte)(lg.R - 25), (byte)(lg.G - 25), (byte)(lg.B - 25)));
+            Color one = Color.FromRgb(0x43, 0x43, 0x43);
+            Color two = Color.FromRgb(0x26, 0x28, 0x2C);
+            Brush backgroundA = new SolidColorBrush(one);
+            Brush backgroundB = new SolidColorBrush(two);
+            
             for (int i = 0; i < ModelList.Items.Count; i++)
             {
                 var li = ModelList.Items[i] as ListBoxItem;
@@ -147,9 +144,9 @@ public partial class ArchiveModelList : BaseProjectWindow
                     continue;
 
                 if (i % 2 == 0)
-                    li.Background = Brushes.LightGray;
-                else
                     li.Background = backgroundB;
+                else
+                    li.Background = backgroundA;
 
             }
         }

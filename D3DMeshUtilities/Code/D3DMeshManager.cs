@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
 using D3DMeshUtilities.Code.MeshHandling;
@@ -47,10 +48,6 @@ public class D3DMeshManager(List<string> file, string outputPath)
     
     public List<string> Files = file;
 
-    public bool MeshRead = false;
-    
-    public readonly List<D3DMesh?> ReadMeshes = [];
-
     public void LoadMeshes()
     {
         // if(!AsyncSerachForSkeletonFiles.BuiltDictionary)
@@ -58,15 +55,12 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
         // AsyncSerachForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance);
         
-        ReadMeshes.Clear();
+        // ReadMeshes.Clear();
 
         if (!Codecs.Registered)
         {
             Codecs.RegisterCodecs();
         }
-
-
-        // List<PropertySet> propertySets = skeletonProperties.ToList();
         
         
         if (!Directory.Exists(outputPath))
@@ -94,7 +88,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
             if (mesh == null)
                 continue;
 
-            ReadMeshes.Add(mesh);
+            // ReadMeshes.Add(mesh);
 
             MeshInfo info = new MeshInfo(mesh, meshFile);
 

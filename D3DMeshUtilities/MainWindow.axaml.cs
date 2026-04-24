@@ -189,6 +189,8 @@ public partial class MainWindow : BaseProjectWindow
                 ResourceLoader.Instance.LoadResourceContexts(Dispatcher, GameDataPath.Text, GameDropdown.Text!);
         
             await pathTask;
+
+            pathTask.Result.Sort();
         
             //remove "Loading..."
             ArchiveList.Items.Clear();

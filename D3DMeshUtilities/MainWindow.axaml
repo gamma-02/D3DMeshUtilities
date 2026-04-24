@@ -27,6 +27,7 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
 
@@ -89,8 +90,8 @@
                 <Button Grid.Column="1" Click="LoadResources_OnClick" Name="OpenGameDir" FontSize="20" Height="40"> Load Game Resources </Button>
             </Grid>
             
-            <Grid Grid.Row="6" Background="LightGray" IsVisible="False" Name="ArchiveListGrid">
-                <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged">
+            <Grid Grid.Row="7" IsVisible="False" Name="ArchiveListGrid">
+                <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged" Background="#26282c" CornerRadius="5">
                     <ListBoxItem>
                         <TextBlock>Loading...</TextBlock>
                     </ListBoxItem>
@@ -98,7 +99,7 @@
             </Grid>
             
             
-            <Grid Grid.Row="7" IsVisible="False" Name="OpenArchiveGrid">
+            <Grid Grid.Row="8" IsVisible="False" Name="OpenArchiveGrid">
                 <Button FontSize="16" Click="LoadArchive"> Load Archive >>></Button>
             </Grid>
 
