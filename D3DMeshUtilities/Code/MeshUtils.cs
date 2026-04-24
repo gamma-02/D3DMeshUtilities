@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Numerics;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
@@ -487,11 +489,13 @@ public static class MeshUtils
         foreach (T3MeshMaterial mat in meshData.Materials)
         {
             var materialName = mat.Material.ObjectInfo.ObjectName.Crc64.ToString();
+            
+            Console.WriteLine($"Getting Material: {materialName}");
 
             bool doubleSided = true;
 
-            if (mesh.InternalResources.Find(res => res.ObjectInfo.ObjectName == mat.Material.ObjectInfo.ObjectName)?
-                    .ObjectInfo.HandleObject is PropertySet p)
+            HandleBase? handle = mesh.InternalResources.Find(res => res.ObjectInfo.ObjectName == mat.Material.ObjectInfo.ObjectName);
+            if (handle?.ObjectInfo.HandleObject is PropertySet p)
             {
                 TttkInit.Instance.Workspace!.ResolveSymbols(p.Properties.Keys);
                 
@@ -534,9 +538,8 @@ public static class MeshUtils
     {
         //Make sure the texture exists :D
         if (textureHandle == null || !workspace.ResolveSymbol(textureHandle.ObjectInfo.ObjectName)) return;
-
         
-        if ((textureHandle.ObjectInfo.ObjectName.ToString().Contains("normalxy_000.d3dtx")) && channel == KnownChannel.Normal) return;
+        if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("normalxy_000.d3dtx") && channel == KnownChannel.Normal) return;
         if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("color_000.d3dtx")) return;
 
         Stream? file = null;
@@ -547,6 +550,9 @@ public static class MeshUtils
                     
         if(file == null || file.Length < 4)
             return;
+        
+        Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
+
 
         if (file.Position != 0)
             file.Position = 0;
@@ -570,6 +576,7 @@ public static class MeshUtils
             intermediateTexture.ConvertToRGBA8sRGB();
         }
         
+        //this is what's erroring!!! i don't know how else to do that, though.....
         byte[] pngData = PngCodec.Codec.SaveToMemory(intermediateTexture, new CodecOptions(), true);
         
         MemoryImage memImage = new MemoryImage(pngData);

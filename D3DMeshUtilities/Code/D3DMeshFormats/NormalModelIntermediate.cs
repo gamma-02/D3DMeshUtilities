@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Geometry;
@@ -130,7 +132,7 @@ public class NormalModelIntermediate : IMeshRepresentation
         }
         
         // List<MaterialBuilder> materials = [];
-        MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
+        MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials); //todo: FFix onl inux!
 
         readMesh = new NormalModelIntermediate(info, vertexPositions, normals, tangentsList,
             textureCoords, [indexList], materials, meshData.LODs);

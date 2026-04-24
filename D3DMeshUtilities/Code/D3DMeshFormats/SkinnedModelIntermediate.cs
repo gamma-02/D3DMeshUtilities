@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Geometry;
