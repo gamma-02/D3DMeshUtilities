@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 
 namespace D3DMeshUtilities.Code.ImageStuffAUGH;
 
@@ -29,7 +30,7 @@ public interface IImageCodec
 
     bool IsSupportedPixelFormat(PixelFormatInfo format)
     {
-        return SupportedPixelFormats.Contains(format);
+        return SupportedPixelFormats!.Contains(format);
     }
 }
 

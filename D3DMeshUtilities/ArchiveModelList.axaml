@@ -5,7 +5,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="D3DMeshUtilities.ArchiveModelList"
         Title="ArchiveModelList"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Width="800" Height="650">
     <Window.Styles>
         <Style Selector="Grid">
             <Setter Property="Margin" Value="10 10"/>

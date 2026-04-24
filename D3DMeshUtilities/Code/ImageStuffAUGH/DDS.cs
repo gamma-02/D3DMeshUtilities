@@ -1,4 +1,5 @@
-﻿using Hexa.NET.DirectXTex;
+﻿using System;
+using Hexa.NET.DirectXTex;
 
 namespace D3DMeshUtilities.Code.ImageStuffAUGH;
 

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;

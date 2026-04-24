@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
 
 // ReSharper disable InconsistentNaming

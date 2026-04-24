@@ -1,15 +1,14 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using TelltaleToolKit.Utility.Blowfish;
-using Application = Avalonia.Application;
 using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
 using TextBlock = Avalonia.Controls.TextBlock;
 using TextBox = Avalonia.Controls.TextBox;
-using Window = Avalonia.Controls.Window;
 using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace D3DMeshUtilities;
@@ -293,18 +292,21 @@ public partial class MainWindow : BaseProjectWindow
             GameDataDirectoryCache = GameDataPath.Text;
         }
 
+        if (ArchiveList.Items.Count == 0)
+            return;
+
         if (!(ArchiveList.Items[0] is ListBoxItem lvi && lvi.Content is TextBox box &&
               box.Text.Contains("Loading...")))
         {
             List<string> archives = new List<string>();
-            foreach (var item in ArchiveList.Items)
+            foreach (object? item in ArchiveList.Items)
             {
                 if(!(item is ListBoxItem listItem))
                     continue;
                 
-                var archiveName = ((TextBlock)listItem.Content!).Text;
+                string? archiveName = ((TextBlock)listItem.Content!).Text;
 
-                archives.Add(Path.Combine(GameDataPath.Text, archiveName));
+                archives.Add(Path.Combine(GameDataPath.Text, archiveName!));
             }
 
             LoadedArchivesCache = archives;

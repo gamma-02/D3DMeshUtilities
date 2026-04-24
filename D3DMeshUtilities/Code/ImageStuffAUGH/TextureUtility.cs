@@ -1,4 +1,6 @@
-﻿namespace D3DMeshUtilities.Code.ImageStuffAUGH;
+﻿using System;
+
+namespace D3DMeshUtilities.Code.ImageStuffAUGH;
 
 public partial class Texture
 {

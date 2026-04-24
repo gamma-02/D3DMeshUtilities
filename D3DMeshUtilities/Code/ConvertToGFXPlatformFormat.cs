@@ -1,4 +1,6 @@
-﻿namespace D3DMeshUtilities.Code;
+﻿using System;
+
+namespace D3DMeshUtilities.Code;
 
 /// <summary>
 /// This class is designed to contain implementations for writing any GFXPlatformFormat tuple
