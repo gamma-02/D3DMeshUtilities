@@ -35,12 +35,12 @@ For each of these, values are set by an equals sign followed by a string, separa
 ### Flags
 Simple booleans that help control CLI behavior when used with other flags
 
-| Name                     | Description                                                                                                                                                                                                                   | default | values      |
-|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|-------------|
-| -al (-autoLoad)          | Controls automatic loading of a specified game directory, used with  (If false, the game data directory field will be populated but the archives will not be loaded)                                                          | true    | true, false |
-| -aa (-autoChooseArchive) | Controls automatic archive selection from the list of game archives (If false, the archive will be selected by default but allow for the user to change the selection in the GUI before manually moving on to model choosing) | true    | true, false |
-| -am (-autoChooseModels)  | Controls automatic model selection from the list of models (If false, the models will be selected by default but allow for the user to change the selection in the GUI before manually moving on to conversion)               | true    | true, false |
-| -ac (-autoConvert)       | Controls automatic conversion of models. (If false, the app will wait for user input to start conversion)                                                                                                                     | true    | true, false |
-| -aq (-autoQuit)          | Controls automatic exiting of the application on finishing converting the models. (If true, the app will exit after finishing conversion)                                                                                     | false   | true, false |
+| Name                     | Description                                                                                                                                                                                                                   |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -al (-autoLoad)          | Controls automatic loading of a specified game directory, used with  (If false, the game data directory field will be populated but the archives will not be loaded)                                                          |
+| -aa (-autoChooseArchive) | Controls automatic archive selection from the list of game archives (If false, the archive will be selected by default but allow for the user to change the selection in the GUI before manually moving on to model choosing) |
+| -am (-autoChooseModels)  | Controls automatic model selection from the list of models (If false, the models will be selected by default but allow for the user to change the selection in the GUI before manually moving on to conversion)               |
+| -ac (-autoConvert)       | Controls automatic conversion of models. (If false, the app will wait for user input to start conversion)                                                                                                                     |
+| -aq (-autoQuit)          | Controls automatic exiting of the application on finishing converting the models. (If true, the app will exit after finishing conversion)                                                                                     |
 
 <sub><sup>Written with [StackEdit](https://stackedit.io/).</sup></sub>
