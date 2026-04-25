@@ -47,8 +47,8 @@ public partial class MainWindow : BaseProjectWindow
             GameDropdown.Items.Add(gameProfileName);
         }
 
-        if (App.StartupGame != null)
-            GameDropdown.SelectedIndex = (int)App.StartupGame;
+        if (!string.IsNullOrWhiteSpace(App.StartupGameName))
+            GameDropdown.SelectedIndex = GameDropdown.Items.IndexOf(App.StartupGameName);
         else if (GameCache.HasValue)
             GameDropdown.SelectedIndex = GameCache.Value;
         else
@@ -166,16 +166,17 @@ public partial class MainWindow : BaseProjectWindow
         ResourceLoader.Instance.LoadArchive(Dispatcher, filePath.Text, GameDropdown.Text!);
 
         ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
+        CloseOnNewWindowOpened(list);
 
-        list.Show();
-
-        this.Hide();
-
-        SetMainWindow(list);
-
-        list.OverriddenOwner = null;
-
-        this.Close();
+        // list.Show();
+        //
+        // this.Hide();
+        //
+        // SetMainWindow(list);
+        //
+        // list.OverriddenOwner = null;
+        //
+        // this.Close();
     }
 
 
@@ -281,11 +282,10 @@ public partial class MainWindow : BaseProjectWindow
     {
         ResourceLoader.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text!, archive), GameDropdown.Text!);
 
-        ArchiveModelList list = new ArchiveModelList(false) { };
+        ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
         
         CloseOnNewWindowOpened(list);
         
-        list.Show();
     }
 
     private void LoadArchive(object sender, RoutedEventArgs e)
@@ -298,17 +298,17 @@ public partial class MainWindow : BaseProjectWindow
         ResourceLoader.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text!, archiveName), GameDropdown.Text!);
 
         ArchiveModelList list = new ArchiveModelList(false) {OverriddenOwner = this };
-        
+        CloseOnNewWindowOpened(list);
 
-        list.Show();
-
-        this.Hide();
-
-        SetMainWindow(list);
-
-        list.OverriddenOwner = null;
-
-        this.Close();
+        // list.Show();
+        //
+        // this.Hide();
+        //
+        // SetMainWindow(list);
+        //
+        // list.OverriddenOwner = null;
+        //
+        // this.Close();
     }
 
     public override Window GetWindow()

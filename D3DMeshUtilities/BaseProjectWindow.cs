@@ -54,13 +54,6 @@ public abstract class BaseProjectWindow : Window
         Owner = newOwner;
     }
 
-    // protected override void OnInitialized()
-    // {
-    //     Console.WriteLine("wahoooooo from OnInitialized");
-    //     _activate = true;
-    //
-    // }
-
     protected override void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
@@ -75,6 +68,10 @@ public abstract class BaseProjectWindow : Window
     {
         void _internalOnNewWindowOpened()
         {
+            //screw parenting, manually set positon/size/state (should also account for monitors)
+            newWindow.ClientSize = this.ClientSize;
+            newWindow.Position = this.Position;
+            newWindow.WindowState = this.WindowState;
             
             if(_activate)
                 this.Hide();
@@ -92,6 +89,9 @@ public abstract class BaseProjectWindow : Window
         }
 
         newWindow.Opened += _internalOnNewWindowOpened;
+        
+        newWindow.Show();
+
     }
 
     public void Header_OnSelectionChanged(object? sender, SelectionChangedEventArgs selectionChangedEventArgs)
@@ -120,9 +120,6 @@ public abstract class BaseProjectWindow : Window
         }
         
         CloseOnNewWindowOpened(newWindow);
-        
-        newWindow.Show();
-
 
         // Console.WriteLine(item.Header);
         // Console.Out.WriteLine(window);

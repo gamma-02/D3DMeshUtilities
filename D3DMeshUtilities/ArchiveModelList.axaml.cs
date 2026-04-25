@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
-using Avalonia.Media;
 
 namespace D3DMeshUtilities;
 
@@ -128,7 +126,7 @@ public partial class ArchiveModelList : BaseProjectWindow
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
             //ignored
         }
@@ -150,7 +148,7 @@ public partial class ArchiveModelList : BaseProjectWindow
             BeginConversion(App.StartupModels);
             
         }
-        catch (Exception e)
+        catch (Exception)
         {
             //ignored
         }
@@ -214,6 +212,7 @@ public partial class ArchiveModelList : BaseProjectWindow
                 ModelList.Items.Add(li);
             }
 
+            // i wish I could use this :(
             // Color one = Color.FromRgb(0x43, 0x43, 0x43);
             // Color two = Color.FromRgb(0x26, 0x28, 0x2C);
             // Brush backgroundA = new SolidColorBrush(one);
@@ -260,21 +259,15 @@ public partial class ArchiveModelList : BaseProjectWindow
             OverriddenOwner = this
         };
 
-        converting.Show();
-        
-        this.Hide();
-
-        SetMainWindow(converting);
-
-        converting.OverriddenOwner = null;
-        
-        this.Close();
+        CloseOnNewWindowOpened(converting);
     }
 
     void BeginConversion(object sender, RoutedEventArgs routedEventArgs)
     {
 
         List<string> models = [];
+
+        if (ModelList.SelectedItems == null) return;
 
         foreach (var item in ModelList.SelectedItems)
         {
@@ -288,7 +281,7 @@ public partial class ArchiveModelList : BaseProjectWindow
             
             TextBlock? b = i.Content as TextBlock;
             
-            if(b == null)
+            if(b?.Text == null)
                 continue;
             
             models.Add(b.Text);
@@ -320,21 +313,23 @@ public partial class ArchiveModelList : BaseProjectWindow
     {
         List<string> models = [];
 
+        if (ModelList.SelectedItems == null) return models;
+        
         foreach (var item in ModelList.SelectedItems)
         {
             if (item == null)
                 continue;
-            
+
             ListBoxItem? i = item as ListBoxItem;
-            
-            if(i == null)
+
+            if (i == null)
                 continue;
-            
+
             TextBlock? b = i.Content as TextBlock;
-            
-            if(b == null)
+
+            if (b?.Text == null)
                 continue;
-            
+
             models.Add(b.Text);
         }
 
