@@ -120,11 +120,7 @@ public partial class Converting : BaseProjectWindow
     {
         return Window.ConvertModels;
     }
-    
-    // private void OutFile_OnClick(object? sender, RoutedEventArgs e)
-    // {
-    //     Dispatcher.InvokeAsync(OpenFile);
-    // }
+
     private void OutFile_OnClick(object? sender, RoutedEventArgs e)
     {
         Dispatcher.InvokeAsync(OpenFile);

@@ -53,7 +53,7 @@ public class ResourceLoader
     public async Task<List<string>> LoadResourceContexts(Dispatcher dispatcher, string gameDataDir, string game)
     {
         
-        if (TttkInit.Instance.Workspace == null)
+        if (TttkInit.Instance.Workspace == null || TttkInit.Instance.Workspace.GameName != game)
         {
             TttkInit.Instance.Workspace = Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
                 game);
