@@ -46,6 +46,9 @@ public partial class ArchiveModelList : BaseProjectWindow
 
             foreach (string model in App.StartupModels)
             {
+                if (ModelList.SelectedItems == null) 
+                    continue;
+                
                 foreach (object? item in ModelList.SelectedItems)
                 {
                     var i = item as ListBoxItem;

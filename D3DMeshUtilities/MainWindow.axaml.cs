@@ -96,7 +96,7 @@ public partial class MainWindow : BaseProjectWindow
     }
 
     private static FilePickerFileType TelltaleArchive2Files =
-        new FilePickerFileType("TellTale Archive 2 Files (*.ttarch2) | *.ttarch2")
+        new ("TellTale Archive 2 Files (*.ttarch2) | *.ttarch2")
         {
             AppleUniformTypeIdentifiers =
                 new[] { "public.item" }, //apple moment. choose whatever, will error if wrong lol
