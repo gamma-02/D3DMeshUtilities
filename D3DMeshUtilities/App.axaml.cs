@@ -176,7 +176,7 @@ public class App : Application
         set; 
     } = true;
 
-    public static bool QuitAfterConvert { get; set; } = false;
+    public static bool QuitAfterConvert { get; set; }
 
     public static void App_OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
     {

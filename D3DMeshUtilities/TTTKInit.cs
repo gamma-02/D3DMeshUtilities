@@ -9,11 +9,11 @@ public class TttkInit
 {
     // Set up the context from a folder.
 
-    public static TttkInit Instance = new TttkInit();
+    public static TttkInit Instance = new ();
 
     public Workspace? Workspace;
     
-    public static string DataDir;
+    public static string DataDir = "";
     
     // Toolkit.Initialize("hello!");
 

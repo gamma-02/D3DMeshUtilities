@@ -541,7 +541,7 @@ public static class MeshUtils
         if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("normalxy_000.d3dtx") && channel == KnownChannel.Normal) return;
         if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("color_000.d3dtx")) return;
 
-        Stream? file = null;
+        Stream? file;
         lock(ResourceLoader.ResourceLock)
         {
             file = workspace.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);

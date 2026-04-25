@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Numerics;
 using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Geometry;
@@ -18,7 +17,7 @@ namespace D3DMeshUtilities.Code.D3DMeshFormats;
 public class SkinnedModelIntermediate : IMeshRepresentation
 {
     
-    public MeshInfo Info { get; private set; }
+    public MeshInfo Info { get; }
     
     public List<Vector3> VertexPositions;
     public List<Vector3> VertexNormals;
@@ -282,7 +281,6 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             //      StartIndex + NumIndices and MaxVertIndex
             uint limit;
             uint numIndicesLimit = batch.StartIndex + batch.NumIndices;
-            uint MaxVertIndexLimit = batch.MaxVertIndex;
 
             limit = numIndicesLimit;
             
@@ -307,7 +305,6 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             //     }
             // }
 
-            uint numIndices = limit - batch.StartIndex;
             
             for (uint indexI = batch.StartIndex + 2; indexI < limit; indexI += 3)
             {
@@ -465,7 +462,6 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         
         Skeleton? skeleton = Skeleton;
 
-        IMeshBuilder<MaterialBuilder> meshBuilder;
         
         int camera = 0;
         if (skeleton != null)

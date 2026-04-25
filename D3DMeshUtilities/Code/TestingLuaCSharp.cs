@@ -43,12 +43,13 @@ public class TestingLuaCSharp
     
     private static readonly LuaState state = LuaState.Create();
 
+    // ReSharper disable once UnusedMember.Global
     public static async void TestLuaStuff()
     {
         try
         {
 
-            state.Environment["RegisterSetDescription"] = new LuaFunction((context, ct) =>
+            state.Environment["RegisterSetDescription"] = new LuaFunction((context, _) =>
             {
                 var set = context.GetArgument<LuaTable>(0);
             

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TelltaleToolKit;
-using TelltaleToolKit.Reflection;
 using TelltaleToolKit.Resource;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;

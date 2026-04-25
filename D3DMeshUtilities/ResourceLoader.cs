@@ -14,7 +14,7 @@ namespace D3DMeshUtilities;
 
 public class ResourceLoader
 {
-    public ResourceContext? ArchiveContext = null;
+    public ResourceContext? ArchiveContext;
     // public string CurrentArchivePath = "";
 
     public List<ResourceContext>? Contexts
@@ -31,7 +31,7 @@ public class ResourceLoader
 
     public static Lock ResourceContextLock = new Lock();
 
-    public static bool SetArchive = false;
+    public static bool SetArchive;
 
     public static object ResourceLock = new();
 
