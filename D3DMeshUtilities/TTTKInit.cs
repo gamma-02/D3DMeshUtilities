@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using TelltaleToolKit;
 using Path = System.IO.Path;
 
@@ -16,9 +17,11 @@ public class TttkInit
     
     // Toolkit.Initialize("hello!");
 
+    [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+    public void InternalInit() { }
+
     public TttkInit()
     {
-
         DataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
 
         Toolkit.Configuration config = new Toolkit.Configuration();
@@ -27,14 +30,12 @@ public class TttkInit
         config.DataFolder = DataDir;
         Console.Out.WriteLine($"Looking for Telltale Tool Kit data directory at {DataDir}");
         
-        
         Toolkit.Initialize(config);
         
-        
-
     }
 
-    public static void Init() { Console.Out.WriteLine($"Trying to init Telltale Tool Kit! Instance: {Instance}"); }
+    [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+    public static void Init() { Instance.InternalInit(); }
 
 
 }

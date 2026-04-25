@@ -18,77 +18,9 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public static void ProcessArgs(string[] args)
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow();
-        }
-
-        base.OnFrameworkInitializationCompleted();
-    }
-    
-    //todo: find platform independent versions of this!
-// #if WINDOWS7_0_OR_GREATER
-//     [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-//     public static extern bool AllocConsole();
-//
-//     [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-//     public static extern bool FreeConsole();
-// #endif
-
-
-    public static string? StartupGameArchivesDirectory { get; private set; }
-    public static T3BlowfishKey? StartupGame { get; private set; }
-    public static string? StartupArchive { get; private set; }
-    public static string[] StartupModels { get; private set; } = [];
-    public static string? StartupOutputDir { get; private set; }
-
-    public static bool StartupLoadGameDir
-    {
-        get
-        {
-            bool temp = field;
-            field = false;
-            return temp;
-        }
-        set;
-    } = true;
-
-    public static bool StartupChooseArchive {
-        get
-        {
-            bool temp = field;
-            field = false;
-            return temp;
-        }
-        set; 
-    } = true;
-    public static bool StartupChooseModels {
-        get
-        {
-            bool temp = field;
-            field = false;
-            return temp;
-        }
-        set; 
-    } = true;
-    public static bool StartupConvertModels { 
-        get
-        {
-            bool temp = field;
-            field = false;
-            return temp;
-        }
-        set; 
-    } = true;
-
-    
-
-    public static void App_OnStartup(object? sender, ControlledApplicationLifetimeStartupEventArgs e)
-    {
-        // Environment.Exit(-1);
-        foreach (string arg in e.Args)
+        foreach (string arg in args)
         {
             if (arg.StartsWith("-gameDir="))
             {
@@ -111,7 +43,8 @@ public partial class App : Application
                 {
                     StartupGame = key;
                 }
-                else if (int.TryParse(game[..], out var index) && index >= 0 && index < Enum.GetValues<T3BlowfishKey>().Length)
+                else if (int.TryParse(game[..], out var index) && index >= 0 &&
+                         index < Enum.GetValues<T3BlowfishKey>().Length)
                 {
                     StartupGame = Enum.GetValues<T3BlowfishKey>()[index];
                 }
@@ -163,11 +96,80 @@ public partial class App : Application
         }
     }
 
+    public override void OnFrameworkInitializationCompleted()
+    {
+        
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            base.OnFrameworkInitializationCompleted();
+            return;
+        }
+        
+        desktop.MainWindow = new MainWindow();
+    
+        base.OnFrameworkInitializationCompleted();
+    }
+    
+    //todo: find platform independent versions of this!
+#if BUILT_FOR_WINDOWS
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool AllocConsole();
+
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool FreeConsole();
+#endif
+
+
+    public static string? StartupGameArchivesDirectory { get; private set; }
+    public static T3BlowfishKey? StartupGame { get; private set; }
+    public static string? StartupArchive { get; private set; }
+    public static string[] StartupModels { get; private set; } = [];
+    public static string? StartupOutputDir { get; private set; }
+
+    public static bool StartupLoadGameDir
+    {
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set;
+    } = true;
+
+    public static bool StartupChooseArchive {
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set; 
+    } = true;
+    public static bool StartupChooseModels {
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set; 
+    } = true;
+    public static bool StartupConvertModels { 
+        get
+        {
+            bool temp = field;
+            field = false;
+            return temp;
+        }
+        set; 
+    } = true;
+
     public static void App_OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
     {
-// #if WINDOWS7_0_OR_GREATER
-//         FreeConsole();
-// #endif
+#if BUILT_FOR_WINDOWS
+        FreeConsole();
+#endif
         
     }
 }

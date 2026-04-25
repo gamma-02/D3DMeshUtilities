@@ -10,12 +10,17 @@ class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args, builderer);
+    public static void Main(string[] args)
+    {
+        
+        App.ProcessArgs(args);
+        
+        BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args, builderer);
+    }
 
     public static Action<IClassicDesktopStyleApplicationLifetime> builderer = lifetime =>
     {
-        lifetime.Startup += App.App_OnStartup;
         lifetime.Exit += App.App_OnExit;
     } ;
 

@@ -84,44 +84,43 @@ public class PixelFormatDecoder
             return DecodeImageToRGBA8(newImage, expandBCXBlueChannel);
         }
 
-        if (image.PixelFormatInfo.Equals(PixelFormats.R8G8B8A8_Unorm_Linear) && expandBCXBlueChannel)
+        if (!image.PixelFormatInfo.Equals(PixelFormats.R8G8B8A8_Unorm_Linear) || !expandBCXBlueChannel) return newImage;
+        
+        
+        Hexa.NET.DirectXTex.Image directXImage = DirectXTexUtility.GetDirectXImage(newImage);
+
+        byte[] pixels = DirectXTexUtility.GetPixelsFromDirectXImage(directXImage);
+            
+        for (var i = 3; i < pixels.Length; i += 4)
         {
-            var directXImage = DirectXTexUtility.GetDirectXImage(newImage);
+            byte r = pixels[i - 3];
+            byte g = pixels[i - 2];
 
-            byte[] pixels = DirectXTexUtility.GetPixelsFromDirectXImage(directXImage);
-            
-            for (int i = 3; i < pixels.Length; i += 4)
-            {
-                byte r = pixels[i - 3];
-                byte g = pixels[i - 2];
+            float red = r / 255.0f;
+            float green = g / 255.0f;
 
-                float red = r / 255.0f;
-                float green = g / 255.0f;
+            red = red * 2.0f - 1.0f;
+            green = green * 2.0f - 1.0f;
 
-                red = red * 2.0f - 1.0f;
-                green = green * 2.0f - 1.0f;
+            float zSq = 1.0f - red * red - green * green;
 
-                float zSq = 1.0f - red * red - green * green;
-
-                float blue = MathF.Sqrt(zSq) * 0.5f + 0.5f;
-                red = red * 0.5f + 0.5f;
-                green = green * 0.5f + 0.5f;
+            float blue = MathF.Sqrt(zSq) * 0.5f + 0.5f;
+            red = red * 0.5f + 0.5f;
+            green = green * 0.5f + 0.5f;
                 
 
-                byte b = (byte)MathF.Round((blue) * 255.0f);
-                r = (byte)MathF.Round((red) * 255.0f);
-                g = (byte)MathF.Round((green) * 255.0f);
+            var b = (byte)MathF.Round((blue) * 255.0f);
+            r = (byte)MathF.Round((red) * 255.0f);
+            g = (byte)MathF.Round((green) * 255.0f);
 
-                pixels[i - 3] = r;
-                pixels[i - 2] = b;
-                pixels[i - 1] = g;
+            pixels[i - 3] = r;
+            pixels[i - 2] = g;
+            pixels[i - 1] = b;
                 
-            }
-            
-            return Image.GetImage(image.Width, image.Height, newImage.PixelFormatInfo, pixels);
         }
+            
+        return Image.GetImage(image.Width, image.Height, newImage.PixelFormatInfo, pixels);
 
-        return newImage;
     }
     
     public static Image DecodeImageToRGBA8SRGB(Image image)

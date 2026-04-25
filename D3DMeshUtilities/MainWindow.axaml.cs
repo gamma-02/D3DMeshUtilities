@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using TelltaleToolKit;
-using TelltaleToolKit.Utility.Blowfish;
 using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
 using TextBlock = Avalonia.Controls.TextBlock;
-using TextBox = Avalonia.Controls.TextBox;
 using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace D3DMeshUtilities;
@@ -25,9 +25,9 @@ public partial class MainWindow : BaseProjectWindow
     
     public MainWindow()
     {
-// #if WINDOWS7_0_OR_GREATER
-//         App.AllocConsole();
-// #endif
+#if BUILT_FOR_WINDOWS
+        App.AllocConsole();
+#endif
         
         InitializeComponent();
 
@@ -64,7 +64,7 @@ public partial class MainWindow : BaseProjectWindow
             GameDataPath.Text = GameDataDirectoryCache;
         }
 
-        if (LoadedArchivesCache != null)
+        if (LoadedArchivesCache != null && LoadedArchivesCache.Count > 0)
         {
             ArchiveList.Items.Clear();
             //assume the resource context is loaded
@@ -78,7 +78,7 @@ public partial class MainWindow : BaseProjectWindow
                 string archiveName = archivePath.Substring(seperator + 1);
 
                 text.Text = archiveName;
-                text.HorizontalAlignment = HorizontalAlignment.Right;
+                text.HorizontalAlignment = HorizontalAlignment.Left;
                 li.Content = text;
 
                 ArchiveList.Items.Add(li);
@@ -96,10 +96,10 @@ public partial class MainWindow : BaseProjectWindow
         GameDataPath.Text = App.StartupGameArchivesDirectory;
 
         if (!App.StartupLoadGameDir || string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory)) return;
-        Dispatcher.InvokeAsync(LoadResources);
+        DispatcherOperation op = Dispatcher.InvokeAsync(LoadResources);
 
         if (!App.StartupChooseArchive || string.IsNullOrWhiteSpace(App.StartupArchive)) return;
-        LoadArchive(App.StartupArchive);
+        Dispatcher.InvokeAsync(() => LoadArchiveAfterResources(op, App.StartupArchive));
         
     }
 
@@ -165,10 +165,7 @@ public partial class MainWindow : BaseProjectWindow
 
         ResourceLoader.Instance.LoadArchive(Dispatcher, filePath.Text, GameDropdown.Text!);
 
-        ArchiveModelList list = new ArchiveModelList()
-        {
-            OverriddenOwner = this
-        };
+        ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
 
         list.Show();
 
@@ -197,19 +194,39 @@ public partial class MainWindow : BaseProjectWindow
             ArchiveListGrid.IsVisible = true;
 
             //make sure the Loading... is shown before huge freeze
-            await Task.Delay(100);
+            Task.Delay(100).GetAwaiter().GetResult();
 
-            var pathTask =
-                ResourceLoader.Instance.LoadResourceContexts(Dispatcher, GameDataPath.Text, GameDropdown.Text!);
-        
+            var cts = new CancellationTokenSource();
+
+            Task<List<string>> pathTask = ResourceLoader.Instance.LoadResourceContexts(cts, GameDataPath.Text, GameDropdown.Text!);
+
             await pathTask;
 
-            pathTask.Result.Sort();
+            if (cts.IsCancellationRequested)//i don't even know. like what.
+            {
+                ArchiveList.Items.Clear();
+                Console.Out.WriteLine("Resdesc lua parsing failed! Watch out!!");
+                
+                var li = new Avalonia.Controls.ListBoxItem();
+                var text = new TextBlock();
+
+                text.Text = "Error parsing resource descriptions!";
+                text.HorizontalAlignment = HorizontalAlignment.Center;
+                li.Content = text;
+
+                ArchiveList.Items.Add(li);
+
+                return;
+
+            }
+            
+            List<string> archives = pathTask.Result;
+            archives.Sort();
         
             //remove "Loading..."
             ArchiveList.Items.Clear();
 
-            foreach (string archivePath in pathTask.Result)
+            foreach (string archivePath in archives)
             {
                 var li = new Avalonia.Controls.ListBoxItem();
                 var text = new TextBlock();
@@ -219,7 +236,7 @@ public partial class MainWindow : BaseProjectWindow
                 string archiveName = archivePath.Substring(seperator + 1);
 
                 text.Text = archiveName;
-                text.HorizontalAlignment = HorizontalAlignment.Right;
+                text.HorizontalAlignment = HorizontalAlignment.Left;
                 li.Content = text;
 
                 ArchiveList.Items.Add(li);
@@ -244,20 +261,31 @@ public partial class MainWindow : BaseProjectWindow
             OpenArchiveGrid.IsVisible = true;
         }
     }
+
+    private async void LoadArchiveAfterResources(DispatcherOperation resourceLoad, string archive)
+    {
+        try
+        {
+            await resourceLoad;
+
+            LoadArchive(archive);
+
+        }
+        catch (Exception e)
+        {
+            // ignored
+        }
+    }
     
     private void LoadArchive(string archive)
     {
         ResourceLoader.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text!, archive), GameDropdown.Text!);
 
-        ArchiveModelList list = new ArchiveModelList();
-
+        ArchiveModelList list = new ArchiveModelList(false) { };
+        
+        CloseOnNewWindowOpened(list);
+        
         list.Show();
-
-        this.Hide();
-
-        SetMainWindow(list);
-
-        this.Close();
     }
 
     private void LoadArchive(object sender, RoutedEventArgs e)
@@ -269,10 +297,8 @@ public partial class MainWindow : BaseProjectWindow
 
         ResourceLoader.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text!, archiveName), GameDropdown.Text!);
 
-        ArchiveModelList list = new ArchiveModelList()
-        {
-            OverriddenOwner = this
-        };
+        ArchiveModelList list = new ArchiveModelList(false) {OverriddenOwner = this };
+        
 
         list.Show();
 
@@ -298,34 +324,38 @@ public partial class MainWindow : BaseProjectWindow
             GameCache = GameDropdown.SelectedIndex;
         }
 
-        if (!filePath.Text.Contains("Archive containing mesh to extract"))
+        if (!(filePath.Text?.Contains("Archive containing mesh to extract") ?? false))
         {
             SingleArchivePathCache = filePath.Text;
         }
 
-        if (!GameDataPath.Text.Contains("Game Data Directory"))
+        if (!(GameDataPath.Text?.Contains("Game Data Directory") ?? false))
         {
             GameDataDirectoryCache = GameDataPath.Text;
         }
 
+        LoadedArchivesCache = null;
+
         if (ArchiveList.Items.Count == 0)
             return;
 
-        if (!(ArchiveList.Items[0] is ListBoxItem lvi && lvi.Content is TextBox box &&
-              box.Text.Contains("Loading...")))
+        if (ArchiveList.Items[0] is not ListBoxItem { Content: TextBlock b })
+            return;
+
+        if (b.Text?.Contains("Loading...") ?? false)
+            return;
+        
+        var archives = new List<string>();
+        foreach (object? item in ArchiveList.Items)
         {
-            List<string> archives = new List<string>();
-            foreach (object? item in ArchiveList.Items)
-            {
-                if(!(item is ListBoxItem listItem))
-                    continue;
+            if(item is not ListBoxItem listItem)
+                continue;
                 
-                string? archiveName = ((TextBlock)listItem.Content!).Text;
+            string? archiveName = ((TextBlock)listItem.Content!).Text;
 
-                archives.Add(Path.Combine(GameDataPath.Text, archiveName!));
-            }
-
-            LoadedArchivesCache = archives;
+            archives.Add(Path.Combine(GameDataPath.Text!, archiveName!));
         }
+
+        LoadedArchivesCache = archives;
     }
 }
