@@ -28,7 +28,7 @@ public class App : Application
                     StartupGameArchivesDirectory = dir;
                 }
             }
-            else if (arg.Equals("-autoLoad=false") || arg.Equals("-al=false"))
+            else if (arg.Equals("-autoLoad") || arg.Equals("-al"))
             {
                 StartupLoadGameDir = false;
             }
@@ -54,7 +54,7 @@ public class App : Application
 
                 StartupArchive = archive;
             }
-            else if (arg.Equals("-autoChooseArchive=false") || arg.Equals("-aa=false"))
+            else if (arg.Equals("-autoChooseArchive") || arg.Equals("-aa"))
             {
                 StartupChooseArchive = false;
             }
@@ -74,7 +74,7 @@ public class App : Application
             {
                 StartupModels = arg.Substring(4).Split(';');
             }
-            else if (arg.Equals("-autoChooseModels=false") || arg.Equals("-am=false"))
+            else if (arg.Equals("-autoChooseModels") || arg.Equals("-am"))
             {
                 StartupChooseModels = false;
             }
@@ -96,11 +96,11 @@ public class App : Application
                     StartupOutputDir = outDir;
                 }
             }
-            else if (arg.Equals("-autoConvert=false") || arg.Equals("-ac=false"))
+            else if (arg.Equals("-autoConvert") || arg.Equals("-ac"))
             {
                 StartupConvertModels = false;
             }
-            else if (arg.Equals("-autoQuit=true") || arg.Equals("-aq=true"))
+            else if (arg.Equals("-autoQuit") || arg.Equals("-aq"))
             {
                 QuitAfterConvert = true;
             }
