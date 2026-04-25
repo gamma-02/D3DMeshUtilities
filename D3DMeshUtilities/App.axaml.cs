@@ -1,17 +1,14 @@
-﻿
-using System;
-using System.IO;
+﻿using System.IO;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using TelltaleToolKit.Utility.Blowfish;
 
 namespace D3DMeshUtilities;
 
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : Application
+public class App : Application
 {
     public override void Initialize()
     {
@@ -24,7 +21,7 @@ public partial class App : Application
         {
             if (arg.StartsWith("-gameDir="))
             {
-                string dir = arg.Substring(9);
+                string dir = arg[9..];
 
                 if (Directory.Exists(dir))
                 {
@@ -38,16 +35,18 @@ public partial class App : Application
             else if (arg.StartsWith("-game="))
             {
                 string game = arg.Substring(6);
+                
+                StartupGameName = game;
 
-                if (Enum.TryParse<T3BlowfishKey>(game[..], true, out var key))
-                {
-                    StartupGame = key;
-                }
-                else if (int.TryParse(game[..], out var index) && index >= 0 &&
-                         index < Enum.GetValues<T3BlowfishKey>().Length)
-                {
-                    StartupGame = Enum.GetValues<T3BlowfishKey>()[index];
-                }
+
+                // if (Enum.TryParse<T3BlowfishKey>(game[..], true, out var key))
+                // {
+                // }
+                // else if (int.TryParse(game[..], out var index) && index >= 0 &&
+                //          index < Enum.GetValues<T3BlowfishKey>().Length)
+                // {
+                //     StartupGame = Enum.GetValues<T3BlowfishKey>()[index];
+                // }
             }
             else if (arg.StartsWith("-archive="))
             {
@@ -55,7 +54,7 @@ public partial class App : Application
 
                 StartupArchive = archive;
             }
-            else if (arg.Equals("-autoChooseArchive=false") || arg.Equals("-ac=false"))
+            else if (arg.Equals("-autoChooseArchive=false") || arg.Equals("-aa=false"))
             {
                 StartupChooseArchive = false;
             }
@@ -63,9 +62,17 @@ public partial class App : Application
             {
                 StartupModels = [arg.Substring(7)];
             }
+            else if (arg.StartsWith("-m="))
+            {
+                StartupModels = [arg.Substring(3)];
+            }
             else if (arg.StartsWith("-models="))
             {
                 StartupModels = arg.Substring(8).Split(';');
+            }
+            else if (arg.StartsWith("-ms="))
+            {
+                StartupModels = arg.Substring(4).Split(';');
             }
             else if (arg.Equals("-autoChooseModels=false") || arg.Equals("-am=false"))
             {
@@ -89,9 +96,13 @@ public partial class App : Application
                     StartupOutputDir = outDir;
                 }
             }
-            else if (arg.Equals("-autoConvert=false") || arg.Equals("-ao=false"))
+            else if (arg.Equals("-autoConvert=false") || arg.Equals("-ac=false"))
             {
                 StartupConvertModels = false;
+            }
+            else if (arg.Equals("-autoQuit=true") || arg.Equals("-aq=true"))
+            {
+                QuitAfterConvert = true;
             }
         }
     }
@@ -121,7 +132,7 @@ public partial class App : Application
 
 
     public static string? StartupGameArchivesDirectory { get; private set; }
-    public static T3BlowfishKey? StartupGame { get; private set; }
+    public static string? StartupGameName { get; private set; }
     public static string? StartupArchive { get; private set; }
     public static string[] StartupModels { get; private set; } = [];
     public static string? StartupOutputDir { get; private set; }
@@ -164,6 +175,8 @@ public partial class App : Application
         }
         set; 
     } = true;
+
+    public static bool QuitAfterConvert { get; set; } = false;
 
     public static void App_OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
     {

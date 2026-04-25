@@ -127,6 +127,12 @@ public partial class Converting : BaseProjectWindow
         AddMessageToBox("Done!");
 
         SetImportantControlsEnabled(true);
+
+        if (App.QuitAfterConvert)
+        {
+            Console.WriteLine("Automatically Exiting!");
+            Dispatcher.Invoke(() => Environment.Exit(1));
+        }
     }
 
     private void SetImportantControlsEnabled(bool enabled)
@@ -135,7 +141,7 @@ public partial class Converting : BaseProjectWindow
         Header.IsEnabled = enabled;
         OutputFolderButton.IsEnabled = enabled;
         ConvertButton.IsEnabled = enabled;
-        Back.IsEnabled = false;
+        Back.IsEnabled = enabled;
 
     }
 
@@ -164,15 +170,8 @@ public partial class Converting : BaseProjectWindow
     {
         ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
 
-        list.Show();
+        CloseOnNewWindowOpened(list);
 
-        this.Hide();
-
-        SetMainWindow(list);
-
-        list.OverriddenOwner = null;
-
-        this.Close();
     }
     
     public override Window GetWindow()
