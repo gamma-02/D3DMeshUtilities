@@ -215,7 +215,7 @@ public class NormalModelIntermediate : IMeshRepresentation
             //first make the choice of numIndicesLimit (it worked until obj_skyGeneric.d3dmesh) (have i talked about obj_skyGeneric.d3dmesh?) (it's evil. I am this world's number one obj_skyGeneric hater) (it was the only thing preventing me from saying that i can load every model) (and then I though adding support for it would be easy but NOOOO it had to be fucked up didn't it)
             limit = numIndicesLimit;
 
-            if (limit % 3 != 0 || limit >= indexList.Count)
+            if (limit % 3 != 0 || limit > indexList.Count)
             {
                 limit = MaxVertIndexLimit;
             }
