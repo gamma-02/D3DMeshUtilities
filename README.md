@@ -22,14 +22,14 @@ The other way to use this is through the command line. Below is a list of argume
 For each of these, values are set by an equals sign followed by a string, separated by spaces, but quotes can escape spaces. The string following should be a value matching the type.
 
 ### Arguments
-| Flag        | Name                    | Description                                                                                                            |
-|-------------|-------------------------|------------------------------------------------------------------------------------------------------------------------|
-| -gameDir    | Game Archives Directory | This sets the path of the game directory, and loads it automatically, unless the autoLoad flag is set to false.        |
-| -game       | Game                    | This sets the game that the app will use settings for, like encryption key, MetaStream version, and Oodle compression. |
-| -archive    | Archive                 | This sets the archive from the game archives that will be loaded, unless the aa flag is set to false.                  |
-| -m[odel]    | Model                   | This sets a model inside of the chosen archive to be automatically converted, unless the am flag is set to false.      |
-| -models[ms] | Models                  | This sets a semicolon-separated list of models to be automatically converted, same above.                              |
-| -o[ut]      | Out Model Directory     | This sets the directory models will be automatically converted into, unless the ac flag is set to false.               |
+| Flag         | Name                    | Description                                                                                                            |
+|--------------|-------------------------|------------------------------------------------------------------------------------------------------------------------|
+| -gameDir     | Game Archives Directory | This sets the path of the game directory, and loads it automatically, unless the autoLoad flag is set to false.        |
+| -game        | Game                    | This sets the game that the app will use settings for, like encryption key, MetaStream version, and Oodle compression. |
+| -archive     | Archive                 | This sets the archive from the game archives that will be loaded, unless the aa flag is set to false.                  |
+| -m[odel]     | Model                   | This sets a model inside of the chosen archive to be automatically converted, unless the am flag is set to false.      |
+| -models [ms] | Models                  | This sets a semicolon-separated list of models to be automatically converted, same above.                              |
+| -o[ut]       | Out Model Directory     | This sets the directory models will be automatically converted into, unless the ac flag is set to false.               |
 
 
 ### Flags
