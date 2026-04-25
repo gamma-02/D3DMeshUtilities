@@ -70,7 +70,7 @@ public partial class MainWindow : BaseProjectWindow
             //assume the resource context is loaded
             foreach (string archivePath in LoadedArchivesCache)
             {
-                var li = new Avalonia.Controls.ListBoxItem();
+                var li = new ListBoxItem();
                 var text = new TextBlock();
 
                 int seperator = archivePath.LastIndexOfAny(['\\', '/']);
@@ -208,7 +208,7 @@ public partial class MainWindow : BaseProjectWindow
                 ArchiveList.Items.Clear();
                 Console.Out.WriteLine("Resdesc lua parsing failed! Watch out!!");
                 
-                var li = new Avalonia.Controls.ListBoxItem();
+                var li = new ListBoxItem();
                 var text = new TextBlock();
 
                 text.Text = "Error parsing resource descriptions!";
@@ -229,7 +229,7 @@ public partial class MainWindow : BaseProjectWindow
 
             foreach (string archivePath in archives)
             {
-                var li = new Avalonia.Controls.ListBoxItem();
+                var li = new ListBoxItem();
                 var text = new TextBlock();
 
                 int seperator = archivePath.LastIndexOfAny(['\\', '/']);
@@ -272,7 +272,7 @@ public partial class MainWindow : BaseProjectWindow
             LoadArchive(archive);
 
         }
-        catch (Exception e)
+        catch (Exception)
         {
             // ignored
         }
@@ -293,7 +293,7 @@ public partial class MainWindow : BaseProjectWindow
         if (ArchiveList.SelectedItem is not ListBoxItem selectedItem)
             return;
 
-        var archiveName = ((TextBlock)selectedItem.Content!)?.Text;
+        string archiveName = ((TextBlock)selectedItem.Content!).Text ?? "";
 
         ResourceLoader.Instance.LoadArchive(Dispatcher, Path.Combine(GameDataPath.Text!, archiveName), GameDropdown.Text!);
 

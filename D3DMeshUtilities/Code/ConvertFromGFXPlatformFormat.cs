@@ -18,7 +18,9 @@ public static class ConvertFromGfxPlatformFormat
     
     private const uint TEN_BIT_MASK = 0x3FF;
     private const uint NINE_BIT_MASK = 0x1FF;
+/*
     private const uint ONE_BYTE_MASK = 0xFF;
+*/
     private const uint TWO_BIT_MASK = 0x3;
     private const uint ELEVEN_BIT_MASK = 0x7FF;
     
@@ -674,7 +676,7 @@ public static class ConvertFromGfxPlatformFormat
 
     public static Vector<int> ReadU8x4(ReadOnlySpan<byte> data)
     {
-        return new Vector<int>(new int[] { data[0], data[1], data[2], data[3], 0, 0, 0, 0});
+        return new Vector<int>(new [] { data[0], data[1], data[2], data[3], 0, 0, 0, 0});
     }
 
     public static float ReadSN8(ReadOnlySpan<byte> data)

@@ -2,7 +2,6 @@
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
-using TelltaleToolKit.T3Types.Miscellaneous;
 
 namespace D3DMeshUtilities.Code.MeshHandling;
 

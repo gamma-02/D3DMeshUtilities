@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
@@ -28,13 +27,8 @@ public abstract class BaseProjectWindow : Window
     }
 
     public static bool startedUp = false;
-    private bool _activate = false;
+    private bool _activate;
 
-    protected static Avalonia.Controls.Window? GetMainWindow()
-    {
-        return (Avalonia.Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-    }
-    
     protected static void SetMainWindow(Avalonia.Controls.Window window)
     {
         (Avalonia.Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow = window;
@@ -105,7 +99,7 @@ public abstract class BaseProjectWindow : Window
 
         if (!(control.SelectedItem is TabItem item)) return;
 
-        Enum.TryParse((item.Header as string)?.Replace(" ", ""), out BaseProjectWindow.Window window);
+        Enum.TryParse((item.Header as string)?.Replace(" ", ""), out Window window);
 
         control.IsEnabled = false;
 
