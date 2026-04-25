@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using TelltaleToolKit;
 using TelltaleToolKit.Utility.Blowfish;
 using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
@@ -28,9 +31,20 @@ public partial class MainWindow : BaseProjectWindow
         
         InitializeComponent();
 
-        foreach (T3BlowfishKey key in Enum.GetValues<T3BlowfishKey>())
+        TttkInit.Init();
+
+        List<string> gameProfileKeys = Toolkit.Instance.GameProfiles.Keys.ToList();
+        
+        int _getYear(string gameName)
         {
-            GameDropdown.Items.Add(key.GetGameName());
+            return int.Parse(Regex.Match(Toolkit.Instance.GameProfiles[gameName].Id, "20[0-9]{2}").Value);
+        }
+        
+        gameProfileKeys.Sort((s, s1) => _getYear(s).CompareTo(_getYear(s1)));
+        
+        foreach (string gameProfileName in gameProfileKeys)
+        {
+            GameDropdown.Items.Add(gameProfileName);
         }
 
         if (App.StartupGame != null)
@@ -38,7 +52,7 @@ public partial class MainWindow : BaseProjectWindow
         else if (GameCache.HasValue)
             GameDropdown.SelectedIndex = GameCache.Value;
         else
-            GameDropdown.SelectedIndex = 79;
+            GameDropdown.SelectedIndex = 31;
 
         if (SingleArchivePathCache != null)
         {

@@ -30,8 +30,11 @@ public class TttkInit
         
         Toolkit.Initialize(config);
         
+        
 
     }
+
+    public static void Init() { Console.Out.WriteLine($"Trying to init Telltale Tool Kit! Instance: {Instance}"); }
 
 
 }

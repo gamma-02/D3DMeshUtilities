@@ -67,7 +67,7 @@
             
             
             <TextBlock Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">OR</TextBlock>
-            <Line Grid.Row="5" Stretch="Fill" Stroke="Black" VerticalAlignment="Bottom"></Line><!--X2="1"-->
+            <Line Grid.Row="5" Stretch="Fill" Stroke="Black" VerticalAlignment="Bottom"></Line>
             
             <Grid Grid.Row="5">
                 <Grid.ColumnDefinitions>
