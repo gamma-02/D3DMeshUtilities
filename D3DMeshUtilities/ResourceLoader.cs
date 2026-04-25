@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
-using D3DMeshUtilities.Code;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit;
 using TelltaleToolKit.Resource;
@@ -50,7 +49,7 @@ public class ResourceLoader
 
     }
 
-    public async Task<List<string>> LoadResourceContexts(Dispatcher dispatcher, string gameDataDir, string game)
+    public async Task<List<string>> LoadResourceContexts(CancellationTokenSource cts, string gameDataDir, string game)
     {
         
         if (TttkInit.Instance.Workspace == null || TttkInit.Instance.Workspace.GameName != game)
@@ -60,21 +59,37 @@ public class ResourceLoader
             
         }
 
-        var resdescs = Directory.EnumerateFiles(gameDataDir, "*.lua").Where((s) => !s.Contains("_version_"));
+        IEnumerable<string> resdescs = Directory.EnumerateFiles(gameDataDir, "*.lua").Where((s) => !s.Contains("_version_"));
 
         List<string> archives = [];
-        Contexts = new List<ResourceContext>();
+        Contexts = [];
         
-        foreach (var resdesc in resdescs)
+        foreach (string resdesc in resdescs)
         {
-            var rc = TttkInit.Instance.Workspace.LoadResourceDescription(resdesc);
+            ResourceContext? rc;
+            try
+            {
+                 rc = TttkInit.Instance.Workspace.LoadResourceDescription(resdesc);
+            }
+            catch (Exception)
+            {
+                cts.Cancel();
+                return [];
+            }
+                
+                
+            if (rc == null)
+            {
+                Console.WriteLine($"Got nil lua table value for resdesc: {resdesc}");
+                continue;
+            }
             
             Contexts.Add(rc);
             
             archives.AddRange(rc.Providers.Select((e) => (e is ArchiveProvider p) ? p.Path : "").ToArray());
         }
 
-        return archives.Where((s => !string.IsNullOrEmpty(s))).ToList();
+        return archives.Where(s => !string.IsNullOrEmpty(s)).ToList();
         
         
     }

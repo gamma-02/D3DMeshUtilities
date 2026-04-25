@@ -10,13 +10,13 @@ namespace D3DMeshUtilities;
 
 public abstract class BaseProjectWindow : Window
 {
-    public Action onOpened;
+    new public Action? Opened;
     
     public static Dictionary<Window, Func<BaseProjectWindow>> WindowConstructorMap =
         new Dictionary<Window, Func<BaseProjectWindow>>()
         {
             { Window.LoadResources, () => new MainWindow()/*{ OverriddenOwner = GetMainWindow() }*/ },
-            { Window.ListModels, () => new ArchiveModelList()/*{ OverriddenOwner = GetMainWindow() }*/ },
+            { Window.ListModels, () => new ArchiveModelList(true)/*{ OverriddenOwner = GetMainWindow() }*/ },
             { Window.ConvertModels, () => new Converting()/*{ OverriddenOwner = GetMainWindow() }*/ }
         };
     
@@ -29,7 +29,6 @@ public abstract class BaseProjectWindow : Window
 
     public static bool startedUp = false;
     private bool _activate = false;
-    
 
     protected static Avalonia.Controls.Window? GetMainWindow()
     {
@@ -68,19 +67,37 @@ public abstract class BaseProjectWindow : Window
 
         _activate = true;
         
-        onOpened?.Invoke();
+        Opened?.Invoke();
 
+    }
+
+    protected void CloseOnNewWindowOpened(BaseProjectWindow newWindow)
+    {
+        void _internalOnNewWindowOpened()
+        {
+            
+            if(_activate)
+                this.Hide();
+            else
+                this.Opened += Close;
+            
+            SetMainWindow(newWindow);
+
+            newWindow.SetOwner(null);
+
+            if (_activate)
+                this.Close();
+            
+            newWindow.Opened -= _internalOnNewWindowOpened;
+        }
+
+        newWindow.Opened += _internalOnNewWindowOpened;
     }
 
     public void Header_OnSelectionChanged(object? sender, SelectionChangedEventArgs selectionChangedEventArgs)
     {
-        
-        
-        // Console.WriteLine($"wahoooooo from SelectionChange, startedUp: {startedUp}");
-
         if (!_activate)
         {
-            // _activate = true;
             return;
         }
         
@@ -88,9 +105,9 @@ public abstract class BaseProjectWindow : Window
 
         if (!(control.SelectedItem is TabItem item)) return;
 
-        
-
         Enum.TryParse((item.Header as string)?.Replace(" ", ""), out BaseProjectWindow.Window window);
+
+        control.IsEnabled = false;
 
         Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
 
@@ -102,24 +119,10 @@ public abstract class BaseProjectWindow : Window
             c.SetModelsToConvert(list.GetModelsToConvert());
         }
         
-        newWindow.onOpened += OnNewWindowOpened;
-
-        void OnNewWindowOpened()
-        {
-            this.Hide();
-
-            SetMainWindow(newWindow);
-
-            newWindow.SetOwner(null);
+        CloseOnNewWindowOpened(newWindow);
         
-            this.Close();
-
-            newWindow.onOpened -= OnNewWindowOpened;
-
-        }
-
         newWindow.Show();
-        
+
 
         // Console.WriteLine(item.Header);
         // Console.Out.WriteLine(window);

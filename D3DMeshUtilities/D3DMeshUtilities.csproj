@@ -5,6 +5,8 @@
         <TargetFramework>net9.0-windows</TargetFramework>
         <!--        <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>-->
         <RuntimeIdentifiers Condition="'$(RuntimeIdentifier)' == ''">win-x64;linux-x64</RuntimeIdentifiers>
+        <DefineConstants Condition="$(RuntimeIdentifiers.Contains('win-x64')) Or '$(RuntimeIdentifier)' == 'win-x64'">$(DefineConstants);BUILT_FOR_WINDOWS</DefineConstants>
+
         <Nullable>enable</Nullable>
         <ImplFicitUsings>enable</ImplFicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -15,6 +17,10 @@
         <ApplicationIcon>Resources\d3dmeshutils-logo.ico</ApplicationIcon>
 
     </PropertyGroup>
+    
+    <Target Name="LogWindows" BeforeTargets="build" >
+        <Message Text="Compiling for windows!" Importance="high" Condition="$(RuntimeIdentifiers.Contains('win-x64')) Or '$(RuntimeIdentifier)' == 'win-x64'"/>
+    </Target>
 
     <ItemGroup>
         <Folder Include="bin\Debug\net9.0-windows\"/>

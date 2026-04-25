@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
 using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Scenes;
 using SharpGLTF.Schema2;
 using TelltaleToolKit;
+using TelltaleToolKit.Serialization.Binary;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Textures;
@@ -40,33 +42,27 @@ public class D3DMeshManager(List<string> file, string outputPath)
     
     //done: obj_skyGeneric (allowing for direct encoding of vertex positions)
     
-    //todo: make sure normals are actually being correct
+    //done: make sure normals are actually being correct
     
     //todo: why wasn't heavy mesh as table working?
 
     // public static MeshBuilder<VertexPositionNormal, VertexTexture1, VertexEmpty>? BoneMesh = null;
     
     public List<string> Files = file;
-
-    public void LoadMeshes()
+    
+    [Discardable]
+    public Task? LoadMeshes(Converting? convertingWindow = null)
     {
-        // if(!AsyncSerachForSkeletonFiles.BuiltDictionary)
-        // AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
-
-        // AsyncSerachForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance);
-        
-        // ReadMeshes.Clear();
 
         if (!Codecs.Registered)
         {
             Codecs.RegisterCodecs();
         }
         
-        
         if (!Directory.Exists(outputPath))
-            return;
+            return null;
 
-        foreach (var meshFile in Files)
+        foreach (string meshFile in Files)
         {
             Stream? stream = ResourceLoader.Instance.ExtractFile(meshFile);
 
@@ -79,7 +75,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
             if (stream.Position != 0)
                 stream.Position = 0;
 
-            D3DMesh? mesh = TttkInit.Instance.Workspace?.TryOpenObject<D3DMesh>(stream, out var config);
+            D3DMesh? mesh = TttkInit.Instance.Workspace?.TryOpenObject<D3DMesh>(stream, out MetaStreamConfiguration _);
 
             stream.Close();
 
@@ -87,8 +83,6 @@ public class D3DMeshManager(List<string> file, string outputPath)
             
             if (mesh == null)
                 continue;
-
-            // ReadMeshes.Add(mesh);
 
             MeshInfo info = new MeshInfo(mesh, meshFile);
 
@@ -102,39 +96,56 @@ public class D3DMeshManager(List<string> file, string outputPath)
             }
 
             bool succeeded = codec.Read(mesh, info, meshFile, out IMeshRepresentation? intermediateMesh);
-                // NormalModelIntermediate.Read(mesh, meshFile, out NormalModelIntermediate? intermediateMesh);
 
             if (!succeeded || intermediateMesh == null)
                 continue;
             
-            SceneBuilder scene = new SceneBuilder();
-
-            var rootNode = new NodeBuilder(meshFile.Remove(meshFile.Length - ".d3dmesh".Length));
-            
-            rootNode.WithLocalScale(new Vector3(10.0f));
-
-            if (!intermediateMesh.SaveToScene(scene, rootNode))
-            {
-                Console.Out.WriteLine("Failed to create mesh!");
-                
-                continue;
-            }
-            
-            // scene.AddRigidMesh(meshBuilder, rootNode);
-
-            ModelRoot root = scene.ToGltf2();
-            
             string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "glb"));
+            string meshName = meshFile.Remove(meshFile.Length - ".d3dmesh".Length);
 
-            root.SaveGLB(outPath);
+            convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Converted {meshName}"));
 
-            Console.Out.WriteLine($"Succeeded in converting {meshFile}! \n\tSaved at: {outPath}");
+            
+            Task t = Task.Run(() =>
+            {
+                SceneBuilder scene = new SceneBuilder();
+
+                var rootNode = new NodeBuilder(meshName);
+
+                rootNode.WithLocalScale(new Vector3(10.0f));
+
+                if (!intermediateMesh.SaveToScene(scene, rootNode))
+                {
+                    Console.Out.WriteLine("Failed to create mesh!");
+
+                    return;
+                }
+
+                ModelRoot root = scene.ToGltf2();
+
+                root.SaveGLB(outPath);
+                
+                Console.Out.WriteLine($"Succeeded in converting {meshFile}! \n    Saved at: {outPath}");
+
+                //todo: reduced debug info or something?
+                convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Saved {meshName}.glb to disk"));
+
+            });
+
+            if (Files[^1] == meshFile)
+            {
+                return t;
+            }
+
+
 
         }
 
+        return null;
+
     }
-    
-    #region old mesh loading
+
+#region old mesh loading
     // if (BoneMesh == null)
     // {
     //     //GLTF read bone mesh
@@ -420,7 +431,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
     //     
     // }
     //
-    #endregion
+#endregion
     
     public void SaveTexture(Handle<T3Texture>? textureHandle, Workspace workspace)
     {

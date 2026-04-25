@@ -19,7 +19,7 @@ public static class AsyncSearchForSkeletonFiles
     public const int NumSearchThreads = 2;
 
     public static Dictionary<ulong, PropertySet> AgentPropertiesByMeshFile = new Dictionary<ulong, PropertySet>();
-    private static bool BuiltDictionary = false;
+    public static bool BuiltDictionary { get; private set; }
 
     public static Lock AgentMeshDictionaryLock = new Lock();
 

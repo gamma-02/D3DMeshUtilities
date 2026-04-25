@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:ProcessContent="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="D3DMeshUtilities.MainWindow"
-        Title="MainWindow"
+        Title="D3DMeshUtilities"
         Closed="MainWindow_OnClosed"
         WindowStartupLocation="CenterOwner"
         Height="650" Width="800">
@@ -12,6 +12,10 @@
     <Window.Styles>
         <Style Selector="Grid">
             <!-- <Setter Property="Margin" Value="10 10"/> -->
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected Border">
+            <Setter Property="Background" Value="rgb(85, 113, 64)" />
         </Style>
     </Window.Styles>
     
@@ -91,11 +95,13 @@
             </Grid>
             
             <Grid Grid.Row="7" IsVisible="False" Name="ArchiveListGrid">
-                <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged" Background="#26282c" CornerRadius="5">
-                    <ListBoxItem>
-                        <TextBlock>Loading...</TextBlock>
-                    </ListBoxItem>
-                </ListBox>
+                <Border>
+                    <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged" Background="#26282c" CornerRadius="5">
+                        <ListBoxItem>
+                            <TextBlock>Loading...</TextBlock>
+                        </ListBoxItem>
+                    </ListBox>
+                </Border>
             </Grid>
             
             

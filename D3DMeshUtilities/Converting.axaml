@@ -4,9 +4,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="480"
         x:Class="D3DMeshUtilities.Converting"
-        Title="Converting"
+        Title="D3DMeshUtilities"
         WindowStartupLocation="CenterOwner"
         Width="800" Height="650">
+    
+    <Window.Styles>
+        <!-- <Style Selector="ListBoxItem"> -->
+        <!--     <Style.Resources> -->
+        <!--          -->
+        <!--     </Style.Resources> -->
+        <!-- </Style> -->
+        <Style Selector="ListBoxItem">
+            
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected Border">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </Window.Styles>
     <Grid Margin="10 10">
         <!-- <Grid.Resources> -->
         <!--     <Style> -->
@@ -20,6 +36,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
 
         </Grid.RowDefinitions>
         
@@ -40,7 +57,7 @@
             <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="16" Name="FilePath" > Folder to store output models
             </TextBox>
                 
-            <Button Grid.Column="1" FontSize="20" Click="OutFile_OnClick" Height="40"> Choose Output Folder </Button>
+            <Button Grid.Column="1" FontSize="20" Click="OutFile_OnClick" Height="40" Name="OutputFolderButton"> Choose Output Folder </Button>
         </Grid>
         
         
@@ -61,8 +78,28 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
                 
-            <Button Grid.Column="1" FontSize="20" Click="Back_OnClick" Height="40"> Back to Model Select </Button>
+            <Button Grid.Column="1" FontSize="20" Click="Back_OnClick" Height="40" Name="Back"> Back to Model Select </Button>
         </Grid>
+        
+        <Border Grid.Row="5" Background="#26282c" CornerRadius="5" Margin=" 5 10 15 10" Padding="10" Name="MessageBox" IsVisible="True">
+            <ListBox Name="MessageList" AutoScrollToSelectedItem="True" >
+                <ListBox.Styles>
+                    <!-- Target the Selected State in Template -->
+                    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                        <!-- Set Custom Selection Background -->
+                        <Setter Property="Background" Value="Transparent" />
+                        <!-- Set Custom Selection Foreground/Text Color -->
+                        <Setter Property="TextBlock.Foreground" Value="Transparent" />
+                    </Style>
+                </ListBox.Styles>
+                <!-- <ListBoxItem> -->
+                <!--     <TextBlock HorizontalAlignment="Left" FontSize="20"> -->
+                <!--         Converting... -->
+                <!--     </TextBlock> -->
+                <!-- </ListBoxItem> -->
+                
+            </ListBox>
+        </Border>
         
         
         <!-- <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="56">Converting... </TextBox> -->

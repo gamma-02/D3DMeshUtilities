@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
 
 namespace D3DMeshUtilities;
@@ -12,12 +15,76 @@ public partial class ArchiveModelList : BaseProjectWindow
 {
     public static readonly Dictionary<string, List<string>> ArchiveMeshListDictionary =
         new Dictionary<string, List<string>>();
-    
+
+    private bool _enableButton = true;
+
+    // public bool fromTab = true;
+
     public ArchiveModelList()
+    {
+        InitializeComponent();
+        
+        if (ArchiveMeshListDictionary.Count == 0)
+        {
+            ModelList.Items.Clear();
+            
+            
+            var li = new ListBoxItem();
+            var text = new TextBlock();
+
+            text.Text = "Archive not yet loaded";
+            text.FontSize = 20;
+            li.Content = text;
+            li.HorizontalAlignment = HorizontalAlignment.Center;
+
+            ModelList.Items.Add(li);
+
+            _enableButton = false;
+        }
+
+        _enableButton = false;
+
+        bool startupChooseModels = App.StartupChooseModels;
+        
+        if (startupChooseModels && App.StartupModels.Length > 0)
+        {
+            Dispatcher.InvokeAsync(ConvertInstantly);
+            return;
+        }
+        
+        Dispatcher.InvokeAsync(FillModelList);
+        
+        if (!startupChooseModels && App.StartupModels.Length > 0)
+        {
+            Dispatcher.InvokeAsync(SelectModels);
+        }
+
+
+    }
+    
+    public ArchiveModelList(bool fromTab = true)
     {
         InitializeComponent();
 
         // ModelList.SelectionMode = SelectionMode.Extended;
+
+        if (fromTab && ArchiveMeshListDictionary.Count == 0)
+        {
+            ModelList.Items.Clear();
+            
+            
+            var li = new ListBoxItem();
+            var text = new TextBlock();
+
+            text.Text = "Archive not yet loaded";
+            text.FontSize = 20;
+            li.Content = text;
+            li.HorizontalAlignment = HorizontalAlignment.Center;
+
+            ModelList.Items.Add(li);
+
+            _enableButton = false;
+        }
 
         bool startupChooseModels = App.StartupChooseModels;
         
@@ -81,7 +148,7 @@ public partial class ArchiveModelList : BaseProjectWindow
             ResourceLoader.ArchiveLocationLock.Enter();
             
             BeginConversion(App.StartupModels);
-            // Dispatcher.
+            
         }
         catch (Exception e)
         {
@@ -134,24 +201,34 @@ public partial class ArchiveModelList : BaseProjectWindow
                 
             }
 
-            Color one = Color.FromRgb(0x43, 0x43, 0x43);
-            Color two = Color.FromRgb(0x26, 0x28, 0x2C);
-            Brush backgroundA = new SolidColorBrush(one);
-            Brush backgroundB = new SolidColorBrush(two);
-            
-            for (int i = 0; i < ModelList.Items.Count; i++)
+            if (ArchiveMeshListDictionary.Count == 0 && _enableButton)
             {
-                var li = ModelList.Items[i] as ListBoxItem;
+                var li = new ListBoxItem();
+                var text = new TextBlock();
 
-                if (li == null)
-                    continue;
+                text.Text = "No models found!";
+                text.FontSize = 20;
+                li.Content = text;
+                li.HorizontalAlignment = HorizontalAlignment.Center;
 
-                if (i % 2 == 0)
-                    li.Background = backgroundB;
-                else
-                    li.Background = backgroundA;
-
+                ModelList.Items.Add(li);
             }
+
+            // Color one = Color.FromRgb(0x43, 0x43, 0x43);
+            // Color two = Color.FromRgb(0x26, 0x28, 0x2C);
+            // Brush backgroundA = new SolidColorBrush(one);
+            // Brush backgroundB = new SolidColorBrush(two);
+            //
+            // for (int i = 0; i < ModelList.Items.Count; i++)
+            // {
+            //     var li = ModelList.Items[i] as ListBoxItem;
+            //
+            //     if (li == null)
+            //         continue;
+            //
+            //     li.Background = (i % 2 == 0) ? backgroundB : backgroundA;
+            //
+            // }
         }
         finally
         {
@@ -161,9 +238,9 @@ public partial class ArchiveModelList : BaseProjectWindow
 
     void ModelList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        var selectedItems = ModelList.SelectedItems;
+        IList? selectedItems = ModelList.SelectedItems;
 
-        if (selectedItems.Count == 0)
+        if (selectedItems?.Count == 0 || !_enableButton)
         {
             ConvertButtonGrid.IsVisible = false;
         }

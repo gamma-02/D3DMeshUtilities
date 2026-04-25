@@ -95,7 +95,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         var meshData = mesh.MeshData;
     
         if(AsyncSearchForSkeletonFiles.BuildDictionaryTask != null && !AsyncSearchForSkeletonFiles.BuildDictionaryTask.IsCompleted)
-            AsyncSearchForSkeletonFiles.BuildDictionaryTask.GetAwaiter().GetResult();
+            AsyncSearchForSkeletonFiles.BuildDictionaryTask.GetAwaiter().GetResult(); //todo: what does this do exactly? am I just waiting twice?
     
         AsyncSearchForSkeletonFiles.AgentMeshDictionaryLock.Enter();
         

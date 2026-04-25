@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using D3DMeshUtilities.Code;
@@ -25,16 +30,21 @@ public partial class Converting : BaseProjectWindow
         _modelsToConvert = modelsToConvert;
         InitializeComponent();
         
+        if (_modelsToConvert.Count == 0)
+        {
+            MessageBox.IsVisible = true;
+            Console.Out.WriteLine("No models provided!");
+
+            AddMessageToBox("No models provided!");
+        }
+        
         if (string.IsNullOrWhiteSpace(App.StartupOutputDir)) return;
         FilePath.Text = App.StartupOutputDir;
 
         if (!App.StartupConvertModels) return;
         
-        D3DMeshManager manager = new D3DMeshManager(modelsToConvert, App.StartupOutputDir);
-
-        Dispatcher.InvokeAsync(manager.LoadMeshes);
-
-        // Console.Out.WriteLine("Read mesh data from ttarchive!");
+        Convert_OnClick(null, new RoutedEventArgs());
+        
         
     }
 
@@ -67,43 +77,92 @@ public partial class Converting : BaseProjectWindow
             
         if(!string.IsNullOrWhiteSpace(folder))
             FilePath.Text = folder;
-
-        // bool? result = dialouge.ShowDialog();
-
-        // if (dialouge.Count > 0)
-        // {
-        //     IStorageFolder file = dialouge[0];
-        //
-        //     FilePath.Text = file.TryGetLocalPath();
-        //
-        // }
     }
     
 
     private void Convert_OnClick(object? sender, RoutedEventArgs e)
     {
+        MessageBox.IsVisible = true;
 
         if (_modelsToConvert.Count == 0)
         {
             Console.Out.WriteLine("No models provided!");
-        }
 
+            AddMessageToBox("No models provided!");
+        }
+        
         if (string.IsNullOrWhiteSpace(FilePath.Text))
             return;
+
+        if (!Directory.Exists(FilePath.Text))
+        {
+            Console.Out.WriteLine($"Directory {FilePath.Text} not found!");
+            
+            AddMessageToBox("Directory not found!");
+
+            return;
+        }
         
         D3DMeshManager manager = new D3DMeshManager(_modelsToConvert, FilePath.Text);
 
-        manager.LoadMeshes();
+        SetImportantControlsEnabled( false);
 
-        Console.Out.WriteLine("Read mesh data from ttarchive!");
+        Task.Run(async () =>
+        {
+            Dispatcher.Invoke(() => AddMessageToBox("Converting..."));
+            await Task.Delay(100);
+            
+            manager.LoadMeshes(this)?
+                .GetAwaiter().OnCompleted(() => Dispatcher.Invoke(CompleteMeshLoad)); //lol
+
+            Console.Out.WriteLine("Read mesh data from ttarchive!");
+
+            //todo: some kind of a system to automatically hide the box if there's been no more messages for a while
+
+        });
+    }
+
+    private void CompleteMeshLoad()
+    {
+        AddMessageToBox("Done!");
+
+        SetImportantControlsEnabled(true);
+    }
+
+    private void SetImportantControlsEnabled(bool enabled)
+    {
+        ConvertButton.IsEnabled = enabled;
+        Header.IsEnabled = enabled;
+        OutputFolderButton.IsEnabled = enabled;
+        ConvertButton.IsEnabled = enabled;
+        Back.IsEnabled = false;
+
+    }
+
+    public void AddMessageToBox(string message)
+    {
+        TextBlock messageBlock = new TextBlock();
+        messageBlock.Text = message;
+        messageBlock.FontSize = 16;
+        messageBlock.HorizontalAlignment = HorizontalAlignment.Left;
+        messageBlock.Margin = new Thickness(5, 5, 5, 5);
+
+        ListBoxItem item = new();
+        item.Content = messageBlock;
+
+        MessageList.Items.Add(messageBlock);
+
+        MessageList.SelectedIndex = MessageList.Items.Count - 1;
+    }
+
+    public static void AddMessageToBox(string message, Converting converting)
+    {
+        converting.AddMessageToBox(message);
     }
 
     private void Back_OnClick(object sender, RoutedEventArgs e)
     {
-        ArchiveModelList list = new ArchiveModelList()
-        {
-            OverriddenOwner = this
-        };
+        ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
 
         list.Show();
 

@@ -8,7 +8,6 @@ using D3DMeshUtilities.Code.MeshHandling;
 using SharpGLTF.Materials;
 using SharpGLTF.Memory;
 using TelltaleToolKit;
-using TelltaleToolKit.Resource;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
