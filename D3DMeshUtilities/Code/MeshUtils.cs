@@ -487,7 +487,9 @@ public static class MeshUtils
         
         foreach (T3MeshMaterial mat in meshData.Materials)
         {
-            var materialName = mat.Material.ObjectInfo.ObjectName.Crc64.ToString();
+            bool? resolved = TttkInit.Instance.Workspace?.ResolveSymbol(mat.Material.ObjectInfo.ObjectName);
+            
+            var materialName = mat.Material.ObjectInfo.ObjectName.ToString();
             
             Console.WriteLine($"Getting Material: {materialName}");
 
@@ -519,7 +521,7 @@ public static class MeshUtils
             Handle<T3Texture>? specularMap = mesh.GetSpecularTexture(mat.Material);
             ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor);
             
-            //todo: detail texture, used for lines and stuff on models
+            //todo: detail map, used for lines and stuff on models
             // Handle<T3Texture>? detailMap = mesh.GetDetailTexture(mat.Material);
             // ProcessTexture(detailMap, TttkInit.Instance.Workspace!, mb, KnownChannel);
             
