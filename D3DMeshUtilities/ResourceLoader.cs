@@ -77,7 +77,6 @@ public class ResourceLoader
                 return [];
             }
                 
-                
             if (rc == null)
             {
                 Console.WriteLine($"Got nil lua table value for resdesc: {resdesc}");
@@ -96,25 +95,26 @@ public class ResourceLoader
 
     private async void LoadArchive()
     {
+        
         AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
         
         lock(ResourceLock)
         {
-            // Instance.CurrentArchive = TttkInit.Instance.Workspace?.LoadArchive(_archiveLocation, debugPrint: true);
-            // Instance.ArchiveContext = TttkInit.Instance.Workspace?.LoadArchive(_archiveLocation, "Current Archive");
-
             if (Contexts == null)
                 Contexts = new List<ResourceContext>();
-            else
+            else if (Contexts.Count != 0)
                 return;
 
             Instance.ArchiveContext = TttkInit.Instance.Workspace?.LoadArchive(ArchiveLocation, "Current Archive");
 
             if (Instance.ArchiveContext != null)
                 Contexts.Add(Instance.ArchiveContext);
-
+            
             ArchiveLocationLock.Exit();
+
         }
+        
+
         
 
     }
@@ -136,10 +136,14 @@ public class ResourceLoader
     {
         lock(ResourceLock)
         {
+            ArchiveLocationLock.Enter();
+            
             ResourceContext? ctx = GetContextWithArchive(archivePath);
 
             if (ctx == null)
                 return [];
+            
+            ArchiveLocationLock.Exit();
 
             return ctx.GetAllEntries();
         }
