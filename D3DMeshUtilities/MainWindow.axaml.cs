@@ -18,6 +18,11 @@ namespace D3DMeshUtilities;
 
 public partial class MainWindow : BaseProjectWindow
 {
+    private static readonly Dictionary<string, int> EXTRA_GAME_YEARS = new Dictionary<string, int>()
+    {
+        { "The Walking Dead", 2012 }
+    };
+    
     public static int? GameCache;
     public static string? SingleArchivePathCache;
     public static string? GameDataDirectoryCache;
@@ -37,6 +42,11 @@ public partial class MainWindow : BaseProjectWindow
         
         int _getYear(string gameName)
         {
+            if (EXTRA_GAME_YEARS.ContainsKey(gameName))
+            {
+                return EXTRA_GAME_YEARS[gameName];
+            }
+            
             return int.Parse(Regex.Match(Toolkit.Instance.GameProfiles[gameName].Id, "20[0-9]{2}").Value);
         }
         
@@ -52,7 +62,7 @@ public partial class MainWindow : BaseProjectWindow
         else if (GameCache.HasValue)
             GameDropdown.SelectedIndex = GameCache.Value;
         else
-            GameDropdown.SelectedIndex = 31;
+            GameDropdown.SelectedIndex = 32;
 
         if (SingleArchivePathCache != null)
         {
