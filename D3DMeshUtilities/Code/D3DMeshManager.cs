@@ -64,6 +64,10 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
         foreach (string meshFile in Files)
         {
+            string meshName = meshFile.Remove(meshFile.Length - ".d3dmesh".Length);
+
+            
+            Profiler.Instance.BeginFrame($"{meshName} conversion");
             Stream? stream = ResourceLoader.Instance.ExtractFile(meshFile);
 
             if (stream == null)
@@ -97,17 +101,22 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             bool succeeded = codec.Read(mesh, info, meshFile, out IMeshRepresentation? intermediateMesh);
 
+            Profiler.Instance.EndFrame(out TimeSpan convertDuration); //end convert frame
+
             if (!succeeded || intermediateMesh == null)
                 continue;
             
             string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "glb"));
-            string meshName = meshFile.Remove(meshFile.Length - ".d3dmesh".Length);
-
+            
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine($"Converting {meshName} took: " + convertDuration); 
+            Console.ResetColor();
+            
             convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Converted {meshName}"));
-
             
             Task t = Task.Run(() =>
             {
+                var saveStartTime = DateTime.Now; //begin save frame
                 SceneBuilder scene = new SceneBuilder();
 
                 var rootNode = new NodeBuilder(meshName);
@@ -124,11 +133,17 @@ public class D3DMeshManager(List<string> file, string outputPath)
                 ModelRoot root = scene.ToGltf2();
 
                 root.SaveGLB(outPath);
+
+                var saveEndTime = DateTime.Now; //end save frame
                 
-                Console.Out.WriteLine($"Succeeded in converting {meshFile}! \n    Saved at: {outPath}");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Out.WriteLine($"Succeeded in converting {meshFile}! \r\n\tSaved at: {outPath}");
+                Console.ResetColor();
 
                 //todo: reduced debug info or something?
                 convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Saved {meshName}.glb to disk"));
+                
+                Console.Out.WriteLine($"\tSaving {meshName} took: " + saveEndTime.Subtract(saveStartTime));
 
             });
 

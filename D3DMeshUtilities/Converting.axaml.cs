@@ -13,6 +13,7 @@ namespace D3DMeshUtilities;
 
 public partial class Converting : BaseProjectWindow
 {
+    
     public List<string> ModelsToConvert
     {
         get => _modelsToConvert;
@@ -109,6 +110,7 @@ public partial class Converting : BaseProjectWindow
             Dispatcher.Invoke(() => AddMessageToBox("Converting..."));
             await Task.Delay(100);
             
+            Profiler.Instance.BeginFrame("Convert Task");
             manager.LoadMeshes(this)?
                 .GetAwaiter().OnCompleted(() => Dispatcher.Invoke(CompleteMeshLoad)); //lol
 
@@ -121,12 +123,17 @@ public partial class Converting : BaseProjectWindow
 
     private void CompleteMeshLoad()
     {
+        Profiler.Instance.EndFrame(out TimeSpan length);
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.WriteLine("Converting task took: " + length);
+        Console.ResetColor();
+        
         AddMessageToBox("Done!");
 
         SetImportantControlsEnabled(true);
 
         if (App.QuitAfterConvert)
-        {
+        { 
             Console.WriteLine("Automatically Exiting!");
             Dispatcher.Invoke(() => Environment.Exit(1));
         }

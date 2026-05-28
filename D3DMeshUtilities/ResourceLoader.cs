@@ -51,7 +51,7 @@ public class ResourceLoader
 
     public async Task<List<string>> LoadResourceContexts(CancellationTokenSource cts, string gameDataDir, string game)
     {
-        
+        Profiler.Instance.BeginFrame("Resource Loading");
         if (TttkInit.Instance.Workspace == null || TttkInit.Instance.Workspace.GameName != game)
         {
             TttkInit.Instance.Workspace = Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
@@ -88,6 +88,12 @@ public class ResourceLoader
             archives.AddRange(rc.Providers.Select((e) => (e is ArchiveProvider p) ? p.Path : "").ToArray());
         }
 
+        Profiler.Instance.EndFrame(out TimeSpan length);
+        
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.Out.WriteLine("\tLoading game resources took: " + length);
+        Console.ResetColor();
+        
         return archives.Where(s => !string.IsNullOrEmpty(s)).ToList();
         
         
@@ -95,7 +101,8 @@ public class ResourceLoader
 
     private async void LoadArchive()
     {
-        
+        // var startLoadTime = DateTime.Now;
+        Profiler.Instance.BeginFrame("Resource load");
         AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
         
         lock(ResourceLock)
@@ -114,8 +121,11 @@ public class ResourceLoader
 
         }
         
-
+        Profiler.Instance.EndFrame(out TimeSpan length);
         
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.Out.WriteLine("\tLoading game resources took: " + length);
+        Console.ResetColor();
 
     }
 

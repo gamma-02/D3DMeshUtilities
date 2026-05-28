@@ -130,10 +130,15 @@ public class NormalModelIntermediate : IMeshRepresentation
                 tangentsList![vertexIndex] = Vector4.Normalize(tangentsList[vertexIndex]);
 
         }
-        
-        // List<MaterialBuilder> materials = [];
-        MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials); //todo: FFix onl inux!
 
+        Profiler.Instance.BeginFrame("Material processing");
+        MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
+        Profiler.Instance.EndFrame(out TimeSpan materialDuration);
+        
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.Out.WriteLine("\tMesh material processing took: " + materialDuration);
+        Console.ResetColor();
+        
         readMesh = new NormalModelIntermediate(info, vertexPositions, normals, tangentsList,
             textureCoords, [indexList], materials, meshData.LODs);
 
