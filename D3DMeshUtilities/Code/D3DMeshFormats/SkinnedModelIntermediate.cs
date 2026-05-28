@@ -213,7 +213,14 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         }
     
         // List<MaterialBuilder> materials = [];
+        Profiler.Instance.BeginFrame("Material processing");
         MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
+        Profiler.Instance.EndFrame(out TimeSpan materialDuration);
+        
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.Out.WriteLine("\tMesh material processing took: " + materialDuration);
+        Console.ResetColor();
+
 
         foreach (T3MeshBoneEntry bone in meshData.Bones)
         {

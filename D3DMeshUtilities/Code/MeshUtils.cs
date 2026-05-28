@@ -489,9 +489,12 @@ public static class MeshUtils
         {
             bool? resolved = TttkInit.Instance.Workspace?.ResolveSymbol(mat.Material.ObjectInfo.ObjectName);
             
+            Profiler.Instance.BeginFrame($"Material {mat.Material.ObjectInfo.ObjectName} processing");
+            
             var materialName = mat.Material.ObjectInfo.ObjectName.ToString();
             
             Console.WriteLine($"Getting Material: {materialName}");
+            
 
             bool doubleSided = true;
 
@@ -525,6 +528,7 @@ public static class MeshUtils
             // Handle<T3Texture>? detailMap = mesh.GetDetailTexture(mat.Material);
             // ProcessTexture(detailMap, TttkInit.Instance.Workspace!, mb, KnownChannel);
             
+            Profiler.Instance.EndFrame();
             materials.Add(mb);
         }
     }
@@ -542,6 +546,8 @@ public static class MeshUtils
         
         if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("normalxy_000.d3dtx") && channel == KnownChannel.Normal) return;
         if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("color_000.d3dtx")) return;
+        
+        Profiler.Instance.BeginFrame($"{textureHandle.ObjectInfo.ObjectName} processing");
 
         Stream? file;
         lock(ResourceLoader.ResourceLock)
@@ -589,10 +595,11 @@ public static class MeshUtils
 
         mb.WithChannelImage(channel, image);
         mb.AlphaMode = AlphaMode.MASK;
-        
+
         Console.Out.WriteLine("Loaded texture: " + textureHandle.ObjectInfo.ObjectName);
         
         File.Delete(tempFile);
+        Profiler.Instance.EndFrame();
     }
     #endregion
     

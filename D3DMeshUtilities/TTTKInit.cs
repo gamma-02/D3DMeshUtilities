@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using TelltaleToolKit;
 using Path = System.IO.Path;
@@ -29,6 +30,11 @@ public class TttkInit
         
         config.DataFolder = DataDir;
         Console.Out.WriteLine($"Looking for Telltale Tool Kit data directory at {DataDir}");
+
+        if (!Directory.Exists(DataDir))
+        {
+            Console.Out.WriteLine("Could not find data directory!");
+        }
         
         Toolkit.Initialize(config);
         

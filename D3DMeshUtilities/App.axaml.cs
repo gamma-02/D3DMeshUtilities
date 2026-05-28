@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Text;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -104,6 +106,17 @@ public class App : Application
             {
                 QuitAfterConvert = true;
             }
+            else if (arg.StartsWith("-profileOut=") || arg.StartsWith("-po="))
+            {
+                PrintProfilerOutput = true;
+                
+                if (arg.Contains("print") && arg.Length is 17 or 9)
+                    continue;
+
+                int prefixLen = arg.StartsWith("-profileOut=") ? 12 : 4;
+
+                ProfilerOutputFile = arg.Substring(prefixLen);
+            }
         }
     }
 
@@ -176,6 +189,9 @@ public class App : Application
         set; 
     } = true;
 
+    public static bool PrintProfilerOutput = false;
+    public static string? ProfilerOutputFile = null;
+
     public static bool QuitAfterConvert { get; set; }
 
     public static void App_OnExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
@@ -183,6 +199,23 @@ public class App : Application
 #if BUILT_FOR_WINDOWS
         FreeConsole();
 #endif
+
+        if (!PrintProfilerOutput) return;
         
+        string profilerOutput = Profiler.Instance.GetResults();
+
+        if (string.IsNullOrWhiteSpace(ProfilerOutputFile))
+        {
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Out.WriteLine(profilerOutput);
+            Console.ResetColor();
+                
+        }
+        else
+        {
+            File.WriteAllBytes(ProfilerOutputFile!, Encoding.UTF8.GetBytes(profilerOutput));
+        }
+
     }
 }

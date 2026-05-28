@@ -110,9 +110,10 @@ public static class AsyncSearchForSkeletonFiles
             if (BuiltDictionary)
                 return;
 
-
+            Profiler.Instance.BeginFrame("Skeleton search");
             IEnumerable<TelltaleFileEntry> skeletonEntries = [];
             IEnumerable<TelltaleFileEntry> otherOne = [];
+            
 
             foreach (ResourceContext rc in archive.Contexts!)
             {
@@ -120,21 +121,25 @@ public static class AsyncSearchForSkeletonFiles
                 otherOne = otherOne.Concat(rc.GetAllEntries());
             }
 
-            HashSet<ulong> skeletons = AsyncSearchForSkeletonFiles.FindSkeletons(skeletonEntries);
+            HashSet<ulong> skeletons = FindSkeletons(skeletonEntries);
 
-            var propFiles = AsyncSearchForSkeletonFiles.GetPropFiles(otherOne);
+            var propFiles = GetPropFiles(otherOne);
 
             var propSets =
-                AsyncSearchForSkeletonFiles.GetPropertySetsFromPropFiles(propFiles, TttkInit.Instance.Workspace);
+                GetPropertySetsFromPropFiles(propFiles, TttkInit.Instance.Workspace);
 
             var skeletonProperties =
-                AsyncSearchForSkeletonFiles.GetPropertySetsReferencingSkeletonFiles(propSets, skeletons);
+                GetPropertySetsReferencingSkeletonFiles(propSets, skeletons);
 
-            AsyncSearchForSkeletonFiles.FillAgentMeshProperties(skeletonProperties);
+            FillAgentMeshProperties(skeletonProperties);
+            Profiler.Instance.EndFrame(out TimeSpan length);
 
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Out.WriteLine("\tFinished building skeleton dictionary, took: " + length);
+            Console.ResetColor();
+            
             BuiltDictionary = true;
-
-
+            
         }
         catch (Exception e)
         {
