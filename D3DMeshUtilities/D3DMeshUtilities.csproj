@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <!--        <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>-->
         <IsLinux>$([MSBuild]::IsOSPlatform('Linux'))</IsLinux>
         <RuntimeIdentifiers Condition="'$(RuntimeIdentifier)' == ''">win-x64;linux-x64</RuntimeIdentifiers>
@@ -67,59 +67,42 @@
     </ItemGroup>
 
 
-    <Target Name="CopyOverDataBuild" AfterTargets="AfterBuild"><!-- BeforeTargets="Publish">-->
+<!--    <Target Name="CopyOverDataBuild" AfterTargets="AfterBuild">&lt;!&ndash; BeforeTargets="Publish">&ndash;&gt;-->
 
-        <Message Text="Copied data directory!" Importance="high"/>
-        <Message Text="MSBuild dir: $(MSBuildProjectDirectory)" Importance="high"/>
-        <Message Text="Target dir: $(TargetDir)" Importance="high"/>
-        <Message Text="Output Path: $(OutputPath)" Importance="high"/>
-
-        <ItemGroup>
-            <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*"/>
-            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/**/*.*"/>
-        </ItemGroup>
-
-        <Copy
-                SourceFiles="@(SourceFiles)"
-                DestinationFolder="$(TargetDir)data/%(RecursiveDir)"
-                SkipUnchangedFiles="False"
-        />
-
-    </Target>
-
-<!--    <Target Name="CopyOverResourcesOnBuild" AfterTargets="AfterBuild">&lt;!&ndash; BeforeTargets="Publish">&ndash;&gt;-->
-
-<!--        <Message Text="Copied Resources directory!" Importance="high"/>-->
+<!--        <Message Text="Copied data directory!" Importance="high"/>-->
+<!--        <Message Text="MSBuild dir: $(MSBuildProjectDirectory)" Importance="high"/>-->
+<!--        <Message Text="Target dir: $(TargetDir)" Importance="high"/>-->
+<!--        <Message Text="Output Path: $(OutputPath)" Importance="high"/>-->
 
 <!--        <ItemGroup>-->
-<!--            &lt;!&ndash;            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/**/*.*" />&ndash;&gt;-->
-<!--            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/*.*"/>-->
+<!--            <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*"/>-->
+<!--            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/**/*.*"/>-->
 <!--        </ItemGroup>-->
 
 <!--        <Copy-->
 <!--                SourceFiles="@(SourceFiles)"-->
-<!--                DestinationFolder="$(TargetDir)Resources/%(RecursiveDir)"-->
+<!--                DestinationFolder="$(TargetDir)data/%(RecursiveDir)"-->
 <!--                SkipUnchangedFiles="False"-->
 <!--        />-->
 
 <!--    </Target>-->
 
-    <Target Name="CopyOverData" AfterTargets="Publish">
+<!--    <Target Name="CopyOverData" AfterTargets="Publish">-->
 
-        <Message Text="Copied data directory into publish directory!" Importance="high"/>
-        <Message Text="MSBuild dir: $(MSBuildProjectDirectory)"/>
-        <Message Text="Publish dir: $(PublishDir)" Importance="high"/>
+<!--        <Message Text="Copied data directory into publish directory!" Importance="high"/>-->
+<!--        <Message Text="MSBuild dir: $(MSBuildProjectDirectory)"/>-->
+<!--        <Message Text="Publish dir: $(PublishDir)" Importance="high"/>-->
 
-        <ItemGroup>
-            <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*"/>
-        </ItemGroup>
+<!--        <ItemGroup>-->
+<!--            <SourceFiles Include="$(MSBuildProjectDirectory)\..\TelltaleToolKit-Contribs\data/**/*.*"/>-->
+<!--        </ItemGroup>-->
 
-        <Copy
-                SourceFiles="@(SourceFiles)"
-                DestinationFolder="$(PublishDir)data/%(RecursiveDir)"
-                SkipUnchangedFiles="False"
-        />
+<!--        <Copy-->
+<!--                SourceFiles="@(SourceFiles)"-->
+<!--                DestinationFolder="$(PublishDir)data/%(RecursiveDir)"-->
+<!--                SkipUnchangedFiles="False"-->
+<!--        />-->
 
-    </Target>
+<!--    </Target>-->
 
 </Project>

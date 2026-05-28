@@ -24,27 +24,27 @@ public static class AsyncSearchForSkeletonFiles
 
     public static Task? BuildDictionaryTask = null;
 
-    public static HashSet<ulong> FindSkeletons(IEnumerable<TelltaleFileEntry> entries)
+    public static HashSet<ulong> FindSkeletons(IEnumerable<ResourceEntry> entries)
     {
-        return entries.Where(entry => entry.Name.EndsWith("skl")).Select(fe => fe.Crc64).ToHashSet();
+        return entries.Where(entry => entry.Name.EndsWith("skl")).Select(fe => fe.NameCrc).ToHashSet();
     }
 
 
-    public static IEnumerable<TelltaleFileEntry> GetPropFiles(IEnumerable<TelltaleFileEntry> entries)
+    public static IEnumerable<ResourceEntry> GetPropFiles(IEnumerable<ResourceEntry> entries)
     {
         return entries.Where(entry => entry.Name.EndsWith("prop"));
     }
 
-    public static IEnumerable<PropertySet> GetPropertySetsFromPropFiles(IEnumerable<TelltaleFileEntry> props, Workspace? w)
+    public static IEnumerable<PropertySet> GetPropertySetsFromPropFiles(IEnumerable<ResourceEntry> props, Workspace? w)
     {
-        w ??= TttkInit.Instance.Workspace;
+        w ??= TttkInit.Workspace;
 
         if (w == null)
             return [];
         
         return props
-            .Where(fe => w.ContainsFile(fe.Crc64))
-            .Select(fe => w.LoadAsset<PropertySet>(fe.Crc64))
+            .Where(fe => w.ContainsFile(fe.NameCrc))
+            .Select(fe => w.LoadAsset<PropertySet>(fe.NameCrc))
             .Where(ps => ps != null)
             .Select(ps => ps!);
     }
@@ -71,9 +71,9 @@ public static class AsyncSearchForSkeletonFiles
             {
 
                 //resolve all of the property set stuff
-                if (TttkInit.Instance.Workspace != null)
+                if (TttkInit.Workspace != null)
                 {
-                    TttkInit.Instance.Workspace!.ResolveSymbols(set.Properties.Keys);
+                    TttkInit.Workspace!.ResolveSymbols(set.Properties.Keys);
                 }
 
                 Handle<D3DMesh>? meshHandle = set.GetProperty<Handle<D3DMesh>>("D3D Mesh");
@@ -111,9 +111,8 @@ public static class AsyncSearchForSkeletonFiles
                 return;
 
             Profiler.Instance.BeginFrame("Skeleton search", out Profiler.ProfilerFrame sklSearchFrame);
-            IEnumerable<TelltaleFileEntry> skeletonEntries = [];
-            IEnumerable<TelltaleFileEntry> otherOne = [];
-            
+            IEnumerable<ResourceEntry> skeletonEntries = [];
+            IEnumerable<ResourceEntry> otherOne = [];
 
             foreach (ResourceContext rc in archive.Contexts!)
             {
@@ -126,7 +125,8 @@ public static class AsyncSearchForSkeletonFiles
             var propFiles = GetPropFiles(otherOne);
 
             var propSets =
-                GetPropertySetsFromPropFiles(propFiles, TttkInit.Instance.Workspace);
+                GetPropertySetsFromPropFiles(propFiles, TttkInit.Workspace);
+
 
             var skeletonProperties =
                 GetPropertySetsReferencingSkeletonFiles(propSets, skeletons);

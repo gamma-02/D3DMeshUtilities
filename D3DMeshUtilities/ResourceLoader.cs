@@ -38,7 +38,7 @@ public class ResourceLoader
     public void LoadArchive(Dispatcher dispatcher, string archiveLocation, string game)
     {
 
-        TttkInit.Instance.Workspace ??= Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
+        TttkInit.Workspace ??= Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
             game);
 
         ArchiveLocation = archiveLocation;
@@ -53,14 +53,14 @@ public class ResourceLoader
     {
         Profiler.Instance.BeginFrame("Resource Loading", out Profiler.ProfilerFrame loadFrame);
         
-        if (TttkInit.Instance.Workspace == null || TttkInit.Instance.Workspace.GameName != game)
+        if (TttkInit.Workspace == null || TttkInit.Workspace.GameName != game)
         {
-            TttkInit.Instance.Workspace = Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
+            TttkInit.Workspace = Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
                 game);
             
         }
 
-        IEnumerable<string> resdescs = Directory.EnumerateFiles(gameDataDir, "*.lua").Where((s) => !s.Contains("_version_"));
+        IEnumerable<string> resdescs = Directory.EnumerateFiles(gameDataDir, "_res*.lua").Where((s) => !s.Contains("_version_"));
 
         List<string> archives = [];
         Contexts = [];
@@ -70,7 +70,7 @@ public class ResourceLoader
             ResourceContext? rc;
             try
             {
-                 rc = TttkInit.Instance.Workspace.LoadResourceDescription(resdesc);
+                 rc = await TttkInit.Workspace.LoadResourceDescriptionAsync(resdesc);
             }
             catch (Exception)
             {
@@ -122,7 +122,7 @@ public class ResourceLoader
                 return;
             }
 
-            Instance.ArchiveContext = TttkInit.Instance.Workspace?.LoadArchive(ArchiveLocation, "Current Archive");
+            Instance.ArchiveContext = TttkInit.Workspace?.LoadArchive(ArchiveLocation, "Current Archive");
 
             if (Instance.ArchiveContext != null)
                 Contexts.Add(Instance.ArchiveContext);
@@ -152,7 +152,7 @@ public class ResourceLoader
             ).First();
     }
     
-    public IEnumerable<TelltaleFileEntry> GetEntriesInArchive(string archivePath)
+    public IEnumerable<ResourceEntry> GetEntriesInArchive(string archivePath)
     {
         lock(ResourceLock)
         {
@@ -173,11 +173,11 @@ public class ResourceLoader
     {
         lock(ResourceLock)
         {
-            return TttkInit.Instance.Workspace?.ExtractFile(file);
+            return TttkInit.Workspace?.ExtractFile(file);
         }
     }
 
-    public IEnumerable<TelltaleFileEntry> GetEntriesInCurrentArchive()
+    public IEnumerable<ResourceEntry> GetEntriesInCurrentArchive()
     {
         lock(ResourceLock)
         {

@@ -63,7 +63,7 @@ public partial class MainWindow : BaseProjectWindow
         else if (GameCache.HasValue)
             GameDropdown.SelectedIndex = GameCache.Value;
         else
-            GameDropdown.SelectedIndex = 32;
+            GameDropdown.SelectedIndex = GameDropdown.Items.IndexOf("Poker Night at the Inventory Remastered");
 
         if (SingleArchivePathCache != null)
         {
