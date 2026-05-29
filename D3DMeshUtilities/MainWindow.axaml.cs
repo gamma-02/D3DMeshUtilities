@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using ICSharpCode.SharpZipLib.Core;
 using TelltaleToolKit;
 using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
@@ -217,7 +218,12 @@ public partial class MainWindow : BaseProjectWindow
 
     private void OpenArchive_OnClick(object sender, RoutedEventArgs e)
     {
-        if (!File.Exists(filePath.Text))
+        if (string.IsNullOrEmpty(filePath.Text))
+            return;
+
+        string fullPath = Path.GetFullPath(filePath.Text);
+        
+        if (!File.Exists(fullPath))
             return;
 
         ResourceLoader.Instance.LoadArchive(Dispatcher, filePath.Text, GameDropdown.Text!);
@@ -246,7 +252,12 @@ public partial class MainWindow : BaseProjectWindow
     {
         try
         {
-            if (!Directory.Exists(GameDataPath.Text))
+            if (string.IsNullOrEmpty(GameDataPath.Text))
+                return;
+
+            string fullPath = Path.GetFullPath(GameDataPath.Text);
+            
+            if (!Directory.Exists(fullPath))
                 return;
 
             ArchiveListGrid.IsVisible = true;
@@ -256,7 +267,7 @@ public partial class MainWindow : BaseProjectWindow
 
             var cts = new CancellationTokenSource();
 
-            Task<List<string>> pathTask = ResourceLoader.Instance.LoadResourceContexts(cts, GameDataPath.Text, GameDropdown.Text!);
+            Task<List<string>> pathTask = ResourceLoader.Instance.LoadResourceContexts(cts, fullPath, GameDropdown.Text!);
 
             await pathTask;
 
