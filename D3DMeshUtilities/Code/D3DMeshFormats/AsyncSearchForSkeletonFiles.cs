@@ -110,7 +110,7 @@ public static class AsyncSearchForSkeletonFiles
             if (BuiltDictionary)
                 return;
 
-            Profiler.Instance.BeginFrame("Skeleton search");
+            Profiler.Instance.BeginFrame("Skeleton search", out Profiler.ProfilerFrame sklSearchFrame);
             IEnumerable<TelltaleFileEntry> skeletonEntries = [];
             IEnumerable<TelltaleFileEntry> otherOne = [];
             
@@ -132,7 +132,7 @@ public static class AsyncSearchForSkeletonFiles
                 GetPropertySetsReferencingSkeletonFiles(propSets, skeletons);
 
             FillAgentMeshProperties(skeletonProperties);
-            Profiler.Instance.EndFrame(out TimeSpan length);
+            Profiler.Instance.EndFrame(sklSearchFrame, out TimeSpan length);
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Out.WriteLine("\tFinished building skeleton dictionary, took: " + length);

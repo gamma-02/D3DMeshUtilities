@@ -110,7 +110,6 @@ public partial class Converting : BaseProjectWindow
             Dispatcher.Invoke(() => AddMessageToBox("Converting..."));
             await Task.Delay(100);
             
-            Profiler.Instance.BeginFrame("Convert Task");
             manager.LoadMeshes(this)?
                 .GetAwaiter().OnCompleted(() => Dispatcher.Invoke(CompleteMeshLoad)); //lol
 
@@ -123,14 +122,16 @@ public partial class Converting : BaseProjectWindow
 
     private void CompleteMeshLoad()
     {
-        Profiler.Instance.EndFrame(out TimeSpan length);
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
-        Console.WriteLine("Converting task took: " + length);
-        Console.ResetColor();
         
         AddMessageToBox("Done!");
 
         SetImportantControlsEnabled(true);
+
+        if (App.DumpOnConversionComplete)
+        {
+            App.DumpProfiler();
+            
+        }
 
         if (App.QuitAfterConvert)
         { 

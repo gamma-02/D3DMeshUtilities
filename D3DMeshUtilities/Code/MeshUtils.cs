@@ -480,16 +480,17 @@ public static class MeshUtils
     }
 
 
-    public static void GetMaterials(D3DMesh mesh, MeshInfo info, out List<MaterialBuilder> materials)
+    public static void GetMaterials(D3DMesh mesh, MeshInfo info, Profiler.ProfilerFrame parent,
+        out List<MaterialBuilder> materials)
     {
         T3MeshData meshData = mesh.MeshData;
         materials = new List<MaterialBuilder>();
         
         foreach (T3MeshMaterial mat in meshData.Materials)
         {
-            bool? resolved = TttkInit.Instance.Workspace?.ResolveSymbol(mat.Material.ObjectInfo.ObjectName);
+            TttkInit.Instance.Workspace?.ResolveSymbol(mat.Material.ObjectInfo.ObjectName);
             
-            Profiler.Instance.BeginFrame($"Material {mat.Material.ObjectInfo.ObjectName} processing");
+            Profiler.Instance.BeginFrame($"Material {mat.Material.ObjectInfo.ObjectName} processing", parent, out Profiler.ProfilerFrame materialInstanceFrame);
             
             var materialName = mat.Material.ObjectInfo.ObjectName.ToString();
             
@@ -516,19 +517,19 @@ public static class MeshUtils
             var mb = new MaterialBuilder(materialName).WithDoubleSide(doubleSided);
 
             Handle<T3Texture>? materialBaseColor = mesh.GetDiffuseTexture(mat.Material);
-            ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor);
+            ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor, materialInstanceFrame);
 
             Handle<T3Texture>? normalMap = mesh.GetNormalMapTexture(mat.Material);
-            ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal);
+            ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal, materialInstanceFrame);
 
             Handle<T3Texture>? specularMap = mesh.GetSpecularTexture(mat.Material);
-            ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor);
+            ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor, materialInstanceFrame);
             
             //todo: detail map, used for lines and stuff on models
             // Handle<T3Texture>? detailMap = mesh.GetDetailTexture(mat.Material);
             // ProcessTexture(detailMap, TttkInit.Instance.Workspace!, mb, KnownChannel);
             
-            Profiler.Instance.EndFrame();
+            Profiler.Instance.EndFrame(materialInstanceFrame);
             materials.Add(mb);
         }
     }
@@ -539,7 +540,8 @@ public static class MeshUtils
     #region Textures
 
 
-    public static void ProcessTexture(Handle<T3Texture>? textureHandle, Workspace workspace, MaterialBuilder mb, KnownChannel channel)
+    public static void ProcessTexture(Handle<T3Texture>? textureHandle, Workspace workspace, MaterialBuilder mb,
+        KnownChannel channel, Profiler.ProfilerFrame parent)
     {
         //Make sure the texture exists :D
         if (textureHandle == null || !workspace.ResolveSymbol(textureHandle.ObjectInfo.ObjectName)) return;
@@ -547,7 +549,7 @@ public static class MeshUtils
         if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("normalxy_000.d3dtx") && channel == KnownChannel.Normal) return;
         if (textureHandle.ObjectInfo.ObjectName.ToString().Contains("color_000.d3dtx")) return;
         
-        Profiler.Instance.BeginFrame($"{textureHandle.ObjectInfo.ObjectName} processing");
+        Profiler.Instance.BeginFrame($"{textureHandle.ObjectInfo.ObjectName} processing", parent, out Profiler.ProfilerFrame textureFrame);
 
         Stream? file;
         lock(ResourceLoader.ResourceLock)
@@ -599,7 +601,7 @@ public static class MeshUtils
         Console.Out.WriteLine("Loaded texture: " + textureHandle.ObjectInfo.ObjectName);
         
         File.Delete(tempFile);
-        Profiler.Instance.EndFrame();
+        Profiler.Instance.EndFrame(textureFrame);
     }
     #endregion
     

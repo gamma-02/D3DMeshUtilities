@@ -31,9 +31,10 @@ public static class Codecs
 
 public class NormalIntermediateCodec : IMeshCodec
 {
-    public bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out IMeshRepresentation? readMesh)
+    public bool Read(D3DMesh mesh, MeshInfo info, string meshFile, Profiler.ProfilerFrame conversionFrame,
+        out IMeshRepresentation? readMesh)
     {
-        bool succeeded = NormalModelIntermediate.Read(mesh, info, meshFile, out NormalModelIntermediate? intermediate);
+        bool succeeded = NormalModelIntermediate.Read(mesh, info, meshFile, conversionFrame, out NormalModelIntermediate? intermediate);
 
         readMesh = intermediate;
 
@@ -122,9 +123,10 @@ public class NormalIntermediateCodec : IMeshCodec
 
 public class SkinnedIntermediateCodec : IMeshCodec
 {
-    public bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out IMeshRepresentation? readMesh)
+    public bool Read(D3DMesh mesh, MeshInfo info, string meshFile, Profiler.ProfilerFrame conversionFrame,
+        out IMeshRepresentation? readMesh)
     {
-        bool success = SkinnedModelIntermediate.Read(mesh, info, meshFile, out SkinnedModelIntermediate? intermediate);
+        bool success = SkinnedModelIntermediate.Read(mesh, info, meshFile, conversionFrame, out SkinnedModelIntermediate? intermediate);
         
         readMesh = intermediate;
 

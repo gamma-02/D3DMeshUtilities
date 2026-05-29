@@ -6,7 +6,8 @@ namespace D3DMeshUtilities.Code.MeshHandling;
 public interface IMeshCodec
 {
 
-    public bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out IMeshRepresentation? readMesh);
+    public bool Read(D3DMesh mesh, MeshInfo info, string meshFile, Profiler.ProfilerFrame conversionFrame,
+        out IMeshRepresentation? readMesh);
 
     public bool CanRead(D3DMesh mesh, MeshInfo info, out string? reason);
 }

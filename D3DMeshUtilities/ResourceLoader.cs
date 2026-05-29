@@ -51,7 +51,8 @@ public class ResourceLoader
 
     public async Task<List<string>> LoadResourceContexts(CancellationTokenSource cts, string gameDataDir, string game)
     {
-        Profiler.Instance.BeginFrame("Resource Loading");
+        Profiler.Instance.BeginFrame("Resource Loading", out Profiler.ProfilerFrame loadFrame);
+        
         if (TttkInit.Instance.Workspace == null || TttkInit.Instance.Workspace.GameName != game)
         {
             TttkInit.Instance.Workspace = Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
@@ -74,6 +75,7 @@ public class ResourceLoader
             catch (Exception)
             {
                 cts.Cancel();
+                Profiler.Instance.EndFrame(loadFrame);
                 return [];
             }
                 
@@ -88,7 +90,7 @@ public class ResourceLoader
             archives.AddRange(rc.Providers.Select((e) => (e is ArchiveProvider p) ? p.Path : "").ToArray());
         }
 
-        Profiler.Instance.EndFrame(out TimeSpan length);
+        Profiler.Instance.EndFrame(loadFrame, out TimeSpan length);
         
         Console.ForegroundColor = ConsoleColor.DarkGreen;
         Console.Out.WriteLine("\tLoading game resources took: " + length);
@@ -102,7 +104,7 @@ public class ResourceLoader
     private async void LoadArchive()
     {
         // var startLoadTime = DateTime.Now;
-        Profiler.Instance.BeginFrame("Resource load");
+        Profiler.Instance.BeginFrame("Archive Loading", out Profiler.ProfilerFrame loadFrame);
         AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
         
         lock(ResourceLock)
@@ -110,7 +112,15 @@ public class ResourceLoader
             if (Contexts == null)
                 Contexts = new List<ResourceContext>();
             else if (Contexts.Count != 0)
+            {
+                Profiler.Instance.EndFrame(loadFrame, out TimeSpan length1);
+        
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Out.WriteLine("\tLoading game resources took: " + length1);
+                Console.ResetColor();
+
                 return;
+            }
 
             Instance.ArchiveContext = TttkInit.Instance.Workspace?.LoadArchive(ArchiveLocation, "Current Archive");
 
@@ -121,7 +131,7 @@ public class ResourceLoader
 
         }
         
-        Profiler.Instance.EndFrame(out TimeSpan length);
+        Profiler.Instance.EndFrame(loadFrame, out TimeSpan length);
         
         Console.ForegroundColor = ConsoleColor.DarkGreen;
         Console.Out.WriteLine("\tLoading game resources took: " + length);
