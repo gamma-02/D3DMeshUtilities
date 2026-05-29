@@ -110,7 +110,7 @@ jobs:
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      run: dotnet build $env:Solution_File_Name /t:Restore /p:RuntimeIdentifier=$env:Platform /p:Configuration=$env:Configuration /p:SelfContained=false /p:_IsPortable=true /p:PublishSingleFile=true /p:PublishReadyToRun=true -property:PublishTrimmed=false /p:IncludeNativeLibrariesForSelfExtract=false /p:IncludeAllContentForSelfExtract=false 
+      run: dotnet build $env:Solution_Name /t:Restore /p:RuntimeIdentifier=$env:Platform /p:Configuration=$env:Configuration /p:SelfContained=false /p:_IsPortable=true /p:PublishSingleFile=true /p:PublishReadyToRun=true -property:PublishTrimmed=false /p:IncludeNativeLibrariesForSelfExtract=false /p:IncludeAllContentForSelfExtract=false 
       env:
         Configuration: ${{ matrix.configuration }}
         Platform: ${{ matrix.platform }}
