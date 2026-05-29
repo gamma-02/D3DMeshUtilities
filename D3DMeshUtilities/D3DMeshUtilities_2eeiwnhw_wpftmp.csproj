@@ -1,0 +1,450 @@
+<Project>
+  <PropertyGroup>
+    <AssemblyName>D3DMeshUtilities</AssemblyName>
+    <IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\obj\</MSBuildProjectExtensionsPath>
+    <_TargetAssemblyProjectName>D3DMeshUtilities</_TargetAssemblyProjectName>
+    <RootNamespace>D3DMeshUtilities</RootNamespace>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Code\MeshHandling\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Exclude all .cs files in a specific directory -->
+    <Compile Remove="ExFromShadow\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DrSwizzler" Version="1.1.1" />
+    <PackageReference Include="Hexa.NET.DirectXTex" Version="2.0.4" />
+    <PackageReference Include="Hexa.NET.ImGui" Version="2.2.10-prerelease" />
+    <PackageReference Include="LuaCSharp" Version="0.5.3" />
+    <PackageReference Include="SharpGLTF.Core" Version="1.0.6" />
+    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.6" />
+    <!--      <PackageReference Include="TelltaleToolKit" Version="0.1.1" />-->
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\data\CHANGELOG.md" />
+    <None Include="Resources\data\game_profiles\batman-the-enemy-within-2017.json" />
+    <None Include="Resources\data\game_profiles\batman-the-telltale-series-2016-12.json" />
+    <None Include="Resources\data\game_profiles\bone-act-1-2-combo-pack-2007.json" />
+    <None Include="Resources\data\game_profiles\bone-out-from-boneville-2005.json" />
+    <None Include="Resources\data\game_profiles\bone-out-from-boneville-2007.json" />
+    <None Include="Resources\data\game_profiles\bone-the-great-cowrace-2006.json" />
+    <None Include="Resources\data\game_profiles\borderlands-2015.json" />
+    <None Include="Resources\data\game_profiles\csi-3-dimensions-of-murder-2006-demo.json" />
+    <None Include="Resources\data\game_profiles\csi-hard-evidence-2007.json" />
+    <None Include="Resources\data\game_profiles\game-of-thrones-2015.json" />
+    <None Include="Resources\data\game_profiles\guardians-of-the-galaxy-2017.json" />
+    <None Include="Resources\data\game_profiles\minecraft-story-mode-2015-old.json" />
+    <None Include="Resources\data\game_profiles\minecraft-story-mode-2015.json" />
+    <None Include="Resources\data\game_profiles\minecraft-story-mode-season-2-2017.json" />
+    <None Include="Resources\data\game_profiles\poker-night-2-2013.json" />
+    <None Include="Resources\data\game_profiles\poker-night-at-the-inventory-remastered-2026.json" />
+    <None Include="Resources\data\game_profiles\poker-night-at-the-inventory-remastered-NEW.vdb.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-101-2006-demo.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-102-2006-demo.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-103-2006-demo.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-104-2006-demo.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-105-2006-demo.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-106-2006-demo.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-201-2007.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-203-2008.json" />
+    <None Include="Resources\data\game_profiles\sam-and-max-season-1-remastered-2019.json" />
+    <None Include="Resources\data\game_profiles\tales-from-the-borderlands-2021-pc.json" />
+    <None Include="Resources\data\game_profiles\tales-from-the-borderlands-2021-switch.json" />
+    <None Include="Resources\data\game_profiles\telltale-texas-hold-em-2005.json" />
+    <None Include="Resources\data\game_profiles\the-walking-dead-collection-2017.json" />
+    <None Include="Resources\data\game_profiles\the-walking-dead-definitive-series-2019.json" />
+    <None Include="Resources\data\game_profiles\the-walking-dead-michonne-2016.json" />
+    <None Include="Resources\data\game_profiles\the-walking-dead-season-2.json" />
+    <None Include="Resources\data\game_profiles\the-walking-dead-season-3-2016.json" />
+    <None Include="Resources\data\game_profiles\the-walking-dead-season-4-2018.json" />
+    <None Include="Resources\data\hashdb\AG-Bones.txt" />
+    <None Include="Resources\data\hashdb\BoneNames.txt" />
+    <None Include="Resources\data\hashdb\PropertySet-Keys.txt" />
+    <None Include="Resources\data\README.md" />
+    <None Include="Resources\data\versiondb\back-to-the-future-101-UNSUPPORTED.vdb.json" />
+    <None Include="Resources\data\versiondb\back-to-the-future-101.vdb.json" />
+    <None Include="Resources\data\versiondb\batman-the-enemy-within-2017.vdb.json" />
+    <None Include="Resources\data\versiondb\batman-the-telltale-series-2016-12.vdb.json" />
+    <None Include="Resources\data\versiondb\bone-act-1-2-combo-pack-2007.vdb.json" />
+    <None Include="Resources\data\versiondb\bone-out-from-boneville-2005.vdb.json" />
+    <None Include="Resources\data\versiondb\bone-out-from-boneville-2007.vdb.json" />
+    <None Include="Resources\data\versiondb\bone-the-great-cowrace-2006.vdb.json" />
+    <None Include="Resources\data\versiondb\borderlands-2015.vdb.json" />
+    <None Include="Resources\data\versiondb\csi-3-dimensions-of-murder-2006-demo.vdb.json" />
+    <None Include="Resources\data\versiondb\csi-hard-evidence-2007.vdb.json" />
+    <None Include="Resources\data\versiondb\game-of-thrones-2015.vdb.json" />
+    <None Include="Resources\data\versiondb\guardians-of-the-galaxy-2017.vdb.json" />
+    <None Include="Resources\data\versiondb\ignore-unsupported.vdb.json" />
+    <None Include="Resources\data\versiondb\ignore.vdb.json" />
+    <None Include="Resources\data\versiondb\jurassic-park-the-game-NEW.vdb.json" />
+    <None Include="Resources\data\versiondb\jurassic-park-the-game-UNSUPPORTED.vdb.json" />
+    <None Include="Resources\data\versiondb\minecraft-story-mode-2015-ARCHIVED.vdb.json" />
+    <None Include="Resources\data\versiondb\minecraft-story-mode-2015-UNSUPPORTED-TYPES.csv" />
+    <None Include="Resources\data\versiondb\minecraft-story-mode-2015.vdb.json" />
+    <None Include="Resources\data\versiondb\minecraft-story-mode-season-2-2017.vdb.json" />
+    <None Include="Resources\data\versiondb\poker-night-2-2013.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-101-2006-demo.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-102-2006-demo.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-103-2006-demo.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-104-2006-demo.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-105-2006-demo.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-106-2006-demo.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-201-2007.vdb.json" />
+    <None Include="Resources\data\versiondb\sam-and-max-season-1-remastered-2019.vdb.json" />
+    <None Include="Resources\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED-TYPES.csv" />
+    <None Include="Resources\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED.vdb.json" />
+    <None Include="Resources\data\versiondb\tales-from-the-borderlands-2021-pc.vdb.json" />
+    <None Include="Resources\data\versiondb\tales-from-the-borderlands-2021-switch-UNSUPPORTED-TYPES.csv" />
+    <None Include="Resources\data\versiondb\tales-from-the-borderlands-2021-switch.vdb.json" />
+    <None Include="Resources\data\versiondb\telltale-texas-hold-em-2005.vdb.json" />
+    <None Include="Resources\data\versiondb\the-walking-dead-collection-2017.vdb.json" />
+    <None Include="Resources\data\versiondb\the-walking-dead-definitive-series-2019.vdb.json" />
+    <None Include="Resources\data\versiondb\the-walking-dead-michonne-2016.vdb.json" />
+    <None Include="Resources\data\versiondb\the-walking-dead-season-2.vdb.json" />
+    <None Include="Resources\data\versiondb\the-walking-dead-season-3-2016.vdb.json" />
+    <None Include="Resources\data\versiondb\the-walking-dead-season-4-2018.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\CHANGELOG.md" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\batman-the-enemy-within-2017.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\batman-the-telltale-series-2016-12.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-act-1-2-combo-pack-2007.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-out-from-boneville-2005.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-out-from-boneville-2007.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\bone-the-great-cowrace-2006.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\borderlands-2015.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\csi-3-dimensions-of-murder-2006-demo.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\csi-hard-evidence-2007.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\game-of-thrones-2015.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\guardians-of-the-galaxy-2017.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\minecraft-story-mode-2015-old.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\minecraft-story-mode-2015.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\minecraft-story-mode-season-2-2017.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\poker-night-2-2013.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\poker-night-at-the-inventory-remastered-2026.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\poker-night-at-the-inventory-remastered-NEW.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-101-2006-demo.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-102-2006-demo.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-103-2006-demo.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-104-2006-demo.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-105-2006-demo.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-106-2006-demo.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-201-2007.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-203-2008.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\sam-and-max-season-1-remastered-2019.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\tales-from-the-borderlands-2021-pc.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\tales-from-the-borderlands-2021-switch.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\telltale-texas-hold-em-2005.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-collection-2017.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-definitive-series-2019.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-michonne-2016.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-season-2.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-season-3-2016.json" />
+    <None Include="bin\Debug\net9.0-windows\data\game_profiles\the-walking-dead-season-4-2018.json" />
+    <None Include="bin\Debug\net9.0-windows\data\hashdb\AG-Bones.txt" />
+    <None Include="bin\Debug\net9.0-windows\data\hashdb\BoneNames.txt" />
+    <None Include="bin\Debug\net9.0-windows\data\hashdb\PropertySet-Keys.txt" />
+    <None Include="bin\Debug\net9.0-windows\data\README.md" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\back-to-the-future-101-UNSUPPORTED.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\back-to-the-future-101.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\batman-the-enemy-within-2017.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\batman-the-telltale-series-2016-12.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-act-1-2-combo-pack-2007.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-out-from-boneville-2005.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-out-from-boneville-2007.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\bone-the-great-cowrace-2006.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\borderlands-2015.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\csi-3-dimensions-of-murder-2006-demo.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\csi-hard-evidence-2007.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\game-of-thrones-2015.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\guardians-of-the-galaxy-2017.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\ignore-unsupported.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\ignore.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\jurassic-park-the-game-NEW.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\jurassic-park-the-game-UNSUPPORTED.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-2015-ARCHIVED.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-2015-UNSUPPORTED-TYPES.csv" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-2015.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\minecraft-story-mode-season-2-2017.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-2-2013.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-at-the-inventory-remastered-NEW.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-101-2006-demo.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-102-2006-demo.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-103-2006-demo.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-104-2006-demo.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-105-2006-demo.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-106-2006-demo.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-201-2007.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\sam-and-max-season-1-remastered-2019.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED-TYPES.csv" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-pc-UNSUPPORTED.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-pc.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-switch-UNSUPPORTED-TYPES.csv" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\tales-from-the-borderlands-2021-switch.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\telltale-texas-hold-em-2005.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-collection-2017.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-definitive-series-2019.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-michonne-2016.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-season-2.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-season-3-2016.vdb.json" />
+    <None Include="bin\Debug\net9.0-windows\data\versiondb\the-walking-dead-season-4-2018.vdb.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\net9.0-windows\data\versiondb\poker-night-at-the-inventory-remastered-2026.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TelltaleToolKit-Contribs\src\TelltaleToolKit\TelltaleToolKit.csproj" />
+  </ItemGroup>
+  <!--    <ItemGroup>-->
+  <!--        <ProjectReference Include="..\TelltaleToolKit\TelltaleToolKit.csproj" />-->
+  <!--    </ItemGroup>-->
+  <ItemGroup>
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\Accessibility.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\base36\1.0.0\lib\netstandard1.0\Base36.NetStandard.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\drswizzler\1.1.1\lib\netstandard2.0\DrSwizzler.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\hexa.net.directxtex\2.0.4\lib\net9.0\Hexa.NET.DirectXTex.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\hexa.net.imgui\2.2.10-prerelease\lib\net9.0\Hexa.NET.ImGui.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\hexagen.runtime.com\1.1.9\lib\net9.0\HexaGen.Runtime.COM.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\hexagen.runtime\1.1.21\lib\net9.0\HexaGen.Runtime.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\sharpziplib\1.4.2\lib\net6.0\ICSharpCode.SharpZipLib.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\luacsharp\0.5.3\lib\net8.0\Lua.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.codeanalysis.csharp\4.14.0\lib\net9.0\Microsoft.CodeAnalysis.CSharp.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.codeanalysis.common\4.14.0\lib\net9.0\Microsoft.CodeAnalysis.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\Microsoft.CSharp.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\Microsoft.VisualBasic.Core.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\Microsoft.VisualBasic.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\Microsoft.Win32.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\Microsoft.Win32.Registry.AccessControl.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\Microsoft.Win32.Registry.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\Microsoft.Win32.SystemEvents.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\mscorlib.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\netstandard.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationCore.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationFramework.Aero.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationFramework.Aero2.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationFramework.AeroLite.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationFramework.Classic.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationFramework.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationFramework.Luna.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationFramework.Royale.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\PresentationUI.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\ReachFramework.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\sharpgltf.core\1.0.6\lib\net8.0\SharpGLTF.Core.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\sharpgltf.runtime\1.0.6\lib\net8.0\SharpGLTF.Runtime.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\sharpgltf.toolkit\1.0.6\lib\net8.0\SharpGLTF.Toolkit.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.AppContext.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Buffers.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.CodeDom.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Collections.Concurrent.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Collections.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Collections.Immutable.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Collections.NonGeneric.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Collections.Specialized.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ComponentModel.Annotations.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ComponentModel.DataAnnotations.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ComponentModel.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ComponentModel.EventBasedAsync.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ComponentModel.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ComponentModel.TypeConverter.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Configuration.ConfigurationManager.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Configuration.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Console.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Core.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Data.Common.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Data.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.Contracts.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.Debug.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.DiagnosticSource.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Diagnostics.EventLog.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.FileVersionInfo.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Diagnostics.PerformanceCounter.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.Process.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.StackTrace.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.TextWriterTraceListener.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.Tools.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.TraceSource.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Diagnostics.Tracing.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.DirectoryServices.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Drawing.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Drawing.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Dynamic.Runtime.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Formats.Asn1.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Formats.Nrbf.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Formats.Tar.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Globalization.Calendars.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Globalization.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Globalization.Extensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.Compression.Brotli.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.Compression.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.Compression.FileSystem.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.Compression.ZipFile.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.FileSystem.AccessControl.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.FileSystem.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.FileSystem.DriveInfo.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.FileSystem.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.FileSystem.Watcher.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\system.io.hashing\8.0.0\lib\net8.0\System.IO.Hashing.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.IsolatedStorage.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.MemoryMappedFiles.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.IO.Packaging.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\system.io.pipelines\10.0.0\lib\net9.0\System.IO.Pipelines.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.Pipes.AccessControl.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.Pipes.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.IO.UnmanagedMemoryStream.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Linq.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Linq.Expressions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Linq.Parallel.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Linq.Queryable.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Memory.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Http.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Http.Json.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.HttpListener.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Mail.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.NameResolution.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.NetworkInformation.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Ping.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Quic.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Requests.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Security.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.ServicePoint.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.Sockets.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.WebClient.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.WebHeaderCollection.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.WebProxy.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.WebSockets.Client.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Net.WebSockets.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Numerics.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Numerics.Vectors.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ObjectModel.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Printing.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.DispatchProxy.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.Emit.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.Emit.ILGeneration.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.Emit.Lightweight.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.Extensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.Metadata.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Reflection.TypeExtensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Resources.Extensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Resources.Reader.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Resources.ResourceManager.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Resources.Writer.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.CompilerServices.Unsafe.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.CompilerServices.VisualC.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Extensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Handles.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.InteropServices.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.InteropServices.JavaScript.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Intrinsics.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Loader.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Numerics.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Serialization.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Serialization.Formatters.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Serialization.Json.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Serialization.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Runtime.Serialization.Xml.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.AccessControl.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Claims.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.Algorithms.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.Cng.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.Csp.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.Encoding.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.OpenSsl.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.Pkcs.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.Primitives.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.ProtectedData.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.X509Certificates.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Security.Cryptography.Xml.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Security.Permissions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Principal.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.Principal.Windows.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Security.SecureString.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ServiceModel.Web.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ServiceProcess.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Text.Encoding.CodePages.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Text.Encoding.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Text.Encoding.Extensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\system.text.encodings.web\10.0.0\lib\net9.0\System.Text.Encodings.Web.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\system.text.json\10.0.0\lib\net9.0\System.Text.Json.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Text.RegularExpressions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Threading.AccessControl.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Channels.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Overlapped.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Tasks.Dataflow.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Tasks.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Tasks.Extensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Tasks.Parallel.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Thread.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.ThreadPool.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Threading.Timer.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Transactions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Transactions.Local.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.ValueTuple.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Web.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Web.HttpUtility.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Windows.Controls.Ribbon.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Windows.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Windows.Extensions.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Windows.Input.Manipulations.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Windows.Presentation.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\System.Xaml.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.Linq.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.ReaderWriter.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.Serialization.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.XDocument.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.XmlDocument.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.XmlSerializer.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.XPath.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\ref\net9.0\System.Xml.XPath.XDocument.dll" />
+    <ReferencePath Include="C:\Users\gamma\RiderProjects\D3DMeshUtilities\TelltaleToolKit-Contribs\src\TelltaleToolKit\bin\Debug\netstandard2.1\TelltaleToolKit.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\UIAutomationClient.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\UIAutomationClientSideProviders.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\UIAutomationProvider.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\UIAutomationTypes.dll" />
+    <ReferencePath Include="C:\Users\gamma\.nuget\packages\microsoft.windowsdesktop.app.ref\9.0.13\ref\net9.0\WindowsBase.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\obj\Debug\net9.0-windows\ArchiveModelList.g.cs" />
+    <Compile Include="C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\obj\Debug\net9.0-windows\Converting.g.cs" />
+    <Compile Include="C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\obj\Debug\net9.0-windows\MainWindow.g.cs" />
+    <Compile Include="C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\obj\Debug\net9.0-windows\App.g.cs" />
+    <Compile Include="C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\obj\Debug\net9.0-windows\D3DMeshUtilities_Content.g.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="C:\Users\gamma\.dotnet\sdk\10.0.103\Sdks\Microsoft.NET.Sdk\targets\..\analyzers\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
+    <Analyzer Include="C:\Users\gamma\.dotnet\sdk\10.0.103\Sdks\Microsoft.NET.Sdk\targets\..\analyzers\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\luacsharp\0.5.3\analyzers\dotnet\cs\Lua.SourceGenerator.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\microsoft.codeanalysis.analyzers\3.11.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\microsoft.codeanalysis.analyzers\3.11.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\system.text.json\10.0.0\analyzers\dotnet\roslyn4.4\cs\System.Text.Json.SourceGeneration.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\analyzers/dotnet/cs/Microsoft.Interop.ComInterfaceGenerator.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\analyzers/dotnet/cs/Microsoft.Interop.JavaScript.JSImportGenerator.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\analyzers/dotnet/cs/Microsoft.Interop.LibraryImportGenerator.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\analyzers/dotnet/cs/Microsoft.Interop.SourceGeneration.dll" />
+    <Analyzer Include="C:\Users\gamma\.nuget\packages\microsoft.netcore.app.ref\9.0.13\analyzers/dotnet/cs/System.Text.RegularExpressions.Generator.dll" />
+  </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

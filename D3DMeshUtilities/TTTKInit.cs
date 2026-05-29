@@ -6,24 +6,22 @@ using Path = System.IO.Path;
 
 namespace D3DMeshUtilities;
 
-public class TttkInit
+public static class TttkInit
 {
     // Set up the context from a folder.
 
-    public static TttkInit Instance = new ();
+    // public static TttkInit Instance = new ();
 
-    public Workspace? Workspace;
+    public static Workspace? Workspace;
     
     public static string DataDir = "";
     
     // Toolkit.Initialize("hello!");
 
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-    public void InternalInit() { }
-
-    public TttkInit()
+    private static void InternalInit()
     {
-        DataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
+        DataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ttk-data");
 
         Toolkit.Configuration config = new Toolkit.Configuration();
 
@@ -37,11 +35,12 @@ public class TttkInit
         }
         
         Toolkit.Initialize(config);
-        
+
     }
 
+
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-    public static void Init() { Instance.InternalInit(); }
+    public static void Init() { InternalInit(); }
 
 
 }

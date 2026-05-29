@@ -103,9 +103,9 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         lock(AsyncSearchForSkeletonFiles.AgentPropertiesByMeshFile)
         {
             
-            if (info.Crc64.HasValue)
+            if (info.Name != null)
             {
-                AsyncSearchForSkeletonFiles.AgentPropertiesByMeshFile.TryGetValue(info.Crc64.Value,
+                AsyncSearchForSkeletonFiles.AgentPropertiesByMeshFile.TryGetValue(info.Name.Crc64,
                     out PropertySet? set);
                 agentProp = set;
             }
@@ -128,7 +128,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         {
             lock(ResourceLoader.ResourceLock)
             {
-                skeleton = TttkInit.Instance.Workspace!.LoadAsset<Skeleton>(skeletonReference.ObjectInfo.ObjectName
+                skeleton = TttkInit.Workspace!.LoadAsset<Skeleton>(skeletonReference.ObjectInfo.ObjectName
                     .Crc64);
             }
 
@@ -224,7 +224,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
         foreach (T3MeshBoneEntry bone in meshData.Bones)
         {
-            TttkInit.Instance.Workspace!.ResolveSymbol(bone.BoneName);
+            TttkInit.Workspace!.ResolveSymbol(bone.BoneName);
         }
         
         readMesh = new SkinnedModelIntermediate(info, vertexPositions, normals, tangentsList,
@@ -454,7 +454,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             // First create all nodes
             foreach (Skeleton.Entry bone in skeleton.Entries)
             {
-                TttkInit.Instance.Workspace!.ResolveSymbol(bone.JointName);
+                TttkInit.Workspace!.ResolveSymbol(bone.JointName);
                 
                 var nodeBuilder = new NodeBuilder(bone.JointName.ToString());
 

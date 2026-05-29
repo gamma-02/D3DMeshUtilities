@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <!--        <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>-->
         <IsLinux>$([MSBuild]::IsOSPlatform('Linux'))</IsLinux>
         <RuntimeIdentifiers Condition="'$(RuntimeIdentifier)' == ''">win-x64;linux-x64</RuntimeIdentifiers>
@@ -23,9 +23,9 @@
         <Message Text="Compiling for windows!" Importance="high" Condition="($(RuntimeIdentifiers.Contains('win-x64')) Or '$(RuntimeIdentifier)' == 'win-x64') And !($(IsLinux))"/>
     </Target>
 
-    <ItemGroup>
-        <Folder Include="bin\Debug\net9.0-windows\"/>
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--        <Folder Include="bin\Debug\net9.0-windows\"/>-->
+<!--    </ItemGroup>-->
 
 <!--    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">-->
 <!--        <Copy SourceFiles="foo.txt" DestinationFolder="$(OutDir)" />-->
@@ -81,28 +81,11 @@
 
         <Copy
                 SourceFiles="@(SourceFiles)"
-                DestinationFolder="$(TargetDir)data/%(RecursiveDir)"
+                DestinationFolder="$(TargetDir)ttk-data/%(RecursiveDir)"
                 SkipUnchangedFiles="False"
         />
 
     </Target>
-
-<!--    <Target Name="CopyOverResourcesOnBuild" AfterTargets="AfterBuild">&lt;!&ndash; BeforeTargets="Publish">&ndash;&gt;-->
-
-<!--        <Message Text="Copied Resources directory!" Importance="high"/>-->
-
-<!--        <ItemGroup>-->
-<!--            &lt;!&ndash;            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/**/*.*" />&ndash;&gt;-->
-<!--            <SourceFiles Include="$(MSBuildProjectDirectory)\Resources/*.*"/>-->
-<!--        </ItemGroup>-->
-
-<!--        <Copy-->
-<!--                SourceFiles="@(SourceFiles)"-->
-<!--                DestinationFolder="$(TargetDir)Resources/%(RecursiveDir)"-->
-<!--                SkipUnchangedFiles="False"-->
-<!--        />-->
-
-<!--    </Target>-->
 
     <Target Name="CopyOverData" AfterTargets="Publish">
 
@@ -116,7 +99,7 @@
 
         <Copy
                 SourceFiles="@(SourceFiles)"
-                DestinationFolder="$(PublishDir)data/%(RecursiveDir)"
+                DestinationFolder="$(PublishDir)ttk-data/%(RecursiveDir)"
                 SkipUnchangedFiles="False"
         />
 

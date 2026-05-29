@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using TelltaleToolKit.TelltaleArchives;
 
 namespace D3DMeshUtilities;
 
@@ -177,8 +178,8 @@ public partial class ArchiveModelList : BaseProjectWindow
             if(!ArchiveMeshListDictionary.ContainsKey(ResourceLoader.Instance.ArchiveLocation))
             {
                 List<string> entries = ResourceLoader.Instance.GetEntriesInCurrentArchive()
-                    .Where(entry => entry.Name.EndsWith("d3dmesh"))
-                    .Select(fe => fe.Name)
+                    .Where(resource => resource.Name.EndsWith("d3dmesh"))
+                    .Select(entry => entry.Name)
                     .ToList();
 
                 entries.Sort();

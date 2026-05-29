@@ -1,4 +1,5 @@
-﻿using TelltaleToolKit.T3Types;
+﻿using System;
+using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
 
@@ -12,7 +13,15 @@ namespace D3DMeshUtilities.Code.MeshHandling;
 public class MeshInfo
 {
 
+    [Obsolete("Use Name instead, from ttk 0.2.0")]
     public ulong? Crc64
+    {
+        get;
+
+        private set;
+    }
+
+    public Symbol? Name
     {
         get;
 
@@ -93,7 +102,7 @@ public class MeshInfo
     public MeshInfo(D3DMesh mesh, string meshName) : this(mesh)
     {
 
-        Crc64 = Symbol.GetCrc64(meshName);
+        Name = Symbol.FromName(meshName);
     }
     
     

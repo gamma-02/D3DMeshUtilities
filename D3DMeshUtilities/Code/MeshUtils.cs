@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
 using D3DMeshUtilities.Code.MeshHandling;
@@ -488,9 +489,10 @@ public static class MeshUtils
         
         foreach (T3MeshMaterial mat in meshData.Materials)
         {
-            TttkInit.Instance.Workspace?.ResolveSymbol(mat.Material.ObjectInfo.ObjectName);
-            
             Profiler.Instance.BeginFrame($"Material {mat.Material.ObjectInfo.ObjectName} processing", parent, out Profiler.ProfilerFrame materialInstanceFrame);
+
+            TttkInit.Workspace?.ResolveSymbol(mat.Material.ObjectInfo.ObjectName);
+
             
             var materialName = mat.Material.ObjectInfo.ObjectName.ToString();
             
@@ -502,10 +504,10 @@ public static class MeshUtils
             HandleBase? handle = mesh.InternalResources.Find(res => res.ObjectInfo.ObjectName == mat.Material.ObjectInfo.ObjectName);
             if (handle?.ObjectInfo.HandleObject is PropertySet p)
             {
-                TttkInit.Instance.Workspace!.ResolveSymbols(p.Properties.Keys);
+                TttkInit.Workspace!.ResolveSymbols(p.Properties.Keys);
                 
                 //the property '5971B48CE79829D9' corresponds to if a model should render double sided
-                bool? sided = p.GetProperty<bool>(new Symbol(0x5971B48CE79829D9));
+                bool? sided = p.GetProperty<bool>(Symbol.FromCrc64(0x5971B48CE79829D9));
 
                 if (sided != null)
                 {
@@ -517,17 +519,18 @@ public static class MeshUtils
             var mb = new MaterialBuilder(materialName).WithDoubleSide(doubleSided);
 
             Handle<T3Texture>? materialBaseColor = mesh.GetDiffuseTexture(mat.Material);
-            ProcessTexture(materialBaseColor, TttkInit.Instance.Workspace!, mb, KnownChannel.BaseColor, materialInstanceFrame);
+            ProcessTexture(materialBaseColor, TttkInit.Workspace!, mb, KnownChannel.BaseColor, materialInstanceFrame);
 
             Handle<T3Texture>? normalMap = mesh.GetNormalMapTexture(mat.Material);
-            ProcessTexture(normalMap, TttkInit.Instance.Workspace!, mb, KnownChannel.Normal, materialInstanceFrame);
+            ProcessTexture(normalMap, TttkInit.Workspace!, mb, KnownChannel.Normal, materialInstanceFrame);
 
             Handle<T3Texture>? specularMap = mesh.GetSpecularTexture(mat.Material);
-            ProcessTexture(specularMap, TttkInit.Instance.Workspace!, mb, KnownChannel.SpecularColor, materialInstanceFrame);
+            ProcessTexture(specularMap, TttkInit.Workspace!, mb, KnownChannel.SpecularColor, materialInstanceFrame);
+
             
             //todo: detail map, used for lines and stuff on models
             // Handle<T3Texture>? detailMap = mesh.GetDetailTexture(mat.Material);
-            // ProcessTexture(detailMap, TttkInit.Instance.Workspace!, mb, KnownChannel);
+            // ProcessTexture(detailMap, TttkInit.Workspace!, mb, KnownChannel);
             
             Profiler.Instance.EndFrame(materialInstanceFrame);
             materials.Add(mb);
@@ -551,29 +554,29 @@ public static class MeshUtils
         
         Profiler.Instance.BeginFrame($"{textureHandle.ObjectInfo.ObjectName} processing", parent, out Profiler.ProfilerFrame textureFrame);
 
-        Stream? file;
-        lock(ResourceLoader.ResourceLock)
-        {
-            file = workspace.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
-        }
-                    
-        if(file == null || file.Length < 4)
-            return;
-        
-        // Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
+        // Stream? file;
+        // lock(ResourceLoader.ResourceLock)
+        // {
+        //     file = workspace.ExtractFile(textureHandle.ObjectInfo.ObjectName.Crc64);
+        // }
+        //             
+        // if(file == null || file.Length < 4)
+        //     return;
+        //
+        // // Console.Out.WriteLine("Loading texture: " + textureHandle.ObjectInfo.ObjectName);
+        //
+        //
+        // if (file.Position != 0)
+        //     file.Position = 0;
 
-
-        if (file.Position != 0)
-            file.Position = 0;
-
-        T3Texture? texture = workspace.TryOpenObject<T3Texture>(file, out _);
+        T3Texture? texture = workspace.LoadAsset<T3Texture>(textureHandle.ObjectInfo.ObjectName.Crc64);
 
         if (texture == null)
             return;
 
         Texture intermediateTexture = D3dtxCodec.Codec.LoadFromMemory(texture, new CodecOptions());
         
-        file.Close();
+        // file.Close();
         
         if (channel == KnownChannel.Normal)
         {
@@ -585,7 +588,7 @@ public static class MeshUtils
             intermediateTexture.ConvertToRGBA8sRGB();
         }
 
-        string tempFile = Path.Combine(Path.GetTempPath(), textureHandle.ObjectInfo.ObjectName.SymbolName!.Replace("d3dtx", "png"));
+        string tempFile = Path.Combine(Path.GetTempPath(), textureHandle.ObjectInfo.ObjectName.DebugString!.Replace("d3dtx", "png"));
         
         //...As it turns out, Linux doesnt support WIC memory, so now this should work on Linux
         PngCodec.Codec.SaveToFile(tempFile, intermediateTexture, new CodecOptions());
@@ -593,7 +596,10 @@ public static class MeshUtils
         //also, somehow, Shadow has a method to skip this whole step and just provide
         //the image path to the mb.WithChannelImage call that I don't. why????
         MemoryImage memImage = new MemoryImage(tempFile);
-        ImageBuilder image = ImageBuilder.From(memImage, textureHandle.ObjectInfo.ObjectName.ToString());
+        ImageBuilder image = ImageBuilder.From(memImage,
+            textureHandle.ObjectInfo.ObjectName.DebugString 
+                ?? textureHandle.ObjectInfo.ObjectName.ToString()
+        );
 
         mb.WithChannelImage(channel, image);
         mb.AlphaMode = AlphaMode.MASK;
