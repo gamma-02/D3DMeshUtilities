@@ -117,6 +117,10 @@ public class App : Application
 
                 ProfilerOutputFile = arg.Substring(prefixLen);
             }
+            else if (arg.Equals("-dumpProfilerOnConversion") || arg.Equals("-dpoc"))
+            {
+                DumpOnConversionComplete = true;
+            }
         }
     }
 
@@ -191,6 +195,7 @@ public class App : Application
 
     public static bool PrintProfilerOutput = false;
     public static string? ProfilerOutputFile = null;
+    public static bool DumpOnConversionComplete = false;
 
     public static bool QuitAfterConvert { get; set; }
 
@@ -199,7 +204,13 @@ public class App : Application
 #if BUILT_FOR_WINDOWS
         FreeConsole();
 #endif
-
+        
+        DumpProfiler();
+        
+    }
+    
+    public static void DumpProfiler()
+    {
         if (!PrintProfilerOutput) return;
         
         string profilerOutput = Profiler.Instance.GetResults();

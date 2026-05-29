@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,7 +102,7 @@ public partial class MainWindow : BaseProjectWindow
         {
             startedUp = true;
         }
-
+        
         if (string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory)) return;
         GameDataPath.Text = App.StartupGameArchivesDirectory;
 
@@ -112,6 +113,52 @@ public partial class MainWindow : BaseProjectWindow
         Dispatcher.InvokeAsync(() => LoadArchiveAfterResources(op, App.StartupArchive));
         
     }
+    
+     private string CreateMultilevelIndentString()
+        {
+            // Creates a TextWriter to use as the base output writer.
+            var baseTextWriter = new StringWriter();
+
+            // Create an IndentedTextWriter and set the tab string to use
+            // as the indentation string for each indentation level.
+            var indentWriter = new IndentedTextWriter(baseTextWriter, "    ");
+
+            // Sets the indentation level.
+            indentWriter.Indent = 0;
+
+            // Output test strings at stepped indentations through a recursive loop method.
+            WriteLevel(indentWriter, 0, 5);
+
+            // Return the resulting string from the base StringWriter.
+            return baseTextWriter.ToString();
+        }
+
+        private void WriteLevel(IndentedTextWriter indentWriter, int level, int totalLevels)
+        {
+            // Output a test string with a new-line character at the end.
+            indentWriter.WriteLine($"This is a test phrase. Current indentation level: {level}");
+
+            // If not yet at the highest recursion level, call this output method for the next level of indentation.
+            if( level < totalLevels )
+            {
+                // Increase the indentation count for the next level of indented output.
+                indentWriter.Indent++;
+
+                // Call the WriteLevel method to write test output for the next level of indentation.
+                WriteLevel(indentWriter, level+1, totalLevels);
+
+                // Restores the indentation count for this level after the recursive branch method has returned.
+                indentWriter.Indent--;
+            }
+            else
+            {
+                // Outputs a string using the WriteLineNoTabs method.
+                indentWriter.WriteLineNoTabs("This is a test phrase written with the IndentTextWriter.WriteLineNoTabs method.");
+            }
+
+            // Outputs a test string with a new-line character at the end.
+            indentWriter.WriteLine("This is a test phrase. Current indentation level: " + level.ToString());
+        }
 
 
     private void OpenFile_OnClick(object sender, RoutedEventArgs e)

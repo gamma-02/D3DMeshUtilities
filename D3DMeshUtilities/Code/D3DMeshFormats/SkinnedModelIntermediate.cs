@@ -88,7 +88,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
     }
 
 
-    public static bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out SkinnedModelIntermediate? readMesh)
+    public static bool Read(D3DMesh mesh, MeshInfo info, string meshFile, Profiler.ProfilerFrame parent, out SkinnedModelIntermediate? readMesh)
     {
         readMesh = null;
         var meshData = mesh.MeshData;
@@ -213,9 +213,9 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         }
     
         // List<MaterialBuilder> materials = [];
-        Profiler.Instance.BeginFrame("Material processing");
-        MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
-        Profiler.Instance.EndFrame(out TimeSpan materialDuration);
+        Profiler.Instance.BeginFrame("Material processing", parent, out Profiler.ProfilerFrame mProcessingFrame);
+        MeshUtils.GetMaterials(mesh, info, mProcessingFrame, out List<MaterialBuilder> materials);
+        Profiler.Instance.EndFrame(mProcessingFrame, out TimeSpan materialDuration);
         
         Console.ForegroundColor = ConsoleColor.DarkGreen;
         Console.Out.WriteLine("\tMesh material processing took: " + materialDuration);
@@ -290,28 +290,6 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             uint numIndicesLimit = batch.StartIndex + batch.NumIndices;
 
             limit = numIndicesLimit;
-            
-            //choose whichever has limit / 3 == NumPrimitives
-
-            // if (batch.NumIndices / 3 == batch.NumPrimitives)
-            // {
-            //     limit = numIndicesLimit;
-            // }
-            // else if (MaxVertIndexLimit / 3 == batch.NumPrimitives)
-            // {
-            //     limit = MaxVertIndexLimit;
-            // }
-            // else
-            // {
-            //     //first make the choice of numIndicesLimit (it worked until obj_skyGeneric.d3dmesh) (have i talked about obj_skyGeneric.d3dmesh?) (it's evil. I am this world's number one obj_skyGeneric hater) (it was the only thing preventing me from saying that i can load every model) (and then I though adding support for it would be easy but NOOOO it had to be fucked up didn't it)
-            //     limit = MaxVertIndexLimit;
-            //
-            //     if (limit % 3 != 0 || limit >= indexList.Count)
-            //     {
-            //         limit = numIndicesLimit;
-            //     }
-            // }
-
             
             for (uint indexI = batch.StartIndex + 2; indexI < limit; indexI += 3)
             {

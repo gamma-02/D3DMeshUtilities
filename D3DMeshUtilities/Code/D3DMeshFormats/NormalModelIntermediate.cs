@@ -59,7 +59,7 @@ public class NormalModelIntermediate : IMeshRepresentation
     }
 
 
-    public static bool Read(D3DMesh mesh, MeshInfo info, string meshFile, out NormalModelIntermediate? readMesh)
+    public static bool Read(D3DMesh mesh, MeshInfo info, string meshFile, Profiler.ProfilerFrame parent, out NormalModelIntermediate? readMesh)
     {
         var meshData = mesh.MeshData;
             
@@ -131,9 +131,9 @@ public class NormalModelIntermediate : IMeshRepresentation
 
         }
 
-        Profiler.Instance.BeginFrame("Material processing");
-        MeshUtils.GetMaterials(mesh, info, out List<MaterialBuilder> materials);
-        Profiler.Instance.EndFrame(out TimeSpan materialDuration);
+        Profiler.Instance.BeginFrame("Material processing", parent, out Profiler.ProfilerFrame mProcessingFrame);
+        MeshUtils.GetMaterials(mesh, info, mProcessingFrame, out List<MaterialBuilder> materials);
+        Profiler.Instance.EndFrame(mProcessingFrame, out TimeSpan materialDuration);
         
         Console.ForegroundColor = ConsoleColor.DarkGreen;
         Console.Out.WriteLine("\tMesh material processing took: " + materialDuration);

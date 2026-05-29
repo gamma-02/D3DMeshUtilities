@@ -2,6 +2,8 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using JetBrains.Annotations;
 
 namespace D3DMeshUtilities;
 
@@ -9,18 +11,30 @@ public class Profiler
 {
 
     public static readonly Profiler Instance = new Profiler();
+    // public static readonly ProfilerThreadLocal ThreadInstance = new ();
     
     public readonly List<ProfilerFrame> ParentFrames = [];
 
-    public ProfilerFrame? CurrentFrame { get; private set; }
+    // public ProfilerFrame? CurrentFrame { get; private set; }
+    
+    public void BeginFrame(string name, out ProfilerFrame frame) => BeginFrame(name, null, out frame);
+    
+    public void BeginFrame(string name, ProfilerFrame? parent, out ProfilerFrame frame)
+    {
+        frame = BeginFrame(name, parent);
+    }
 
-    public void BeginFrame(string name)
+    [MustUseReturnValue]
+    public ProfilerFrame BeginFrame(string name) => BeginFrame(name, null);
+
+    [MustUseReturnValue]
+    public ProfilerFrame BeginFrame(string name, ProfilerFrame? parent)
     {
         ProfilerFrame frame;
 
-        if (CurrentFrame != null)
+        if (parent != null)
         {
-            frame = CurrentFrame.CreateChild(name);
+            frame = parent.CreateChild(name);
         }
         else
         {
@@ -28,51 +42,51 @@ public class Profiler
             ParentFrames.Add(frame);
         }
 
-        CurrentFrame = frame;
+        return frame;
     }
 
-    public void EndFrame()
+    public void EndFrame(ProfilerFrame frame)
     {
-
-        if (CurrentFrame == null)
-            return;
         
-        CurrentFrame.EndFrame();
+        frame.EndFrame();
 
-        CurrentFrame = CurrentFrame.Parent;
+        // CurrentFrame = CurrentFrame.Parent;
     }
 
-    public void EndFrame(out TimeSpan length)
+    public void EndFrame(ProfilerFrame frame, out TimeSpan length)
     {
         length = TimeSpan.Zero;
 
-        if (CurrentFrame == null)
-            return;
+        // if (CurrentFrame == null)
+        //     return;
         
-        CurrentFrame.EndFrame();
+        frame.EndFrame();
 
-        length = CurrentFrame.EndTime!.Value.Subtract(CurrentFrame.StartTime);
-
-        CurrentFrame = CurrentFrame.Parent;
-
+        length = frame.EndTime!.Value.Subtract(frame.StartTime);
+        
     }
 
     public string GetResults()
     {
-        if (CurrentFrame != null)
-        {
-            throw new InvalidOperationException($"Profiler frame {CurrentFrame.Name} not ended!");
-        }
 
         StringWriter stringWriter = new StringWriter();
-        IndentedTextWriter writer = new IndentedTextWriter(stringWriter);
+        IndentedTextWriter writer = new IndentedTextWriter(stringWriter, "|   ");
+        writer.Indent = 0;
 
         foreach (var parent in ParentFrames)
         {
-            parent.GetResults(writer);
+            parent.GetResults(writer, 0);
         }
 
         return stringWriter.ToString();
+    }
+
+    private void MergeCompleteOther(Profiler? other)
+    {
+        if (other is null)
+            return;
+        
+        this.ParentFrames.AddRange(other.ParentFrames);
     }
     
     public class ProfilerFrame(string name)
@@ -115,17 +129,33 @@ public class Profiler
             EndTime = DateTime.Now;
         }
 
-        public void GetResults(IndentedTextWriter writer)
+        public void GetResults(IndentedTextWriter writer, int level)
         {
+
+            if (EndTime == null)
+            {
+                throw new InvalidOperationException($"Profiler frame {Name} not ended!");
+
+            }
+            
+            writer.Indent = level;
+            
             writer.WriteLine($"{Name} took {Length}");
-            writer.Indent += 1;
+            
             
             foreach (var child in Children)
             {
-                child.GetResults(writer);
+                child.GetResults(writer, level + 1);
             }
-
-            writer.Indent -= 1;
         }
     }
+
+    // public class ProfilerThreadLocal() : ThreadLocal<Profiler>(() => new Profiler(), true)
+    // {
+    //     protected override void Dispose(bool disposing)
+    //     {
+    //         Instance.MergeCompleteOther(this.Value);
+    //         base.Dispose(disposing);
+    //     }
+    // }
 }

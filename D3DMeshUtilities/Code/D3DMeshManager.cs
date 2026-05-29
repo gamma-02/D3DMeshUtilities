@@ -54,6 +54,8 @@ public class D3DMeshManager(List<string> file, string outputPath)
     public Task? LoadMeshes(Converting? convertingWindow = null)
     {
 
+        Profiler.Instance.BeginFrame("Convert Task", out Profiler.ProfilerFrame convertTask);
+
         if (!Codecs.Registered)
         {
             Codecs.RegisterCodecs();
@@ -62,19 +64,28 @@ public class D3DMeshManager(List<string> file, string outputPath)
         if (!Directory.Exists(outputPath))
             return null;
 
+        Profiler.ProfilerFrame? conversionFrame = null;
+
         foreach (string meshFile in Files)
         {
             string meshName = meshFile.Remove(meshFile.Length - ".d3dmesh".Length);
-
             
-            Profiler.Instance.BeginFrame($"{meshName} conversion");
+            Profiler.Instance.BeginFrame($"{meshName} conversion", convertTask, out conversionFrame);
             Stream? stream = ResourceLoader.Instance.ExtractFile(meshFile);
 
             if (stream == null)
+            {
+                Profiler.Instance.EndFrame(conversionFrame);
+
                 continue;
+            }
 
             if (stream.Length < 4)
+            {
+                Profiler.Instance.EndFrame(conversionFrame);
+
                 continue;
+            }
 
             if (stream.Position != 0)
                 stream.Position = 0;
@@ -86,7 +97,10 @@ public class D3DMeshManager(List<string> file, string outputPath)
             Console.Out.WriteLine($"Attempting to decode {meshFile}");
             
             if (mesh == null)
+            {
+                Profiler.Instance.EndFrame(conversionFrame);
                 continue;
+            }
 
             MeshInfo info = new MeshInfo(mesh, meshFile);
 
@@ -94,17 +108,20 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
             if (codec == null)
             {
+                Profiler.Instance.EndFrame(conversionFrame);
                 Console.Out.WriteLine($"Failed to find a mesh codec that can decode {meshFile}, skipping!");
                 
                 continue;
             }
 
-            bool succeeded = codec.Read(mesh, info, meshFile, out IMeshRepresentation? intermediateMesh);
+            bool succeeded = codec.Read(mesh, info, meshFile, conversionFrame, out IMeshRepresentation? intermediateMesh);
 
-            Profiler.Instance.EndFrame(out TimeSpan convertDuration); //end convert frame
+            Profiler.Instance.EndFrame(conversionFrame, out TimeSpan convertDuration); //end convert frame
 
             if (!succeeded || intermediateMesh == null)
+            {
                 continue;
+            }
             
             string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "glb"));
             
@@ -113,10 +130,11 @@ public class D3DMeshManager(List<string> file, string outputPath)
             Console.ResetColor();
             
             convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Converted {meshName}"));
-            
+
+            Profiler.ProfilerFrame frame = conversionFrame;
             Task t = Task.Run(() =>
-            {
-                var saveStartTime = DateTime.Now; //begin save frame
+            { 
+                Profiler.Instance.BeginFrame($"Saving {meshName}", frame, out Profiler.ProfilerFrame savingFrame);
                 SceneBuilder scene = new SceneBuilder();
 
                 var rootNode = new NodeBuilder(meshName);
@@ -133,29 +151,38 @@ public class D3DMeshManager(List<string> file, string outputPath)
                 ModelRoot root = scene.ToGltf2();
 
                 root.SaveGLB(outPath);
-
-                var saveEndTime = DateTime.Now; //end save frame
                 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Profiler.Instance.EndFrame(savingFrame, out TimeSpan saveDuration);
+                
                 Console.Out.WriteLine($"Succeeded in converting {meshFile}! \r\n\tSaved at: {outPath}");
-                Console.ResetColor();
 
                 //todo: reduced debug info or something?
                 convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Saved {meshName}.glb to disk"));
                 
-                Console.Out.WriteLine($"\tSaving {meshName} took: " + saveEndTime.Subtract(saveStartTime));
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Out.WriteLine($"\tSaving {meshName} took: " + saveDuration);
+                Console.ResetColor();
 
             });
 
             if (Files[^1] == meshFile)
             {
+                Profiler.Instance.EndFrame(convertTask, out TimeSpan length);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine("Converting task took: " + length);
+                Console.ResetColor();
+                
                 return t;
             }
-
-
-
+            
         }
-
+        
+        
+        Profiler.Instance.EndFrame(convertTask, out TimeSpan length1);
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.WriteLine("Converting task took: " + length1);
+        Console.ResetColor();
+        
         return null;
 
     }
