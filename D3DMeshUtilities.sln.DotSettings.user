@@ -137,5 +137,6 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\gamma\.nuget\packages\hexa.net.directxtex\2.0.4\lib\net9.0\Hexa.NET.DirectXTex.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\gamma\.nuget\packages\material.avalonia\3.15.1\lib\net8.0\Material.Styles.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\gamma\RiderProjects\D3DMeshUtilities\D3DMeshUtilities\bin\Release\net10.0\win-x64\publish\av_libglesv2.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/FileVerbosityLevel/@EntryValue">Diagnostic</s:String></wpf:ResourceDictionary>
