@@ -12,7 +12,7 @@ public partial class CodecOptions
     public bool AutoCompress { get; set; }
     public bool ForceDx9Legacy { get; set; }
     public bool GenerateJSON { get; set; }
-    public byte[] JSONData { get; set; }
+    public byte[] JSONData { get; set; } = [];
 }
 
 public enum Platform

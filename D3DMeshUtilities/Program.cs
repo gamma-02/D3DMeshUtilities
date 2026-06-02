@@ -1,6 +1,9 @@
 ﻿using Avalonia;
 using System;
 using Avalonia.Controls.ApplicationLifetimes;
+using D3DMeshUtilities.Code;
+using SharpGLTF.Schema2;
+
 
 namespace D3DMeshUtilities;
 
@@ -30,7 +33,7 @@ class Program
             .UsePlatformDetect()
 //-:cnd:noEmit
 // #if DEBUG
-            // .WithDeveloperTools()
+//             .WithDeveloperTools()
 // #endif
 //+:cnd:noEmit
             .LogToTrace();

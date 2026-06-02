@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using D3DMeshUtilities.Code.Util;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
 
 // ReSharper disable InconsistentNaming
@@ -359,11 +360,11 @@ public static class ConvertFromGfxPlatformFormat
         return ret;
     }
 
-    public static Vector<int>? ReadIntegerVector4FromSpanAndFormat(ReadOnlySpan<byte> span, GFXPlatformFormat format)
+    public static Vec4<int>? ReadIntegerVector4FromSpanAndFormat(ReadOnlySpan<byte> span, GFXPlatformFormat format)
     {
         object? vert = ReadVertexFromFormat(span, format);
 
-        return vert is Vector<int> v ? v : null;
+        return vert is Vec4<int> v ? v : null;
     }
     
     //todo: check that this will work...
@@ -467,68 +468,62 @@ public static class ConvertFromGfxPlatformFormat
         return i;
     }
 
-    public static Vector<int> ReadS32x2(ReadOnlySpan<byte> span)
+    public static Vec2<int> ReadS32x2(ReadOnlySpan<byte> span)
     {
-        return new Vector<int>(new[]
-        {
+        return new Vec2<int>([
             ReadS32(span.Slice(0, 4)), 
             ReadS32(span.Slice(4, 4))
-        });
+        ]);
     }
     
-    public static Vector<uint> ReadU32x2(ReadOnlySpan<byte> span)
+    public static Vec2<uint> ReadU32x2(ReadOnlySpan<byte> span)
     {
-        return new Vector<uint>(new[]
-        {
+        return new Vec2<uint>([
             ReadU32(span.Slice(0, 4)), 
             ReadU32(span.Slice(4, 4))
-        });
+        ]);
     }
 
 
-    public static Vector<int> ReadS32x3(ReadOnlySpan<byte> span)
+    public static Vec3<int> ReadS32x3(ReadOnlySpan<byte> span)
     {
-        return new Vector<int>(new[]
-        {
+        return new Vec3<int>([
             ReadS32(span.Slice(0, 4)), 
             ReadS32(span.Slice(4, 4)),
             ReadS32(span.Slice(8, 4))
-        });
+        ]);
 
     }
     
-    public static Vector<uint> ReadU32x3(ReadOnlySpan<byte> span)
+    public static Vec3<uint> ReadU32x3(ReadOnlySpan<byte> span)
     {
-        return new Vector<uint>(new[]
-        {
+        return new Vec3<uint>([
             ReadU32(span.Slice(0, 4)), 
             ReadU32(span.Slice(4, 4)),
             ReadU32(span.Slice(8, 4))
-        });
+        ]);
 
     }
     
-    public static Vector<int> ReadS32x4(ReadOnlySpan<byte> span)
+    public static Vec4<int> ReadS32x4(ReadOnlySpan<byte> span)
     {
-        return new Vector<int>(new[]
-        {
+        return new Vec4<int>([
             ReadS32(span.Slice(0, 4)), 
             ReadS32(span.Slice(4, 4)),
             ReadS32(span.Slice(8, 4)),
             ReadS32(span.Slice(12, 4))
-        });
+        ]);
 
     }
     
-    public static Vector<uint> ReadU32x4(ReadOnlySpan<byte> span)
+    public static Vec4<uint> ReadU32x4(ReadOnlySpan<byte> span)
     {
-        return new Vector<uint>(new[]
-        {
+        return new Vec4<uint>([
             ReadU32(span.Slice(0, 4)), 
             ReadU32(span.Slice(4, 4)),
             ReadU32(span.Slice(8, 4)),
             ReadU32(span.Slice(12, 4))
-        });
+        ]);
 
     }
 
@@ -542,56 +537,52 @@ public static class ConvertFromGfxPlatformFormat
         return BitConverter.ToUInt16(span.Slice(0, 2));
     }
 
-    public static Vector<short> ReadS16x2(ReadOnlySpan<byte> span)
+    public static Vec2<short> ReadS16x2(ReadOnlySpan<byte> span)
     {
-        return new Vector<short>(new[]
-        {
+        return new Vec2<short>([
             ReadS16(span.Slice(0, 2)),
             ReadS16(span.Slice(2, 2))
-        });
+        ]);
     }
     
-    public static Vector<ushort> ReadU16x2(ReadOnlySpan<byte> span)
+    public static Vec2<ushort> ReadU16x2(ReadOnlySpan<byte> span)
     {
-        return new Vector<ushort>(new[]
-        {
+        return new Vec2<ushort>([
             ReadU16(span.Slice(0, 2)),
             ReadU16(span.Slice(2, 2))
-        });
+        ]);
     }
     
-    public static Vector<short> ReadS16x4(ReadOnlySpan<byte> span)
+    public static Vec4<short> ReadS16x4(ReadOnlySpan<byte> span)
     {
-        return new Vector<short>(new[]
-        {
+        return new Vec4<short>([
             ReadS16(span.Slice(0, 2)),
             ReadS16(span.Slice(2, 2)),
             ReadS16(span.Slice(4, 2)),
             ReadS16(span.Slice(6, 2))
-        });
+        ]);
     }
 
-    public static Vector<ushort> ReadU16x4(ReadOnlySpan<byte> span)
+    public static Vec4<ushort> ReadU16x4(ReadOnlySpan<byte> span)
     {
-        return new Vector<ushort>(new[]
-        {
+        return new Vec4<ushort>([
             ReadU16(span.Slice(0, 2)),
             ReadU16(span.Slice(2, 2)),
             ReadU16(span.Slice(4, 2)),
             ReadU16(span.Slice(6, 2))
-        });
+        ]);
     }
     
     public static float ReadSN16(ReadOnlySpan<byte> span)
     {
         short s = BitConverter.ToInt16(span.Slice(0, 2));
-        
-        return s < 0 ? (s / 32768.0f) : (s / 32767.0f);
+        return Math.Clamp(s / 32767.0f, -1.0f, 1.0f);
     }
 
     public static float ReadUN16(ReadOnlySpan<byte> span)
     {
-        return BitConverter.ToUInt16(span.Slice(0, 2)) / 65535.0f;
+        ushort s = BitConverter.ToUInt16(span.Slice(0, 2));
+        return Math.Clamp(s / 65535.0f, 0.0f, 1.0f);
     }
 
     public static Vector2 ReadSN16x2(ReadOnlySpan<byte> span)
@@ -643,53 +634,51 @@ public static class ConvertFromGfxPlatformFormat
         return data[0];
     }
 
-    public static Vector<sbyte> ReadS8x2(ReadOnlySpan<byte> data)
+    public static Vec2<sbyte> ReadS8x2(ReadOnlySpan<byte> data)
     {
         unchecked
         {
-            return new Vector<sbyte>(new[]
-            {
+            return new Vec2<sbyte>([
                 (sbyte)data[0],
                 (sbyte)data[1]
-            });
+            ]);
         }
     }
 
-    public static Vector<int> ReadU8x2(ReadOnlySpan<byte> data)
+    public static Vec2<byte> ReadU8x2(ReadOnlySpan<byte> data)
     {
-        return new Vector<int>(new [] {data[0], data[1], 0, 0, 0, 0, 0, 0});
+        return new Vec2<byte>([data[0], data[1]]);
     }
 
-    public static Vector<sbyte> ReadS8x4(ReadOnlySpan<byte> data)
+    public static Vec4<sbyte> ReadS8x4(ReadOnlySpan<byte> data)
     {
         unchecked
         {
-            return new Vector<sbyte>(new[]
-            {
+            return new Vec4<sbyte>([
                 (sbyte)data[0],
                 (sbyte)data[1],
                 (sbyte)data[2],
                 (sbyte)data[3]
-            });
+            ]);
         }
     }
 
-    public static Vector<int> ReadU8x4(ReadOnlySpan<byte> data)
+    public static Vec4<byte> ReadU8x4(ReadOnlySpan<byte> data)
     {
-        return new Vector<int>(new [] { data[0], data[1], data[2], data[3], 0, 0, 0, 0});
+        return new Vec4<byte>([data[0], data[1], data[2], data[3]]);
     }
 
     public static float ReadSN8(ReadOnlySpan<byte> data)
     {
         unchecked
         {
-            return ((sbyte)data[0]) / ((data[0] & 0x80) == 0 ? 127.0f : 128.0f);
+            return MathUtils.ClampA1(((sbyte)data[0]) / 127.0f);
         }
     }
 
     public static float ReadUN8(ReadOnlySpan<byte> data)
     {
-        return data[0] / 255.0f;
+        return MathUtils.Clamp01(data[0] / 255.0f);
     }
 
     public static Vector2 ReadSN8x2(ReadOnlySpan<byte> data)
@@ -697,8 +686,8 @@ public static class ConvertFromGfxPlatformFormat
         unchecked
         {
             return new Vector2(
-                ((sbyte)data[0]) / ((data[0] & 0x80) == 0 ? 127.0f : 128.0f),
-                ((sbyte)data[1]) / ((data[1] & 0x80) == 0 ? 127.0f : 128.0f)
+                MathUtils.ClampA1(((sbyte)data[0]) / 127.0f),
+                MathUtils.ClampA1(((sbyte)data[1]) / 127.0f)
             );
         }
     }
@@ -706,8 +695,8 @@ public static class ConvertFromGfxPlatformFormat
     public static Vector2 ReadUN8x2(ReadOnlySpan<byte> data)
     {
         return new Vector2(
-            data[0] / 255.0f,
-            data[1] / 255.0f
+            MathUtils.Clamp01(data[0] / 255.0f),
+            MathUtils.Clamp01(data[1] / 255.0f)
         );
     }
     
@@ -719,10 +708,10 @@ public static class ConvertFromGfxPlatformFormat
             sbyte z = (sbyte)data[2];
             sbyte w = (sbyte)data[3];
 
-            float sxn = x / ((x & 0x80) == 0 ? 127.0f : 128.0f);
-            float syn = y / ((y & 0x80) == 0 ? 127.0f : 128.0f);
-            float szn = z / ((z & 0x80) == 0 ? 127.0f : 128.0f);
-            float swn = w / ((w & 0x80) == 0 ? 127.0f : 128.0f);
+            float sxn = MathUtils.ClampA1(x / 127.0f);
+            float syn = MathUtils.ClampA1(y / 127.0f);
+            float szn = MathUtils.ClampA1(z / 127.0f);
+            float swn = MathUtils.ClampA1(w / 127.0f);
 
             return new Vector4(sxn, syn, szn, swn);
         }
@@ -731,21 +720,22 @@ public static class ConvertFromGfxPlatformFormat
     public static Vector4 ReadUN8x4(ReadOnlySpan<byte> data)
     {
         return new Vector4(
-                data[0] / 255.0f,
-                data[1] / 255.0f,
-                data[2] / 255.0f,
-                data[3] / 255.0f
+                MathUtils.Clamp01(data[0] / 255.0f),
+                MathUtils.Clamp01(data[1] / 255.0f),
+                MathUtils.Clamp01(data[2] / 255.0f),
+                MathUtils.Clamp01(data[3] / 255.0f)
             );
     }
 
+    //here, it is correct to use higher values when converting b/c engine does it
     public static Vector3 ReadSN10_SN11_SN11(ReadOnlySpan<byte> data)
     {
         //read data
         uint packed = ReadUInt32(data);
-        
-        uint x = packed & TEN_BIT_MASK;
-        uint y = (packed >> 10) & ELEVEN_BIT_MASK;
-        uint z = (packed >> 21) & ELEVEN_BIT_MASK;
+
+        uint x = (packed) & ELEVEN_BIT_MASK;
+        uint y = (packed >> 11) & ELEVEN_BIT_MASK;
+        uint z = (packed >> 22) & TEN_BIT_MASK;
 
         
         //sign and normalize
@@ -753,14 +743,14 @@ public static class ConvertFromGfxPlatformFormat
         float snx;
         
         //x is negative
-        if ((x & (1 << 9)) != 0)
+        if ((x & (1 << 10)) != 0)
         {
-            snx = -((ToPositive(x) & NINE_BIT_MASK) / 512.0f);
+            snx = -((ToPositive(x) & ELEVEN_BIT_MASK) / 1024.0f);
         }
         //x is positive
         else
         {
-            snx = x / 511.0f;
+            snx = x / 1023.0f;
         }
 
         float sny;
@@ -768,7 +758,7 @@ public static class ConvertFromGfxPlatformFormat
         //y is negative
         if ((y & (1 << 10)) != 0)
         {
-            sny = -((ToPositive(y) & TEN_BIT_MASK) / 1024.0f);
+            sny = -((ToPositive(y) & ELEVEN_BIT_MASK) / 1024.0f);
         }
         //y is positive
         else
@@ -779,14 +769,14 @@ public static class ConvertFromGfxPlatformFormat
         float snz;
 
         //z is negative
-        if ((z & (1 << 10)) != 0)
+        if ((z & (1 << 9)) != 0)
         {
-            snz = -((ToPositive(z) & TEN_BIT_MASK) / 1024.0f);
+            snz = -((ToPositive(z) & TEN_BIT_MASK) / 512.0f);
         }
         //z is positive
         else
         {
-            snz = z / 1023.0f;
+            snz = z / 511.0f;
         }
 
         //return
@@ -804,7 +794,7 @@ public static class ConvertFromGfxPlatformFormat
 
         uint x = packed & TEN_BIT_MASK;
         uint y = (packed >> 10) & TEN_BIT_MASK;
-        uint z = (packed >> 10) & TEN_BIT_MASK;
+        uint z = (packed >> 20) & TEN_BIT_MASK; //i can't believe i missed this one -_-
         uint w = (packed >> 30) & TWO_BIT_MASK;
         
         //sign and normalize
@@ -814,7 +804,12 @@ public static class ConvertFromGfxPlatformFormat
         //x is negative
         if ((x & (1 << 9)) != 0)
         {
-            snx = -((ToPositive(x) & NINE_BIT_MASK) / 512.0f);
+            //so we take x to be negative in two's complement
+            //then we convert it to positive in two's complement (but this leaves upper bits set wrong)
+            //so we or it with the nine bit mask (because the 10th bit will be 0 since it's positive)
+            //then we divide by 511 to normalize the value
+            //and then invert the resulting float because it needs to be negative
+            snx = -((ToPositive(x) & NINE_BIT_MASK) / 511.0f);
         }
         //x is positive
         else
@@ -827,12 +822,12 @@ public static class ConvertFromGfxPlatformFormat
         //y is negative
         if ((y & (1 << 9)) != 0)
         {
-            sny = -(ToPositive(y, NINE_BIT_MASK) / 512.0f);
+            sny = -(ToPositive(y, NINE_BIT_MASK) / 511.0f);
         }
         //y is positive
         else
         {
-            sny = y / 1023.0f;
+            sny = y / 511.0f;
         }
 
         float snz;
@@ -840,7 +835,7 @@ public static class ConvertFromGfxPlatformFormat
         //z is negative
         if ((z & (1 << 9)) != 0)
         {
-            snz = -((ToPositive(z, NINE_BIT_MASK))  / 512.0f);
+            snz = -((ToPositive(z, NINE_BIT_MASK))  / 511.0f);
         }
         //z is positive
         else
@@ -853,11 +848,12 @@ public static class ConvertFromGfxPlatformFormat
         //w is negative
         if ((w & 0b10) != 0)
         {
-            snw = -(ToPositive(w, 0b1) / 2.0f);
+            snw = -(ToPositive(w, 0b1));
         }
+        //w is positive -> it can literally just be set because it can only be 0 or 1 if it's not -1
         else
         {
-            snw = w / 1.0f;
+            snw = w;
         }
 
         return new Vector4(snx, sny, snz, snw);

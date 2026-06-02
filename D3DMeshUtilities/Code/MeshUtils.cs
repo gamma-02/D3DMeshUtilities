@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using D3DMeshUtilities.Code.ImageStuffAUGH;
 using D3DMeshUtilities.Code.MeshHandling;
+using D3DMeshUtilities.Code.Util;
 using SharpGLTF.Materials;
 using SharpGLTF.Memory;
 using TelltaleToolKit;
@@ -323,7 +324,7 @@ public static class MeshUtils
         return vertices;
     }
     
-    public static List<Vector<int>>? GetVertexBlendIndices(T3MeshData meshData, int vertexStateIndex)
+    public static List<Vec4<int>>? GetVertexBlendIndices(T3MeshData meshData, int vertexStateIndex)
     {
         
         var vertexState = meshData.VertexStates[vertexStateIndex];
@@ -356,13 +357,13 @@ public static class MeshUtils
     
         ReadOnlySpan<byte> indexBuffer = vertexBlendIndexBuffer.Buffer;
     
-        var indices = new List<Vector<int>>();
+        var indices = new List<Vec4<int>>();
     
         uint readerIndex = 0;
     
         while (readerIndex < indexBuffer.Length)
         {
-            indices.Add((Vector<int>)ConvertFromGfxPlatformFormat.ReadIntegerVector4FromSpanAndFormat(indexBuffer.Slice((int)readerIndex), format)!);
+            indices.Add((Vec4<int>)ConvertFromGfxPlatformFormat.ReadIntegerVector4FromSpanAndFormat(indexBuffer.Slice((int)readerIndex), format)!);
     
             readerIndex += vertexBlendIndexBuffer.Stride;
     

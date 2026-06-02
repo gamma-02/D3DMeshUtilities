@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using TelltaleToolKit.T3Types.Meshes.T3Types;
 
-namespace D3DMeshUtilities.Code;
+namespace D3DMeshUtilities.Code.Util;
 
 public class Utils
 {

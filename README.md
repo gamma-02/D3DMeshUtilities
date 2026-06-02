@@ -22,14 +22,16 @@ The other way to use this is through the command line. Below is a list of argume
 For each of these, values are set by an equals sign followed by a string, separated by spaces, but quotes can escape spaces. The string following should be a value matching the type.
 
 ### Arguments
-| Flag         | Name                    | Description                                                                                                            |
-|--------------|-------------------------|------------------------------------------------------------------------------------------------------------------------|
-| -gameDir     | Game Archives Directory | This sets the path of the game directory, and loads it automatically, unless the autoLoad flag is set to false.        |
-| -game        | Game                    | This sets the game that the app will use settings for, like encryption key, MetaStream version, and Oodle compression. |
-| -archive     | Archive                 | This sets the archive from the game archives that will be loaded, unless the aa flag is set to false.                  |
-| -m[odel]     | Model                   | This sets a model inside of the chosen archive to be automatically converted, unless the am flag is set to false.      |
-| -models [ms] | Models                  | This sets a semicolon-separated list of models to be automatically converted, same above.                              |
-| -o[ut]       | Out Model Directory     | This sets the directory models will be automatically converted into, unless the ac flag is set to false.               |
+| Flag               | Name                           | Description                                                                                                                                                          |
+|--------------------|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -gameDir           | Game Archives Directory        | This sets the path of the game directory, and loads it automatically, unless the autoLoad flag is set to false.                                                      |
+| -game              | Game                           | This sets the game that the app will use settings for, like encryption key, MetaStream version, and Oodle compression.                                               |
+| -archive           | Archive                        | This sets the archive from the game archives that will be loaded, unless the aa flag is set to false.                                                                |
+| -m[odel]           | Model                          | This sets a model inside of the chosen archive to be automatically converted, unless the am flag is set to false.                                                    |
+| -models [ms]       | Models                         | This sets a semicolon-separated list of models to be automatically converted, same above.                                                                            |
+| -o[ut]             | Out Model Directory            | This sets the directory models will be automatically converted into, unless the ac flag is set to false.                                                             |
+| -po (-profilerOut) | Profiler Output Mode/Directory | This sets the mode and directory of the profiling system, defaulting to off by not specifying, printing to stdout with "print", and a file with any valid file path. |
+| -testImportMesh    | Test Import Mesh Directory     | This sets the file path of a small, WIP, testing gltf -> d3d importer. IT DOES NOT OUTPUT ANYTHING YET.                                                              |
 
 
 ### Flags
@@ -42,5 +44,6 @@ Simple booleans that help control CLI behavior when used with other flags
 | -am (-autoChooseModels)  | Controls automatic model selection from the list of models (If false, the models will be selected by default but allow for the user to change the selection in the GUI before manually moving on to conversion)               |
 | -ac (-autoConvert)       | Controls automatic conversion of models. (If false, the app will wait for user input to start conversion)                                                                                                                     |
 | -aq (-autoQuit)          | Controls automatic exiting of the application on finishing converting the models. (If true, the app will exit after finishing conversion)                                                                                     |
+| -dpoc (-dumpProfilerOnConversion) | Controls wether to dump profiler output on conversion task finish or when the program closes. When the program closes can be unreliable. |
 
 <sub><sup>Written with [StackEdit](https://stackedit.io/).</sup></sub>

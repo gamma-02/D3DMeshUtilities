@@ -71,7 +71,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         submodules: true
         fetch-depth: 0
@@ -95,7 +95,7 @@ jobs:
     - name: Setup NuGet.exe for use with actions
       # You may pin to the exact commit or the version.
       # uses: NuGet/setup-nuget@d105a947828025cd7a980103c35ba2bfae586d0f
-      uses: NuGet/setup-nuget@v2.0.2
+      uses: NuGet/setup-nuget@v4
       
     - name: Restore nuget
       run: nuget restore $env:Solution_Name.sln
@@ -138,7 +138,7 @@ jobs:
     #   run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
 
     - name: Publish Windows artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         # Name of the artifact to upload.
         # Optional. Default is 'artifact'

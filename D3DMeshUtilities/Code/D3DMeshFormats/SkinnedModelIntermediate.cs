@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using D3DMeshUtilities.Code.MeshHandling;
+using D3DMeshUtilities.Code.Util;
 using SharpGLTF.Geometry;
 using SharpGLTF.Geometry.VertexTypes;
 using SharpGLTF.Materials;
@@ -41,7 +42,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
     //todo: make skeleton actually optional
     public Skeleton? Skeleton;
 
-    public List<Vector<int>> BlendIndices;
+    public List<Vec4<int>> BlendIndices;
     public List<Vector4> BlendWeights;
 
     public List<T3MeshBoneEntry> MeshDataBones;
@@ -60,7 +61,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         List<MaterialBuilder> materials, 
         List<T3MeshLOD> loDs, 
         Skeleton skeleton, 
-        List<Vector<int>> blendIndices, 
+        List<Vec4<int>> blendIndices, 
         List<Vector4> blendWeights, List<T3MeshBoneEntry> bones)
     {
         Info = info;
@@ -147,7 +148,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         // List<Vector4>? vertexColorList = MeshUtils.GetVertexColors(meshData, 0);
     
     
-        List<Vector<int>>? vertexBlendIndices = MeshUtils.GetVertexBlendIndices(meshData, 0);
+        List<Vec4<int>>? vertexBlendIndices = MeshUtils.GetVertexBlendIndices(meshData, 0);
         List<Vector4>? vertexBlendWeights = MeshUtils.GetVertexBlendWeights(meshData, 0);
     
     
@@ -234,7 +235,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
     }
 
     //todo: look into exporting LODs as seprate meshBuilders
-    public bool SaveToGLTF(out IMeshBuilder<MaterialBuilder> meshBuilder, List<Vector<int>>? blendIndices = null)
+    public bool SaveToGLTF(out IMeshBuilder<MaterialBuilder> meshBuilder, List<Vec4<int>>? blendIndices = null)
     {
         if(blendIndices == null)
         {
@@ -349,13 +350,13 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         }
     }
     
-    private void AddVertexWithSkinning(int vertexIndex, List<IVertexBuilder> vertexList, List<Vector<int>> blendIndices)
+    private void AddVertexWithSkinning(int vertexIndex, List<IVertexBuilder> vertexList, List<Vec4<int>> blendIndices)
     {
         
         // Create skinning data
         VertexJoints4 skinning = default;
         
-        Vector<int> indices = blendIndices[vertexIndex];
+        Vec4<int> indices = blendIndices[vertexIndex];
         Vector4 weights = BlendWeights[vertexIndex];
         // Normalize weights first
         float sum = weights.X + weights.Y + weights.Z + weights.W;
@@ -503,7 +504,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
                 boneNameToJointIndex[boneName] = i;
             }
 
-            List<Vector<int>> blendIndices = BlendIndices;
+            List<Vec4<int>> blendIndices = BlendIndices;
         
             List<T3MeshBoneEntry> d3dMeshBones = MeshDataBones;
             for (var i = 0; i < blendIndices.Count; i++)
@@ -523,7 +524,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
                 int remappedIndex3 = RemapBoneIndex(bone3, boneNameToJointIndex);
                 int remappedIndex4 = RemapBoneIndex(bone4, boneNameToJointIndex);
 
-                blendIndices[i] = new Vector<int>([remappedIndex1, remappedIndex2, remappedIndex3, remappedIndex4, 0, 0, 0, 0]);
+                blendIndices[i] = new Vec4<int>([remappedIndex1, remappedIndex2, remappedIndex3, remappedIndex4]);
             }
 
             if (!SaveToGLTF(out IMeshBuilder<MaterialBuilder> skinnedMesh, blendIndices))
