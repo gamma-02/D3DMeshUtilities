@@ -144,7 +144,6 @@ public class App : Application
         base.OnFrameworkInitializationCompleted();
     }
     
-    //todo: find platform independent versions of this!
 #if BUILT_FOR_WINDOWS
     [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool AllocConsole();

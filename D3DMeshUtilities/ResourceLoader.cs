@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit;
-using TelltaleToolKit.Resource;
-using TelltaleToolKit.TelltaleArchives;
+using TelltaleToolKit.IO.Archives;
+using TelltaleToolKit.IO.Resources;
+
 
 namespace D3DMeshUtilities;
 
@@ -74,7 +75,7 @@ public class ResourceLoader
             }
             catch (Exception)
             {
-                cts.Cancel();
+                await cts.CancelAsync();
                 Profiler.Instance.EndFrame(loadFrame);
                 return [];
             }
@@ -93,7 +94,7 @@ public class ResourceLoader
         Profiler.Instance.EndFrame(loadFrame, out TimeSpan length);
         
         Console.ForegroundColor = ConsoleColor.DarkGreen;
-        Console.Out.WriteLine("\tLoading game resources took: " + length);
+        await Console.Out.WriteLineAsync("\tLoading game resources took: " + length);
         Console.ResetColor();
         
         return archives.Where(s => !string.IsNullOrEmpty(s)).ToList();
@@ -103,40 +104,46 @@ public class ResourceLoader
 
     private async void LoadArchive()
     {
-        // var startLoadTime = DateTime.Now;
-        Profiler.Instance.BeginFrame("Archive Loading", out Profiler.ProfilerFrame loadFrame);
-        AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
-        
-        lock(ResourceLock)
+        try
         {
-            if (Contexts == null)
-                Contexts = new List<ResourceContext>();
-            else if (Contexts.Count != 0)
+            // var startLoadTime = DateTime.Now;
+            Profiler.Instance.BeginFrame("Archive Loading", out Profiler.ProfilerFrame loadFrame);
+            AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
+        
+            lock(ResourceLock)
             {
-                Profiler.Instance.EndFrame(loadFrame, out TimeSpan length1);
+                if (Contexts == null)
+                    Contexts = [];
+                else if (Contexts.Count != 0)
+                {
+                    Profiler.Instance.EndFrame(loadFrame, out TimeSpan length1);
         
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Out.WriteLine("\tLoading game resources took: " + length1);
-                Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Out.WriteLine("\tLoading game resources took: " + length1);
+                    Console.ResetColor();
 
-                return;
-            }
+                    return;
+                }
 
-            Instance.ArchiveContext = TttkInit.Workspace?.LoadArchive(ArchiveLocation, "Current Archive");
+                Instance.ArchiveContext = TttkInit.Workspace?.LoadArchive(ArchiveLocation, "Current Archive");
 
-            if (Instance.ArchiveContext != null)
-                Contexts.Add(Instance.ArchiveContext);
+                if (Instance.ArchiveContext != null)
+                    Contexts.Add(Instance.ArchiveContext);
             
-            ArchiveLocationLock.Exit();
+                ArchiveLocationLock.Exit();
 
+            }
+        
+            Profiler.Instance.EndFrame(loadFrame, out TimeSpan length);
+        
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            await Console.Out.WriteLineAsync("\tLoading game resources took: " + length);
+            Console.ResetColor();
         }
-        
-        Profiler.Instance.EndFrame(loadFrame, out TimeSpan length);
-        
-        Console.ForegroundColor = ConsoleColor.DarkGreen;
-        Console.Out.WriteLine("\tLoading game resources took: " + length);
-        Console.ResetColor();
-
+        catch (Exception)
+        {
+            //ignored
+        }
     }
 
     public ResourceContext? GetContextWithArchive(string archivePath)

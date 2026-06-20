@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
-using TelltaleToolKit.TelltaleArchives;
 
 namespace D3DMeshUtilities;
 
@@ -29,10 +28,12 @@ public partial class ArchiveModelList : BaseProjectWindow
             
             
             var li = new ListBoxItem();
-            var text = new TextBlock();
+            var text = new TextBlock
+            {
+                Text = "Archive not yet loaded",
+                FontSize = 20
+            };
 
-            text.Text = "Archive not yet loaded";
-            text.FontSize = 20;
             li.Content = text;
             li.HorizontalAlignment = HorizontalAlignment.Center;
 
@@ -73,10 +74,12 @@ public partial class ArchiveModelList : BaseProjectWindow
             
             
             var li = new ListBoxItem();
-            var text = new TextBlock();
+            var text = new TextBlock
+            {
+                Text = "Archive not yet loaded",
+                FontSize = 20
+            };
 
-            text.Text = "Archive not yet loaded";
-            text.FontSize = 20;
             li.Content = text;
             li.HorizontalAlignment = HorizontalAlignment.Center;
 
@@ -191,9 +194,11 @@ public partial class ArchiveModelList : BaseProjectWindow
             {
                 
                 var li = new ListBoxItem();
-                var text = new TextBlock();
+                var text = new TextBlock
+                {
+                    Text = element
+                };
 
-                text.Text = element;
                 li.Content = text;
 
                 ModelList.Items.Add(li);
@@ -203,10 +208,12 @@ public partial class ArchiveModelList : BaseProjectWindow
             if (ArchiveMeshListDictionary.Count == 0 && _enableButton)
             {
                 var li = new ListBoxItem();
-                var text = new TextBlock();
+                var text = new TextBlock
+                {
+                    Text = "No models found!",
+                    FontSize = 20
+                };
 
-                text.Text = "No models found!";
-                text.FontSize = 20;
                 li.Content = text;
                 li.HorizontalAlignment = HorizontalAlignment.Center;
 

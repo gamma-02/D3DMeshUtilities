@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TelltaleToolKit;
-using TelltaleToolKit.Resource;
+using TelltaleToolKit.IO.Archives;
+using TelltaleToolKit.IO.Resources;
 using TelltaleToolKit.T3Types;
 using TelltaleToolKit.T3Types.Meshes;
 using TelltaleToolKit.T3Types.Properties;
 using TelltaleToolKit.T3Types.Skeletons;
-using TelltaleToolKit.TelltaleArchives;
+
 
 namespace D3DMeshUtilities.Code.D3DMeshFormats;
 
