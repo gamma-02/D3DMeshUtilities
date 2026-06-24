@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using JetBrains.Annotations;
@@ -11,11 +12,8 @@ public class Profiler
 {
 
     public static readonly Profiler Instance = new Profiler();
-    // public static readonly ProfilerThreadLocal ThreadInstance = new ();
     
     public readonly List<ProfilerFrame> ParentFrames = [];
-
-    // public ProfilerFrame? CurrentFrame { get; private set; }
     
     public void BeginFrame(string name, out ProfilerFrame frame) => BeginFrame(name, null, out frame);
     
@@ -47,18 +45,12 @@ public class Profiler
 
     public void EndFrame(ProfilerFrame frame)
     {
-        
         frame.EndFrame();
-
-        // CurrentFrame = CurrentFrame.Parent;
     }
 
     public void EndFrame(ProfilerFrame frame, out TimeSpan length)
     {
         length = TimeSpan.Zero;
-
-        // if (CurrentFrame == null)
-        //     return;
         
         frame.EndFrame();
 
@@ -68,12 +60,11 @@ public class Profiler
 
     public string GetResults()
     {
-
-        StringWriter stringWriter = new StringWriter();
-        IndentedTextWriter writer = new IndentedTextWriter(stringWriter, "|   ");
+        var stringWriter = new StringWriter();
+        var writer = new IndentedTextWriter(stringWriter, "|   ");
         writer.Indent = 0;
 
-        foreach (var parent in ParentFrames)
+        foreach (ProfilerFrame parent in ParentFrames)
         {
             parent.GetResults(writer, 0);
         }
@@ -81,7 +72,7 @@ public class Profiler
         return stringWriter.ToString();
     }
 
-    private void MergeCompleteOther(Profiler? other)
+    public void MergeWithOther(Profiler? other)
     {
         if (other is null)
             return;
@@ -92,7 +83,7 @@ public class Profiler
     public class ProfilerFrame(string name)
     {
         public string Name = name;
-        public ProfilerFrame? Parent;
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")] public ProfilerFrame? Parent;
         public readonly List<ProfilerFrame> Children = [];
         public DateTime StartTime { get; private set; } = DateTime.Now;
         public DateTime? EndTime;
@@ -131,31 +122,18 @@ public class Profiler
 
         public void GetResults(IndentedTextWriter writer, int level)
         {
-
             if (EndTime == null)
-            {
                 throw new InvalidOperationException($"Profiler frame {Name} not ended!");
-
-            }
             
             writer.Indent = level;
             
             writer.WriteLine($"{Name} took {Length}");
             
-            
-            foreach (var child in Children)
+            foreach (ProfilerFrame child in Children)
             {
                 child.GetResults(writer, level + 1);
             }
         }
     }
-
-    // public class ProfilerThreadLocal() : ThreadLocal<Profiler>(() => new Profiler(), true)
-    // {
-    //     protected override void Dispose(bool disposing)
-    //     {
-    //         Instance.MergeCompleteOther(this.Value);
-    //         base.Dispose(disposing);
-    //     }
-    // }
+    
 }

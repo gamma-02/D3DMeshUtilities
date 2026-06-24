@@ -82,7 +82,7 @@
             <Button Grid.Column="1" FontSize="20" Click="Back_OnClick" Height="40" Name="Back"> Back to Model Select </Button>
         </Grid>
         
-        <Border Grid.Row="5" Background="#26282c" CornerRadius="5" Margin=" 5 10 15 10" Padding="10" Name="MessageBox" IsVisible="True">
+        <Border Grid.Row="5" Background="#26282c" CornerRadius="5" Margin=" 5 10 15 5" Padding="10" Name="MessageBox" IsVisible="True">
             <ListBox Name="MessageList" AutoScrollToSelectedItem="True" >
                 <ListBox.Styles>
                     <!-- Target the Selected State in Template -->

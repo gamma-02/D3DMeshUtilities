@@ -14,4 +14,17 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
+    
+    <Style Selector="Control.comingSoon">
+        <Setter Property="ToolTip.Tip">
+            <Template>
+                <Border CornerRadius="4" Padding="8" Background="{DynamicResource ThemeBackgroundColor}" BorderThickness="1">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Feature coming soon!"/>
+                    </StackPanel>
+                </Border>
+            </Template>
+        </Setter>
+        <Setter Property="ToolTip.ShowOnDisabled" Value="True" />
+    </Style>
 </Styles>

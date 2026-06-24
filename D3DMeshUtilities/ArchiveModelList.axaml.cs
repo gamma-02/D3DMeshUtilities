@@ -23,15 +23,12 @@ public partial class ArchiveModelList : BaseProjectWindow
     {
         InitializeComponent();
         
-        if (ArchiveMeshListDictionary.Count == 0)
+        if (ArchiveMeshListDictionary.Count == 0 && !Design.IsDesignMode)
         {
-            if(!Design.IsDesignMode)
-            {
-                ListPanel.Children.Clear();
-            }
+            ListPanel.Children.Clear();
             
-            var notLoadedMessage = new ArchiveListBox("Archive not yet loaded", new List<string>());
-            notLoadedMessage.GetHeaderText().FontSize = 20;
+            var notLoadedMessage = new TextBlock();
+            notLoadedMessage.Text = "Archive not yet loaded";
 
             ListPanel.Children.Add(notLoadedMessage);
             
@@ -40,7 +37,7 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         _enableButton = false;
 
-        bool startupChooseModels = App.StartupChooseModels;
+        bool startupChooseModels = App.StartConversionInstantly;
         
         if (startupChooseModels && App.StartupModels.Length > 0)
         {
@@ -49,39 +46,31 @@ public partial class ArchiveModelList : BaseProjectWindow
         }
         
         Dispatcher.InvokeAsync(FillModelList);
-        
-        if (!startupChooseModels && App.StartupModels.Length > 0)
-        {
-            Dispatcher.InvokeAsync(SelectModels);
-        }
-
 
     }
     
     public ArchiveModelList(bool fromTab = true)
     {
         InitializeComponent();
-
-        // ModelList.SelectionMode = SelectionMode.Extended;
-
-        if (fromTab && ArchiveMeshListDictionary.Count == 0)
+        
+        if (fromTab && ArchiveMeshListDictionary.Count == 0 && !Design.IsDesignMode)
         {
-            if(!Design.IsDesignMode)
-            {
-                ListPanel.Children.Clear();
-            }
+            ListPanel.Children.Clear();
             
-            var notLoadedMessage = new ArchiveListBox("Archive not yet loaded", new List<string>());
-            notLoadedMessage.GetHeaderText().FontSize = 20;
+            var notLoadedMessage = new TextBlock
+            {
+                Text = "Archive not yet loaded :(",
+                FontSize = 20
+            };
 
             ListPanel.Children.Add(notLoadedMessage);
             
             _enableButton = false;
         }
 
-        bool startupChooseModels = App.StartupChooseModels;
+        bool startConversionInstantly = App.StartConversionInstantly;
         
-        if (startupChooseModels && App.StartupModels.Length > 0)
+        if (startConversionInstantly && App.StartupModels.Length > 0)
         {
             Dispatcher.InvokeAsync(ConvertInstantly);
             return;
@@ -89,48 +78,8 @@ public partial class ArchiveModelList : BaseProjectWindow
         
         Dispatcher.InvokeAsync(FillModelList);
         
-        if (!startupChooseModels && App.StartupModels.Length > 0)
-        {
-            Dispatcher.InvokeAsync(SelectModels);
-        }
-        
     }
-
-    private async void SelectModels()
-    {
-        try
-        {
-            await Task.Delay(100);
-
-            ResourceLoader.ArchiveLocationLock.TryEnter();
-
-            foreach (string model in App.StartupModels)
-            {
-                // if (ModelList.SelectedItems == null) 
-                //     continue;
-                //
-                // foreach (object? item in ModelList.SelectedItems)
-                // {
-                //     var i = item as ListBoxItem;
-                //
-                //     if (i?.Content is not TextBlock b)
-                //         continue;
-                //
-                //     if (b.Text != null && b.Text.Equals(model))
-                //         i.IsSelected = true;
-                // }
-            }
-        }
-        catch (Exception)
-        {
-            //ignored
-        }
-        finally
-        {
-            if(ResourceLoader.ArchiveLocationLock.IsHeldByCurrentThread)
-                ResourceLoader.ArchiveLocationLock.Exit();
-        }
-    }
+    
 
     private async void ConvertInstantly()
     {
@@ -156,7 +105,6 @@ public partial class ArchiveModelList : BaseProjectWindow
 
     private void FillModelList()
     {
-
         ResourceLoader.ArchiveLocationLock.TryEnter();
 
         try
@@ -166,7 +114,8 @@ public partial class ArchiveModelList : BaseProjectWindow
                 ListPanel.Children.Clear();
             }
 
-
+            HashSet<string> modelsToTrySelect = new (!App.StartConversionInstantly ? App.StartupModels.ToList() : []);
+            
             if (!string.IsNullOrWhiteSpace(ResourceLoader.Instance.ArchiveLocation) &&
                 !ArchiveMeshListDictionary.ContainsKey(ResourceLoader.Instance.ArchiveLocation))
             {
@@ -182,6 +131,8 @@ public partial class ArchiveModelList : BaseProjectWindow
                 ArchiveMeshListDictionary[rcName] = entries;
                 
                 var listBox = new ArchiveListBox(rcName, entries);
+                listBox.SelectionChanged += ArchiveListBox_OnSelectionChanged;
+                listBox.MeshesToTrySelect = modelsToTrySelect;
                 
                 ListPanel.Children.Add(listBox);
 
@@ -211,22 +162,22 @@ public partial class ArchiveModelList : BaseProjectWindow
                 foreach(string archive in ArchiveMeshListDictionary.Keys)
                 {
                     var listBox = new ArchiveListBox(archive, ArchiveMeshListDictionary[archive]);
+                    listBox.SelectionChanged += ArchiveListBox_OnSelectionChanged;
+                    listBox.MeshesToTrySelect = modelsToTrySelect;
                     
                     ListPanel.Children.Add(listBox);
                 }
                 
             }
-            
-            if (ArchiveMeshListDictionary.Count == 0 && _enableButton)
-            {
-                
-                var notLoadedMessage = new ArchiveListBox("No models found :(", new List<string>());
-                notLoadedMessage.GetHeaderText().FontSize = 20;
 
-                ListPanel.Children.Add(notLoadedMessage);
+            if (ArchiveMeshListDictionary.Count != 0 || !_enableButton) return;
             
-                _enableButton = false;
-            }
+            var notLoadedMessage = new ArchiveListBox("No models found :(", new List<string>());
+            notLoadedMessage.GetHeaderText().FontSize = 20;
+
+            ListPanel.Children.Add(notLoadedMessage);
+            
+            _enableButton = false;
 
             // i wish I could use this :(
             // Color one = Color.FromRgb(0x43, 0x43, 0x43);
@@ -251,23 +202,53 @@ public partial class ArchiveModelList : BaseProjectWindow
         }
     }
 
-    void ModelList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    void ArchiveListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        // IList? selectedItems = ModelList.SelectedItems;
-        //
-        // if (selectedItems?.Count == 0 || !_enableButton)
-        // {
-        //     ConvertButtonGrid.IsVisible = false;
-        // }
-        // else
-        // {
-        //     ConvertButtonGrid.IsVisible = true;
-        // }
+        if (IsNothingSelected() || !_enableButton)
+        {
+            ConvertButtonGrid.IsVisible = false;
+        }
+        else
+        {
+            ConvertButtonGrid.IsVisible = true;
+        }
     }
-    
+
+    public bool IsNothingSelected()
+    {
+        foreach (Control? child in ListPanel.Children)
+        {
+            if(child is not ArchiveListBox archiveListBox) continue;
+
+            if (archiveListBox.GetSelectedItems() is not { Count: 0 })
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public List<string> GetSelectedMeshes()
+    {
+        List<string> meshes = [];
+
+        if (IsNothingSelected()) return meshes;
+
+        foreach (Control? child in ListPanel.Children)
+        {
+            if(child is not ArchiveListBox archiveListBox) continue;
+            
+            if(archiveListBox.GetSelectedItems() is { Count: 0 }) continue; //slightly faster, checks for empty
+            
+            meshes.AddRange(archiveListBox.GetSelectedMeshes());
+        }
+
+        return meshes;
+    }
+
     void BeginConversion(string[] modelArray)
     {
-
         List<string> models = modelArray.ToList();
 
         Converting converting = new Converting(models)
@@ -280,43 +261,17 @@ public partial class ArchiveModelList : BaseProjectWindow
 
     void BeginConversion(object sender, RoutedEventArgs routedEventArgs)
     {
+        List<string> models = GetSelectedMeshes();
 
-        List<string> models = [];
-
-        // if (ModelList.SelectedItems == null) return;
-        //
-        // foreach (var item in ModelList.SelectedItems)
-        // {
-        //     if (item == null)
-        //         continue;
-        //     
-        //     ListBoxItem? i = item as ListBoxItem;
-        //     
-        //     if(i == null)
-        //         continue;
-        //     
-        //     TextBlock? b = i.Content as TextBlock;
-        //     
-        //     if(b?.Text == null)
-        //         continue;
-        //     
-        //     models.Add(b.Text);
-        // }
+        if(models.Count == 0) return;
 
         Converting converting = new Converting(models)
         {
             OverriddenOwner = this
         };
-
-        converting.Show();
         
-        this.Hide();
-
-        SetMainWindow(converting);
-
-        converting.OverriddenOwner = null;
+        CloseOnNewWindowOpened(converting);
         
-        this.Close();
     }
     
     
@@ -325,30 +280,5 @@ public partial class ArchiveModelList : BaseProjectWindow
         return Window.ListModels;
     }
 
-    public List<string> GetModelsToConvert()
-    {
-        List<string> models = [];
-
-        // if (ModelList.SelectedItems == null) return models;
-        //
-        // foreach (var item in ModelList.SelectedItems)
-        // {
-        //     if (item == null)
-        //         continue;
-        //
-        //     ListBoxItem? i = item as ListBoxItem;
-        //
-        //     if (i == null)
-        //         continue;
-        //
-        //     TextBlock? b = i.Content as TextBlock;
-        //
-        //     if (b?.Text == null)
-        //         continue;
-        //
-        //     models.Add(b.Text);
-        // }
-
-        return models;
-    }
+    public List<string> GetModelsToConvert() => GetSelectedMeshes();
 }

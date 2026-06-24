@@ -6,11 +6,14 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ICSharpCode.SharpZipLib.Core;
 using TelltaleToolKit;
+using Tmds.DBus.Protocol;
 using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
 using TextBlock = Avalonia.Controls.TextBlock;
@@ -70,38 +73,34 @@ public partial class MainWindow : BaseProjectWindow
         else
             GameDropdown.SelectedIndex = GameDropdown.Items.IndexOf("Poker Night at the Inventory Remastered");
         
-        // if (SingleArchivePathCache != null)
-        // {
-        //     filePath.Text = SingleArchivePathCache;
-        // }
         
         if (GameDataDirectoryCache != null)
         {
             GameDataPath.Text = GameDataDirectoryCache;
         }
         
-        if (LoadedArchivesCache != null && LoadedArchivesCache.Count > 0)
-        {
-            ArchiveList.Items.Clear();
-            //assume the resource context is loaded
-            foreach (string archivePath in LoadedArchivesCache)
-            {
-                var li = new ListBoxItem();
-                var text = new TextBlock();
-        
-                int seperator = archivePath.LastIndexOfAny(['\\', '/']);
-        
-                string archiveName = archivePath.Substring(seperator + 1);
-        
-                text.Text = archiveName;
-                text.HorizontalAlignment = HorizontalAlignment.Left;
-                li.Content = text;
-        
-                ArchiveList.Items.Add(li);
-            }
-            
-            ArchiveListGrid.IsVisible = true;
-        }
+        // if (LoadedArchivesCache != null && LoadedArchivesCache.Count > 0)
+        // {
+        //     ArchiveList.Items.Clear();
+        //     //assume the resource context is loaded
+        //     foreach (string archivePath in LoadedArchivesCache)
+        //     {
+        //         var li = new ListBoxItem();
+        //         var text = new TextBlock();
+        //
+        //         int seperator = archivePath.LastIndexOfAny(['\\', '/']);
+        //
+        //         string archiveName = archivePath.Substring(seperator + 1);
+        //
+        //         text.Text = archiveName;
+        //         text.HorizontalAlignment = HorizontalAlignment.Left;
+        //         li.Content = text;
+        //
+        //         ArchiveList.Items.Add(li);
+        //     }
+        //     
+        //     ArchiveListGrid.IsVisible = true;
+        // }
 
         if (!startedUp)
         {
@@ -111,14 +110,71 @@ public partial class MainWindow : BaseProjectWindow
         if (string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory)) return;
         GameDataPath.Text = App.StartupGameArchivesDirectory;
 
-        if (!App.StartupLoadGameDir || string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory)) return;
-        DispatcherOperation op = Dispatcher.InvokeAsync(LoadResources);
+        bool chooseArchive = App.StartupChooseArchive;
+        bool loadGameDir = App.StartupLoadGameDir;
+        //todo: Change this to be compatable with the new system that has a couple extra options
+        if(loadGameDir && !chooseArchive && !string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory))
+        {
+            Dispatcher.InvokeAsync(LoadResources);
+            return;
+        }
 
-        if (!App.StartupChooseArchive || string.IsNullOrWhiteSpace(App.StartupArchive)) return;
-        Dispatcher.InvokeAsync(() => LoadArchiveAfterResources(op, App.StartupArchive));
+        //for right now: StartupChooseArchive implies App.StartupLoadGameDir
+        if (chooseArchive && !string.IsNullOrWhiteSpace(App.StartupArchive) && !string.IsNullOrWhiteSpace(App.StartupGameArchivesDirectory))
+        {
+            if (!loadGameDir)
+            {
+                Console.Out.WriteLine("Automatically loading game directory (possibly against your wishes). This is based on legacy behaviour and you should update your usage methodology.");
+            }
+            Dispatcher.InvokeAsync(() => LoadArchiveAfterResources(App.StartupArchive));
+        }
         
     }
     
+    public void AddMessageToBox(string message)
+    {
+        var messageBlock = new TextBlock
+        {
+            Text = message,
+            FontSize = 16,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(5, 5, 5, 5)
+
+        };
+
+        // ListBoxItem item = new()
+        // {
+        //     Content = messageBlock
+        // };
+
+        MessageBox.Items.Add(messageBlock);
+
+        MessageBox.SelectedIndex = MessageBox.Items.Count - 1;
+    }
+
+    public void AddMessageToBox(string message, Color textColor)
+    {
+        textColor = Color.FromArgb(0xFF, textColor.R, textColor.G, textColor.B);
+        var messageBlock = new TextBlock
+        {
+            Text = message,
+            FontSize = 16,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Foreground = new SolidColorBrush(textColor),
+            Margin = new Thickness(5, 5, 5, 5)
+        };
+
+        // ListBoxItem item = new()
+        // {
+        //     Content = messageBlock
+        // };
+
+        MessageBox.Items.Add(messageBlock);
+
+        MessageBox.SelectedIndex = MessageBox.Items.Count - 1;
+
+    }
+
 
     private static FilePickerFileType TelltaleArchive2Files =
         new ("TellTale Archive 2 Files (*.ttarch2) | *.ttarch2")
@@ -165,47 +221,38 @@ public partial class MainWindow : BaseProjectWindow
 
     //huge todo: add the console window thing, gonna need to change ArchiveLoader for that too tbf
 
-    private async Task<List<string>> LoadGameDir()
+    private static async Task<List<string>> LoadGameDir(MainWindow window, string? gameDataPath, string chosenGame)
     {
         try
         {
-            if (string.IsNullOrEmpty(GameDataPath.Text))
+            if (string.IsNullOrEmpty(gameDataPath))
                 return [];
 
-            string fullPath = Path.GetFullPath(GameDataPath.Text);
+            string fullPath = Path.GetFullPath(gameDataPath);
 
             if (!Directory.Exists(fullPath))
                 return [];
-
-            ArchiveListGrid.IsVisible = true;
 
             //make sure the Loading... is shown before huge freeze
             Task.Delay(100).GetAwaiter().GetResult();
 
             var cts = new CancellationTokenSource();
 
+            
             //todo: message box logging
-            Task<List<string>> pathTask =
-                ResourceLoader.Instance.LoadResourceContexts(cts, this, fullPath, GameDropdown.Text!);
+            Task<List<string>> pathTask = Task.Run(() =>
+                ResourceLoader.Instance.LoadResourceContexts(cts, window, fullPath, chosenGame), cts.Token);
 
-            await pathTask;
-
-            //todo: message box logging
+            while (!pathTask.IsCompleted)
+            {
+                await Task.Yield();
+            }
+            
             if (cts.IsCancellationRequested) //i don't even know. like what.
             {
-                ArchiveList.Items.Clear();
                 await Console.Out.WriteLineAsync("Resdesc lua parsing failed! Watch out!!");
 
-                var li = new ListBoxItem();
-                var text = new TextBlock
-                {
-                    Text = "Error parsing resource descriptions!",
-                    HorizontalAlignment = HorizontalAlignment.Center
-                };
-
-                li.Content = text;
-
-                ArchiveList.Items.Add(li);
+                window.Dispatcher.Invoke(() => window.AddMessageToBox("Error parsing resource descriptions", Color.FromUInt32(0xf64a42)));
 
                 return [];
 
@@ -223,72 +270,26 @@ public partial class MainWindow : BaseProjectWindow
         }
     }
 
-    private async void LoadResources()
+    private void LoadResources()
     {
-        try
-        {
-            List<string> archives = await LoadGameDir();
+        string? gameDataPath = GameDataPath.Text;
+        string gameDropdown = GameDropdown.Text!;
+        Task.Run(() => LoadGameDir(this, gameDataPath, gameDropdown))
+            .GetAwaiter()
+            .OnCompleted(
+                () => AddMessageToBox("Loaded game resources", Color.FromUInt32(0x62a36d))
+                );
+
         
-            //todo: replace with button
-            Dispatcher.Invoke(() =>
-            {
-                ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
-                CloseOnNewWindowOpened(list);
-            });
-            
-            
-            //remove "Loading..."
-            // ArchiveList.Items.Clear();
-            //
-            // foreach (string archivePath in archives)
-            // {
-            //     var li = new ListBoxItem();
-            //     var text = new TextBlock();
-            //
-            //     int seperator = archivePath.LastIndexOfAny(['\\', '/']);
-            //
-            //     string archiveName = archivePath.Substring(seperator + 1);
-            //
-            //     text.Text = archiveName;
-            //     text.HorizontalAlignment = HorizontalAlignment.Left;
-            //     li.Content = text;
-            //
-            //     ArchiveList.Items.Add(li);
-            // }
-        }
-        catch (Exception e)
-        {
-            Console.Out.WriteLine(e);
-        }
     }
 
-    private void ArchiveList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void LoadArchiveAfterResources(string archive)
     {
-        var selectedItems = ArchiveList.SelectedItems;
-
-        if (selectedItems == null || selectedItems.Count == 0)
-        {
-            OpenArchiveGrid.IsVisible = false;
-        }
-        else
-        {
-            OpenArchiveGrid.IsVisible = true;
-        }
-    }
-
-    private async void LoadArchiveAfterResources(DispatcherOperation resourceLoad, string archive)
-    {
-        try
-        {
-            await resourceLoad;
-
-            LoadArchive(archive);
-
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
+        string? gameDataPath = GameDataPath.Text;
+        string gameDropdown = GameDropdown.Text!;
+        Task.Run(() => LoadGameDir(this, gameDataPath, gameDropdown))
+            .GetAwaiter()
+            .OnCompleted(() => LoadArchive(archive));
     }
     
     private void LoadArchive(string archive)
@@ -301,34 +302,23 @@ public partial class MainWindow : BaseProjectWindow
         
     }
 
-    private void LoadArchive(object sender, RoutedEventArgs e)
-    {
-        if (ArchiveList.SelectedItem is not ListBoxItem selectedItem)
-            return;
-
-        string archiveName = ((TextBlock)selectedItem.Content!).Text ?? "";
-
-        ResourceLoader.Instance.LoadArchive(this, Path.Combine(GameDataPath.Text!, archiveName), GameDropdown.Text!);
-
-        ArchiveModelList list = new ArchiveModelList(false) {OverriddenOwner = this };
-        CloseOnNewWindowOpened(list);
-
-        // list.Show();
-        //
-        // this.Hide();
-        //
-        // SetMainWindow(list);
-        //
-        // list.OverriddenOwner = null;
-        //
-        // this.Close();
-    }
+    // private void LoadArchive(object sender, RoutedEventArgs e)
+    // {
+    //     if (ArchiveList.SelectedItem is not ListBoxItem selectedItem)
+    //         return;
+    //
+    //     string archiveName = ((TextBlock)selectedItem.Content!).Text ?? "";
+    //
+    //     ResourceLoader.Instance.LoadArchive(this, Path.Combine(GameDataPath.Text!, archiveName), GameDropdown.Text!);
+    //
+    //     ArchiveModelList list = new ArchiveModelList(false) {OverriddenOwner = this };
+    //     CloseOnNewWindowOpened(list);
+    // }
 
     public override Window GetWindow()
     {
         return Window.LoadResources;
     }
-
 
     private void MainWindow_OnClosed(object? sender, EventArgs e)
     {
@@ -337,52 +327,49 @@ public partial class MainWindow : BaseProjectWindow
             GameCache = GameDropdown.SelectedIndex;
         }
 
-        // if (!(filePath.Text?.Contains("Archive containing mesh to extract") ?? false))
-        // {
-        //     SingleArchivePathCache = filePath.Text;
-        // }
-
         if (!(GameDataPath.Text?.Contains("Game Data Directory") ?? false))
         {
             GameDataDirectoryCache = GameDataPath.Text;
         }
 
-        LoadedArchivesCache = null;
-
-        if (ArchiveList.Items.Count == 0)
-            return;
-
-        if (ArchiveList.Items[0] is not ListBoxItem { Content: TextBlock b })
-            return;
-
-        if (b.Text?.Contains("Loading...") ?? false)
-            return;
-        
-        var archives = new List<string>();
-        foreach (object? item in ArchiveList.Items)
-        {
-            if(item is not ListBoxItem listItem)
-                continue;
-                
-            string? archiveName = ((TextBlock)listItem.Content!).Text;
-
-            archives.Add(Path.Combine(GameDataPath.Text!, archiveName!));
-        }
-
-        LoadedArchivesCache = archives;
+        // LoadedArchivesCache = null;
+        //
+        // if (ArchiveList.Items.Count == 0)
+        //     return;
+        //
+        // if (ArchiveList.Items[0] is not ListBoxItem { Content: TextBlock b })
+        //     return;
+        //
+        // if (b.Text?.Contains("Loading...") ?? false)
+        //     return;
+        //
+        // var archives = new List<string>();
+        // foreach (object? item in ArchiveList.Items)
+        // {
+        //     if(item is not ListBoxItem listItem)
+        //         continue;
+        //         
+        //     string? archiveName = ((TextBlock)listItem.Content!).Text;
+        //
+        //     archives.Add(Path.Combine(GameDataPath.Text!, archiveName!));
+        // }
+        //
+        // LoadedArchivesCache = archives;
     }
 
     private void ChooseSingleArchive_OnClick(object? sender, RoutedEventArgs args)
     {
-        Dispatcher.InvokeAsync(LoadSingleArchive);
+        string? gameDataPath = GameDataPath.Text;
+        string gameDropdown = GameDropdown.Text!;
+        Task.Run(() => LoadSingleArchive(this, gameDataPath, gameDropdown));
 
     }
 
-    private async void LoadSingleArchive()
+    private async void LoadSingleArchive(MainWindow window, string? gameDataPath, string chosenGame)
     {
         try
         {
-            List<string> archives = await LoadGameDir();
+            List<string> archives = await LoadGameDir(window, gameDataPath, chosenGame);
 
             var dialouge = new SelectSingleArchive(archives);
 
@@ -391,21 +378,10 @@ public partial class MainWindow : BaseProjectWindow
             if (archive == null)
                 return;
             
-            ResourceLoader.Instance.LoadArchive(this, Path.Combine(GameDataPath.Text!, archive), GameDropdown.Text!);
+            ResourceLoader.Instance.LoadArchive(this, Path.Combine(gameDataPath!, archive), chosenGame);
             
             //todo: Log that the archive has been selected in the console
-
-            
-
-            //todo: replace with button
-            Dispatcher.Invoke(() =>
-            {
-                ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
-                CloseOnNewWindowOpened(list);
-            });
-
-
-
+            Dispatcher.Invoke(() => AddMessageToBox($"Archive {archive} selected!", Color.FromUInt32(0x62a36d)));
         }
         catch (Exception e)
         {
@@ -430,5 +406,26 @@ public partial class MainWindow : BaseProjectWindow
             OpenGameDir.IsEnabled = true;
             ChooseSingleArchive.IsEnabled = true;
         }
+    }
+
+    private void MoveToListMeshes(object? sender, RoutedEventArgs e)
+    {
+        ArchiveModelList list = new ArchiveModelList(false) { OverriddenOwner = this };
+        CloseOnNewWindowOpened(list);
+    }
+
+    private void MoveToListAgents(object? sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void MoveToImportMeshes(object? sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void MoveToImportAgents(object? sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }

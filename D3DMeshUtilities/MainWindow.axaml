@@ -26,6 +26,15 @@
         <Style Selector="ListBoxItem:selected Border">
             <Setter Property="Background" Value="Transparent" />
         </Style>
+        
+        <Style Selector="ToolTip">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+        
     </Window.Styles>
     
     <Grid Margin="10 10">
@@ -56,10 +65,6 @@
                 <ComboBox Name="GameDropdown" FontSize="16"></ComboBox>
             </Grid>
             
-            
-            <!-- <TextBlock Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">OR</TextBlock> -->
-            <!-- <Line Grid.Row="4" Stretch="Fill" Stroke="Black" VerticalAlignment="Bottom"></Line> -->
-            
             <Grid Grid.Row="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"></ColumnDefinition>
@@ -83,29 +88,68 @@
                 <Button Grid.Column="2" Click="ChooseSingleArchive_OnClick" Name="ChooseSingleArchive" IsEnabled="False" FontSize="18" Height="40" HorizontalAlignment="Left"> <![CDATA[Load & Choose Archive]]></Button>
             </Grid>
             
-            <Grid Grid.Row="7" IsVisible="True" Name="ArchiveListGrid">
+            <Grid Grid.Row="7" IsVisible="True" Name="ArchiveListGrid" Margin="10">
                 <Border>
-                    <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged" Background="#26282c" CornerRadius="5">
+                    <ListBox Name="MessageBox" Background="#26282c" CornerRadius="5" AutoScrollToSelectedItem="True" Padding="10 5 0 0">
                         <ListBox.Styles>
-                            <!-- Target the Selected State in Template -->
-                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                                <!-- Set Custom Selection Background -->
-                                <Setter Property="Background" Value="Transparent" />
-                                <!-- Set Custom Selection Foreground/Text Color -->
-                                <Setter Property="TextBlock.Foreground" Value="Transparent" />
-                            </Style>
+                            <!-- ~1~ Target the Selected State in Template @1@ -->
+                            <!-- <Style Selector="ListBoxItem:selected /template/ ContentPresenter"> -->
+                            <!--     ~1~ Set Custom Selection Background @1@ -->
+                            <!--     <Setter Property="Background" Value="Transparent" /> -->
+                            <!--     ~1~ Set Custom Selection Foreground/Text Color @1@ -->
+                            <!--     <Setter Property="TextBlock.Foreground" Value="Transparent" /> -->
+                            <!-- </Style> -->
                         </ListBox.Styles>
                         
-                        <ListBoxItem>
-                            <TextBlock>Loading...</TextBlock>
-                        </ListBoxItem>
+                        <TextBlock FontSize="16">Waiting to load resources....</TextBlock>
+                        
+                        
                     </ListBox>
                 </Border>
             </Grid>
             
             
-            <Grid Grid.Row="8" IsVisible="False" Name="OpenArchiveGrid" VerticalAlignment="Bottom" Margin="0 10">
-                <Button FontSize="16" Click="LoadArchive"> Load Archive >>> </Button>
+            <Grid Grid.Row="8" RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="10" Name="OpenArchiveGrid" VerticalAlignment="Bottom" Margin="0 10">
+                <Button Grid.Row="0" FontSize="16" Click="MoveToListMeshes"> Export Meshes >>> </Button>
+                <Button Grid.Row="1" FontSize="16" Click="MoveToListAgents" IsEnabled="False" ToolTip.ShowOnDisabled="True" ToolTip.Placement="Top">
+                    <ToolTip.Tip>
+                        <Border 
+                            CornerRadius="5" 
+                            Padding="5" 
+                            Background="{DynamicResource MaterialDesignPaper}" 
+                            BorderBrush="{DynamicResource MaterialCardBackgroundBrush}" 
+                            BorderThickness="2">
+                            <TextBlock Text="Feature coming soon!"/>
+                        </Border>
+                    </ToolTip.Tip>
+                    Export Agents >>>
+                </Button>
+                <Button Grid.Row="2" FontSize="16" Click="MoveToImportMeshes" IsEnabled="False" ToolTip.ShowOnDisabled="True" ToolTip.Placement="Top">
+                    <ToolTip.Tip>
+                        <Border 
+                            CornerRadius="5" 
+                            Padding="5" 
+                            Background="{DynamicResource MaterialDesignPaper}" 
+                            BorderBrush="{DynamicResource MaterialCardBackgroundBrush}" 
+                            BorderThickness="2">
+                            <TextBlock Text="Feature coming soon!"/>
+                        </Border>
+                    </ToolTip.Tip>
+                    Import Meshes >>>
+                </Button>
+                <Button Grid.Row="3" FontSize="16" Click="MoveToImportAgents" IsEnabled="False" ToolTip.ShowOnDisabled="True" ToolTip.Placement="Top">
+                    <ToolTip.Tip>
+                        <Border 
+                            CornerRadius="5" 
+                            Padding="5" 
+                            Background="{DynamicResource MaterialDesignPaper}" 
+                            BorderBrush="{DynamicResource MaterialCardBackgroundBrush}" 
+                            BorderThickness="2">
+                            <TextBlock Text="Feature coming soon!"/>
+                        </Border>
+                    </ToolTip.Tip>
+                    Import Agents >>>
+                </Button>
             </Grid>
 
 

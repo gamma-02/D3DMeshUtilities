@@ -78,7 +78,7 @@ public class App : Application
             }
             else if (arg.Equals("-autoChooseModels") || arg.Equals("-am"))
             {
-                StartupChooseModels = false;
+                StartConversionInstantly = false;
             }
             else if (arg.StartsWith("-out="))
             {
@@ -177,7 +177,7 @@ public class App : Application
         }
         set; 
     } = true;
-    public static bool StartupChooseModels {
+    public static bool StartConversionInstantly {
         get
         {
             bool temp = field;

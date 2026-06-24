@@ -32,25 +32,18 @@
         <Border Grid.Row="2" Margin="10" CornerRadius="5" ClipToBounds="True">
             <ScrollViewer Background="#26282C" >
                 <Border CornerRadius="5" >
-                    <!-- todo: Make the content of this stack panel officially a "list" of something! -->
-                    <!-- todo: I think the easiest way of doing that with the single archive is to just do a single ListView w/ string elements -->
-                    <StackPanel Name="ListPanel">
-                        <!-- <d3DMeshUtilities:ArchiveListBox CornerRadius="10" ShowExpand="False"> -->
-                        <!--     <x:Arguments> -->
-                        <!--         <x:String>Loading...</x:String> -->
-                        <!--         <collections:List x:TypeArguments="x:String" /> -->
-                        <!--     </x:Arguments> -->
-                        <!-- </d3DMeshUtilities:ArchiveListBox> -->
+                    
+                    <StackPanel Name="ListPanel"> <!-- This is where our list of items goes! -->
                         
-                        
-                        <TextBlock FontSize="20" Margin="10"> Loading... </TextBlock>
+                        <TextBlock FontSize="20" Margin="10" HorizontalAlignment="Center"> Loading... </TextBlock>
                                 
                     </StackPanel>
+                    
                 </Border>
             </ScrollViewer>
         </Border>
         
-        <Grid Row="3" IsVisible="False" Name="ConvertButtonGrid">
+        <Grid Row="3" IsVisible="False" Name="ConvertButtonGrid" Margin="10">
             <Button FontSize="16" Click="BeginConversion"> Choose output directories >>> </Button>
         </Grid>
     </Grid>

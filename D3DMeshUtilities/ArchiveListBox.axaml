@@ -28,7 +28,14 @@
                         <TextBlock FontSize="15" VerticalAlignment="Center" Text="{Binding $parent[controls:ArchiveListBox].ArchiveName}"></TextBlock>
                     </Expander.Header>
                         
-                    <ListBox ItemsSource="{Binding $parent[controls:ArchiveListBox].MeshEntries}" SelectionMode="Multiple" Margin="10 0 15 0" Padding="0" BorderBrush="#172030" BorderThickness="5 0 0 0" Name="ArchiveMeshes">
+                    <ListBox ItemsSource="{Binding $parent[controls:ArchiveListBox].MeshEntries}" 
+                             SelectionMode="Multiple" 
+                             Margin="10 0 15 0" 
+                             Padding="0" 
+                             BorderBrush="#43552f" 
+                             BorderThickness="5 0 0 0" 
+                             Name="ArchiveList" 
+                             AutoScrollToSelectedItem="False" >
                     
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:MeshEntry">

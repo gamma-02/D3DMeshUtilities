@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Media;
 using Avalonia.Threading;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit;
@@ -69,21 +70,33 @@ public class ResourceLoader
         
         foreach (string resdesc in resdescs)
         {
+            int seperator = resdesc.LastIndexOfAny(['\\', '/']);
+            string resdescName = resdesc.Substring(seperator + 1);
+            window.Dispatcher.Invoke(() => window.AddMessageToBox($"Parsing {resdescName}"));
             ResourceContext? rc;
             try
             {
                  rc = await TttkInit.Workspace.LoadResourceDescriptionAsync(resdesc);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 await cts.CancelAsync();
-                Profiler.Instance.EndFrame(loadFrame);
-                return [];
+                
+                window.Dispatcher.Invoke(() => window.AddMessageToBox($"Failed to parse {resdescName}! Skipping... ", Color.FromUInt32(0xf64a42)));
+
+                await Console.Out.WriteLineAsync("Failed to parse, see below");
+                await Console.Out.WriteLineAsync($"Resdesc at: {resdesc}");
+                await Console.Out.WriteLineAsync(e.ToString()); 
+                
+                //todo: test. will this work? what is a fatal resdesc parsing error?
+                continue;
             }
                 
             if (rc == null)
             {
                 Console.WriteLine($"Got nil lua table value for resdesc: {resdesc}");
+                window.Dispatcher.Invoke(() => window.AddMessageToBox($"Failed to parse {resdescName}! Skipping... ", Color.FromUInt32(0xf64a42)));
+
                 continue;
             }
             
@@ -119,7 +132,7 @@ public class ResourceLoader
             {
                 if (Contexts == null)
                     Contexts = [];
-                else if (Contexts.Count != 0)
+                else if (Contexts.Count != 0) //wait wtf??
                 {
                     Profiler.Instance.EndFrame(loadFrame, out TimeSpan length1);
         
@@ -131,6 +144,9 @@ public class ResourceLoader
                 }
 
                 Instance.ArchiveContext = TttkInit.Workspace?.LoadArchive(ArchiveLocation, "Current Archive");
+                
+                window.Dispatcher.Invoke(() => window.AddMessageToBox($"Loaded {ArchiveContext?.Name}!"));
+
 
                 if (Instance.ArchiveContext != null)
                     Contexts.Add(Instance.ArchiveContext);
@@ -166,19 +182,16 @@ public class ResourceLoader
     
     public (string Name, IEnumerable<ResourceEntry>) GetEntriesInArchive(string archivePath)
     {
-        lock(ResourceLock)
-        {
-            ArchiveLocationLock.Enter();
+        ArchiveLocationLock.Enter();
             
-            ResourceContext? ctx = GetContextWithArchive(archivePath);
+        ResourceContext? ctx = GetContextWithArchive(archivePath);
 
-            if (ctx == null)
-                return ("", []);
+        if (ctx == null)
+            return ("", []);
             
-            ArchiveLocationLock.Exit();
+        ArchiveLocationLock.Exit();
 
-            return (ctx.Name, ctx.GetAllEntries());
-        }
+        return (ctx.Name, ctx.GetAllEntries());
     }
 
     public Stream? ExtractFile(string file)
@@ -189,32 +202,22 @@ public class ResourceLoader
         }
     }
 
-    public (string Name, IEnumerable<ResourceEntry>) GetEntriesInCurrentArchive()
-    {
-        lock(ResourceLock)
-        {
-            return GetEntriesInArchive(ArchiveLocation);
-        }
-    }
+    public (string Name, IEnumerable<ResourceEntry>) GetEntriesInCurrentArchive() => GetEntriesInArchive(ArchiveLocation);
 
     public Dictionary<string, IEnumerable<ResourceEntry>> GetEntriesInCurrentContexts()
     {
-        lock (ResourceLock)
+        if (Contexts == null)
         {
-            if (Contexts == null)
-            {
-                return [];
-            }
-            
-
-            Dictionary<string, IEnumerable<ResourceEntry>> entryDict = [];
-
-            foreach (ResourceContext context in Contexts)
-            {
-                entryDict[context.Name] = context.GetAllEntries();
-            }
-
-            return entryDict;
+            return [];
         }
+
+        Dictionary<string, IEnumerable<ResourceEntry>> entryDict = [];
+
+        foreach (ResourceContext context in Contexts)
+        {
+            entryDict[context.Name] = context.GetAllEntries();
+        }
+
+        return entryDict;
     }
 }
