@@ -2,29 +2,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:collections="clr-namespace:System.Collections.Generic;assembly=System.Collections"
+        xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
+        xmlns:d3DMeshUtilities="clr-namespace:D3DMeshUtilities"
+        xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="D3DMeshUtilities.ArchiveModelList"
         Title="D3DMeshUtilities"
         WindowStartupLocation="CenterOwner"
         Width="800" Height="650">
-    <!-- <x:Arguments> -->
-    <!--     <x:Boolean>True</x:Boolean> -->
-    <!-- </x:Arguments> -->
-    <Window.Styles>
-        <Style Selector="Grid">
-            <Setter Property="Margin" Value="10 10"/>
-        </Style>
-        <Style Selector="ListBoxItem:selected Border">
-            <Setter Property="Background" Value="rgb(85, 113, 64)" />
-        </Style>
-    </Window.Styles>
-        
-    <Grid>
-        <!-- <Grid.Resources> -->
-        <!--     <Style> -->
-        <!--         <Setter Property="Margin" Value="10 10"/> -->
-        <!--     </Style> -->
-        <!-- </Grid.Resources> -->
+    
+    <Grid Margin="10">
         
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -41,17 +29,29 @@
         
         <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"> Select Mesh To Export </TextBlock>
         
-        <Grid Grid.Row="2">
-            <ListBox Name="ModelList" SelectionChanged="ModelList_SelectionChanged" 
-                     SelectionMode="Multiple" Background="#26282C" CornerRadius="5">
-                <ListBoxItem>
-                    <TextBlock HorizontalAlignment="Center" FontStretch="Expanded"> Loading... </TextBlock>
-                </ListBoxItem>
-            </ListBox>
-        </Grid>
+        <Border Grid.Row="2" Margin="10" CornerRadius="5" ClipToBounds="True">
+            <ScrollViewer Background="#26282C" >
+                <Border CornerRadius="5" >
+                    <!-- todo: Make the content of this stack panel officially a "list" of something! -->
+                    <!-- todo: I think the easiest way of doing that with the single archive is to just do a single ListView w/ string elements -->
+                    <StackPanel Name="ListPanel">
+                        <!-- <d3DMeshUtilities:ArchiveListBox CornerRadius="10" ShowExpand="False"> -->
+                        <!--     <x:Arguments> -->
+                        <!--         <x:String>Loading...</x:String> -->
+                        <!--         <collections:List x:TypeArguments="x:String" /> -->
+                        <!--     </x:Arguments> -->
+                        <!-- </d3DMeshUtilities:ArchiveListBox> -->
+                        
+                        
+                        <TextBlock FontSize="20" Margin="10"> Loading... </TextBlock>
+                                
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+        </Border>
         
         <Grid Row="3" IsVisible="False" Name="ConvertButtonGrid">
-            <Button FontSize="16" Click="BeginConversion"> Choose output directories >>></Button>
+            <Button FontSize="16" Click="BeginConversion"> Choose output directories >>> </Button>
         </Grid>
     </Grid>
 </Window>

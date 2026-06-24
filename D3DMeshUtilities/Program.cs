@@ -18,6 +18,10 @@ class Program
         
         App.ProcessArgs(args);
         
+        //todo: process a lot of the startup args relating to default folder loading here
+        //todo: allow for game switching while program is running
+        TttkInit.Init(); 
+        
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args, builderer);
     }
@@ -31,6 +35,7 @@ class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
+            .WithDeveloperTools()
 //-:cnd:noEmit
 // #if DEBUG
 //             .WithDeveloperTools()

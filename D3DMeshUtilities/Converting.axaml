@@ -23,6 +23,7 @@
             <Setter Property="Background" Value="Transparent" />
         </Style>
     </Window.Styles>
+    
     <Grid Margin="10 10">
         <!-- <Grid.Resources> -->
         <!--     <Style> -->

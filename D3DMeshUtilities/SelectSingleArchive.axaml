@@ -1,0 +1,39 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="300"
+        x:Class="D3DMeshUtilities.SelectSingleArchive"
+        Height="300" Width="600"
+        Title="SelectSingleArchive">
+    <Window.Styles>
+        <Style Selector="Grid">
+            <!-- <Setter Property="Margin" Value="10 10"/> -->
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected Border">
+            <Setter Property="Background" Value="rgb(85, 113, 64)" />
+        </Style>
+    </Window.Styles>
+    
+    <Grid Margin="10 10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0" IsVisible="True" Name="ArchiveListGrid">
+            <Border>
+                <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged" SelectionMode="Single" Background="#26282c" CornerRadius="5">
+                    <ListBoxItem>
+                        <TextBlock>Loading...</TextBlock>
+                    </ListBoxItem>
+                </ListBox>
+            </Border>
+        </Grid>
+        
+        <Grid Grid.Row="1" IsVisible="False" Name="OpenArchiveGrid" VerticalAlignment="Bottom" Margin="0 10">
+            <Button FontSize="16" Click="FinishDlog"> Load Archive >>> </Button>
+        </Grid>
+    </Grid>
+</Window>

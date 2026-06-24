@@ -15,6 +15,8 @@ public static class TttkInit
     public static Workspace? Workspace;
     
     public static string DataDir = "";
+
+    public static bool Initialized { get; private set; } = false;
     
     // Toolkit.Initialize("hello!");
 
@@ -35,6 +37,9 @@ public static class TttkInit
         }
         
         Toolkit.Initialize(config);
+        
+        Console.Out.WriteLine("Successfully initalized Telltale Tool Kit!");
+        Initialized = true;
 
     }
 

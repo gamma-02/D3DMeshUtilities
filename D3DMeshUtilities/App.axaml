@@ -2,10 +2,60 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="D3DMeshUtilities.App"
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
+             xmlns:assists="clr-namespace:Material.Styles.Assists;assembly=Material.Styles"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Styles>
         <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Purple" SecondaryColor="Lime" />
+        
+        <StyleInclude Source="avares://D3DMeshUtilities/Styles.axaml" />
+        <StyleInclude Source="avares://D3DMeshUtilities/ArchiveListBox.axaml" />
+        
+        <!-- Reusable class for small Material Expanders -->
+        <Style Selector="Expander.small">
+            <!-- Optional: Shrink the overall container minimum height if needed -->
+            <Setter Property="MinHeight" Value="32" />
+        </Style>
+
+        <!-- 1. Scale down the main internal Material toggle bar -->
+        <Style Selector="Expander.small /template/ ToggleButton#PART_ToggleButton">
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0,0" /> 
+        </Style>
+
+        <!-- 2. FIX: Prevent the text from being hidden or clipped -->
+        <!-- <Style Selector="Expander.small /template/ ToggleButton#PART_ToggleButton ContentControl"> -->
+        <!--     <Setter Property="MinHeight" Value="0" /> -->
+        <!--     <Setter Property="Height" Value="32" /> -->
+        <!--     <Setter Property="VerticalAlignment" Value="Center" /> -->
+        <!--     <Setter Property="VerticalContentAlignment" Value="Center" /> -->
+        <!-- </Style> -->
+        <!-- 2. CORRECTED FIX: Target the HeaderedContentControl's dedicated presenter part -->
+        <Style Selector="Expander.small /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <!-- 3. Shrink the expanding arrow to fit the new height -->
+        <Style Selector="Expander.small /template/ ToggleButton#PART_ToggleButton Viewbox">
+            <Setter Property="Height" Value="16" />
+            <Setter Property="Width" Value="16" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        
+        <Style Selector="Expander.flat /template/ ToggleButton#PART_ToggleButton">
+            <Setter Property="assists:ShadowAssist.ShadowDepth" Value="Depth0" />
+            <Setter Property="assists:ShadowAssist.Darken" Value="False" />
+        </Style>
+        
+        <Style Selector="Expander.flat">
+            <Setter Property="assists:ShadowAssist.Darken" Value="False" />
+            <Setter Property="assists:ShadowAssist.ShadowDepth" Value="Depth0" />
+        </Style>
+        
     </Application.Styles>
 </Application>

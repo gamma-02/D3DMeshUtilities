@@ -9,6 +9,7 @@ using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit;
 using TelltaleToolKit.IO.Archives;
 using TelltaleToolKit.IO.Resources;
+using Tmds.DBus.Protocol;
 
 
 namespace D3DMeshUtilities;
@@ -36,7 +37,7 @@ public class ResourceLoader
 
     public static object ResourceLock = new();
 
-    public void LoadArchive(Dispatcher dispatcher, string archiveLocation, string game)
+    public void LoadArchive(MainWindow window, string archiveLocation, string game)
     {
 
         TttkInit.Workspace ??= Toolkit.Instance.CreateWorkspace("D3DMeshUtilsWorkspace",
@@ -46,11 +47,11 @@ public class ResourceLoader
         
         ArchiveLocationLock.Enter();
         
-        dispatcher.InvokeAsync(LoadArchive).GetAwaiter().OnCompleted(() => SetArchive = true);
+        window.Dispatcher.InvokeAsync(() => LoadArchive(window)).GetAwaiter().OnCompleted(() => SetArchive = true);
 
     }
 
-    public async Task<List<string>> LoadResourceContexts(CancellationTokenSource cts, string gameDataDir, string game)
+    public async Task<List<string>> LoadResourceContexts(CancellationTokenSource cts, MainWindow window, string gameDataDir, string game)
     {
         Profiler.Instance.BeginFrame("Resource Loading", out Profiler.ProfilerFrame loadFrame);
         
@@ -97,18 +98,22 @@ public class ResourceLoader
         await Console.Out.WriteLineAsync("\tLoading game resources took: " + length);
         Console.ResetColor();
         
+        AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
+        
         return archives.Where(s => !string.IsNullOrEmpty(s)).ToList();
-        
-        
     }
 
-    private async void LoadArchive()
+    //todo: remove logic for loading a single archive without the rest of game data
+    // because we're dropping that functionality
+    private async void LoadArchive(MainWindow window)
     {
         try
         {
             // var startLoadTime = DateTime.Now;
             Profiler.Instance.BeginFrame("Archive Loading", out Profiler.ProfilerFrame loadFrame);
-            AsyncSearchForSkeletonFiles.BuildDictionaryTask = Task.Run(() => AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
+            
+            AsyncSearchForSkeletonFiles.BuildDictionaryTask ??= Task.Run(() =>
+                AsyncSearchForSkeletonFiles.BuildAgentMeshDictionary(ResourceLoader.Instance));
         
             lock(ResourceLock)
             {
@@ -159,7 +164,7 @@ public class ResourceLoader
             ).First();
     }
     
-    public IEnumerable<ResourceEntry> GetEntriesInArchive(string archivePath)
+    public (string Name, IEnumerable<ResourceEntry>) GetEntriesInArchive(string archivePath)
     {
         lock(ResourceLock)
         {
@@ -168,11 +173,11 @@ public class ResourceLoader
             ResourceContext? ctx = GetContextWithArchive(archivePath);
 
             if (ctx == null)
-                return [];
+                return ("", []);
             
             ArchiveLocationLock.Exit();
 
-            return ctx.GetAllEntries();
+            return (ctx.Name, ctx.GetAllEntries());
         }
     }
 
@@ -184,11 +189,32 @@ public class ResourceLoader
         }
     }
 
-    public IEnumerable<ResourceEntry> GetEntriesInCurrentArchive()
+    public (string Name, IEnumerable<ResourceEntry>) GetEntriesInCurrentArchive()
     {
         lock(ResourceLock)
         {
             return GetEntriesInArchive(ArchiveLocation);
+        }
+    }
+
+    public Dictionary<string, IEnumerable<ResourceEntry>> GetEntriesInCurrentContexts()
+    {
+        lock (ResourceLock)
+        {
+            if (Contexts == null)
+            {
+                return [];
+            }
+            
+
+            Dictionary<string, IEnumerable<ResourceEntry>> entryDict = [];
+
+            foreach (ResourceContext context in Contexts)
+            {
+                entryDict[context.Name] = context.GetAllEntries();
+            }
+
+            return entryDict;
         }
     }
 }

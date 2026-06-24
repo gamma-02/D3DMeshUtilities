@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using TelltaleToolKit.IO.Archives;
 
 namespace D3DMeshUtilities;
 
@@ -24,21 +25,16 @@ public partial class ArchiveModelList : BaseProjectWindow
         
         if (ArchiveMeshListDictionary.Count == 0)
         {
-            ModelList.Items.Clear();
-            
-            
-            var li = new ListBoxItem();
-            var text = new TextBlock
+            if(!Design.IsDesignMode)
             {
-                Text = "Archive not yet loaded",
-                FontSize = 20
-            };
+                ListPanel.Children.Clear();
+            }
+            
+            var notLoadedMessage = new ArchiveListBox("Archive not yet loaded", new List<string>());
+            notLoadedMessage.GetHeaderText().FontSize = 20;
 
-            li.Content = text;
-            li.HorizontalAlignment = HorizontalAlignment.Center;
-
-            ModelList.Items.Add(li);
-
+            ListPanel.Children.Add(notLoadedMessage);
+            
             _enableButton = false;
         }
 
@@ -70,21 +66,16 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         if (fromTab && ArchiveMeshListDictionary.Count == 0)
         {
-            ModelList.Items.Clear();
-            
-            
-            var li = new ListBoxItem();
-            var text = new TextBlock
+            if(!Design.IsDesignMode)
             {
-                Text = "Archive not yet loaded",
-                FontSize = 20
-            };
+                ListPanel.Children.Clear();
+            }
+            
+            var notLoadedMessage = new ArchiveListBox("Archive not yet loaded", new List<string>());
+            notLoadedMessage.GetHeaderText().FontSize = 20;
 
-            li.Content = text;
-            li.HorizontalAlignment = HorizontalAlignment.Center;
-
-            ModelList.Items.Add(li);
-
+            ListPanel.Children.Add(notLoadedMessage);
+            
             _enableButton = false;
         }
 
@@ -115,19 +106,19 @@ public partial class ArchiveModelList : BaseProjectWindow
 
             foreach (string model in App.StartupModels)
             {
-                if (ModelList.SelectedItems == null) 
-                    continue;
-                
-                foreach (object? item in ModelList.SelectedItems)
-                {
-                    var i = item as ListBoxItem;
-
-                    if (i?.Content is not TextBlock b)
-                        continue;
-
-                    if (b.Text != null && b.Text.Equals(model))
-                        i.IsSelected = true;
-                }
+                // if (ModelList.SelectedItems == null) 
+                //     continue;
+                //
+                // foreach (object? item in ModelList.SelectedItems)
+                // {
+                //     var i = item as ListBoxItem;
+                //
+                //     if (i?.Content is not TextBlock b)
+                //         continue;
+                //
+                //     if (b.Text != null && b.Text.Equals(model))
+                //         i.IsSelected = true;
+                // }
             }
         }
         catch (Exception)
@@ -170,54 +161,71 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         try
         {
-
-            if (string.IsNullOrWhiteSpace(ResourceLoader.Instance.ArchiveLocation))
+            if(!Design.IsDesignMode)
             {
-                return;
+                ListPanel.Children.Clear();
             }
 
-            ModelList.Items.Clear();
-            
-            if(!ArchiveMeshListDictionary.ContainsKey(ResourceLoader.Instance.ArchiveLocation))
+
+            if (!string.IsNullOrWhiteSpace(ResourceLoader.Instance.ArchiveLocation) &&
+                !ArchiveMeshListDictionary.ContainsKey(ResourceLoader.Instance.ArchiveLocation))
             {
-                List<string> entries = ResourceLoader.Instance.GetEntriesInCurrentArchive()
+                (String rcName, IEnumerable<ResourceEntry> entryList) =
+                    ResourceLoader.Instance.GetEntriesInCurrentArchive();
+                List<string> entries = entryList
                     .Where(resource => resource.Name.EndsWith("d3dmesh"))
                     .Select(entry => entry.Name)
                     .ToList();
 
                 entries.Sort();
+                
+                ArchiveMeshListDictionary[rcName] = entries;
+                
+                var listBox = new ArchiveListBox(rcName, entries);
+                
+                ListPanel.Children.Add(listBox);
 
-                ArchiveMeshListDictionary[ResourceLoader.Instance.ArchiveLocation] = entries;
             }
-
-            foreach (string element in ArchiveMeshListDictionary[ResourceLoader.Instance.ArchiveLocation])
+            else
             {
+                Dictionary<string, IEnumerable<ResourceEntry>> entries = ResourceLoader.Instance.GetEntriesInCurrentContexts();
                 
-                var li = new ListBoxItem();
-                var text = new TextBlock
+                foreach(string archive in entries.Keys)
                 {
-                    Text = element
-                };
+                    List<string> meshes = entries[archive]
+                        .Where(resource => resource.Name.EndsWith("d3dmesh"))
+                        .Select(entry => entry.Name)
+                        .ToList();
 
-                li.Content = text;
+                    meshes.Sort();
 
-                ModelList.Items.Add(li);
+                    if (meshes.Count == 0)
+                    {
+                        continue; //todo: Add skipping archives without meshes as a config option
+                    }
+
+                    ArchiveMeshListDictionary[archive] = meshes;
+                }
+                
+                
+                foreach(string archive in ArchiveMeshListDictionary.Keys)
+                {
+                    var listBox = new ArchiveListBox(archive, ArchiveMeshListDictionary[archive]);
+                    
+                    ListPanel.Children.Add(listBox);
+                }
                 
             }
-
+            
             if (ArchiveMeshListDictionary.Count == 0 && _enableButton)
             {
-                var li = new ListBoxItem();
-                var text = new TextBlock
-                {
-                    Text = "No models found!",
-                    FontSize = 20
-                };
+                
+                var notLoadedMessage = new ArchiveListBox("No models found :(", new List<string>());
+                notLoadedMessage.GetHeaderText().FontSize = 20;
 
-                li.Content = text;
-                li.HorizontalAlignment = HorizontalAlignment.Center;
-
-                ModelList.Items.Add(li);
+                ListPanel.Children.Add(notLoadedMessage);
+            
+                _enableButton = false;
             }
 
             // i wish I could use this :(
@@ -245,16 +253,16 @@ public partial class ArchiveModelList : BaseProjectWindow
 
     void ModelList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        IList? selectedItems = ModelList.SelectedItems;
-
-        if (selectedItems?.Count == 0 || !_enableButton)
-        {
-            ConvertButtonGrid.IsVisible = false;
-        }
-        else
-        {
-            ConvertButtonGrid.IsVisible = true;
-        }
+        // IList? selectedItems = ModelList.SelectedItems;
+        //
+        // if (selectedItems?.Count == 0 || !_enableButton)
+        // {
+        //     ConvertButtonGrid.IsVisible = false;
+        // }
+        // else
+        // {
+        //     ConvertButtonGrid.IsVisible = true;
+        // }
     }
     
     void BeginConversion(string[] modelArray)
@@ -275,25 +283,25 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         List<string> models = [];
 
-        if (ModelList.SelectedItems == null) return;
-
-        foreach (var item in ModelList.SelectedItems)
-        {
-            if (item == null)
-                continue;
-            
-            ListBoxItem? i = item as ListBoxItem;
-            
-            if(i == null)
-                continue;
-            
-            TextBlock? b = i.Content as TextBlock;
-            
-            if(b?.Text == null)
-                continue;
-            
-            models.Add(b.Text);
-        }
+        // if (ModelList.SelectedItems == null) return;
+        //
+        // foreach (var item in ModelList.SelectedItems)
+        // {
+        //     if (item == null)
+        //         continue;
+        //     
+        //     ListBoxItem? i = item as ListBoxItem;
+        //     
+        //     if(i == null)
+        //         continue;
+        //     
+        //     TextBlock? b = i.Content as TextBlock;
+        //     
+        //     if(b?.Text == null)
+        //         continue;
+        //     
+        //     models.Add(b.Text);
+        // }
 
         Converting converting = new Converting(models)
         {
@@ -321,25 +329,25 @@ public partial class ArchiveModelList : BaseProjectWindow
     {
         List<string> models = [];
 
-        if (ModelList.SelectedItems == null) return models;
-        
-        foreach (var item in ModelList.SelectedItems)
-        {
-            if (item == null)
-                continue;
-
-            ListBoxItem? i = item as ListBoxItem;
-
-            if (i == null)
-                continue;
-
-            TextBlock? b = i.Content as TextBlock;
-
-            if (b?.Text == null)
-                continue;
-
-            models.Add(b.Text);
-        }
+        // if (ModelList.SelectedItems == null) return models;
+        //
+        // foreach (var item in ModelList.SelectedItems)
+        // {
+        //     if (item == null)
+        //         continue;
+        //
+        //     ListBoxItem? i = item as ListBoxItem;
+        //
+        //     if (i == null)
+        //         continue;
+        //
+        //     TextBlock? b = i.Content as TextBlock;
+        //
+        //     if (b?.Text == null)
+        //         continue;
+        //
+        //     models.Add(b.Text);
+        // }
 
         return models;
     }

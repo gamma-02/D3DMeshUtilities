@@ -240,7 +240,7 @@ public class NormalModelIntermediate : IMeshRepresentation
                 meshBuilder.UsePrimitive(mat).AddTriangle(vertOne, vertTwo, vertThree);
             }
         }
-
+        
         return true;
 
     }

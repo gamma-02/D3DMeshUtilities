@@ -1,0 +1,59 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:D3DMeshUtilities"
+        xmlns:vm="using:D3DMeshUtilities"
+        xmlns:ripple="clr-namespace:Material.Ripple;assembly=Material.Ripple">
+    <Design.PreviewWith>
+        <controls:ArchiveListBox>
+            <x:Arguments>
+                <x:String>Test Name</x:String>
+            </x:Arguments>
+        </controls:ArchiveListBox>
+    </Design.PreviewWith>
+
+    <Style Selector="controls|ArchiveListBox">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Expander Background="Transparent" Name="Expander" Padding="0" Classes="flat small" IsExpanded="True">
+                    
+                    <Expander.Styles>
+                        <Style Selector="Expander /template/ Path#PART_ExpandIcon">
+                            <Setter Property="IsVisible" Value="{Binding $parent[controls:ArchiveListBox].ShowExpand}" />
+                            <Setter Property="Fill" Value="Black" />
+                        </Style>
+                    </Expander.Styles>
+                    
+                    <Expander.Header>
+                        <TextBlock FontSize="15" VerticalAlignment="Center" Text="{Binding $parent[controls:ArchiveListBox].ArchiveName}"></TextBlock>
+                    </Expander.Header>
+                        
+                    <ListBox ItemsSource="{Binding $parent[controls:ArchiveListBox].MeshEntries}" SelectionMode="Multiple" Margin="10 0 15 0" Padding="0" BorderBrush="#172030" BorderThickness="5 0 0 0" Name="ArchiveMeshes">
+                    
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:MeshEntry">
+                                <TextBlock Padding="0" Margin="5 0 0 0" Text="{Binding MeshName}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                            
+                    </ListBox>
+                    
+                </Expander>
+                
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="MinHeight" Value="32" />
+        
+        
+        <!-- <Setter Property="Height" Value="*"></Setter> -->
+    </Style>
+    
+    <Style Selector="ListBoxItem:selected Border">
+        <Setter Property="Background" Value="rgb(85, 113, 64)" />
+    </Style>
+    <Style Selector="Expander /template/ LayoutTransformControl#PART_ToggleTransform">
+        <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    
+    
+</Styles>

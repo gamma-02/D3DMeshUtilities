@@ -4,8 +4,6 @@ using System.Text;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using D3DMeshUtilities.Code;
-using SharpGLTF.Schema2;
 
 namespace D3DMeshUtilities;
 
@@ -123,10 +121,10 @@ public class App : Application
             {
                 DumpOnConversionComplete = true;
             }
-            else if (arg.StartsWith("-testImportMesh="))
-            {
-                ReadGltf.ImportGltf(ModelRoot.Load(arg.Substring(16)));
-            }
+            // else if (arg.StartsWith("-testImportMesh="))
+            // {
+            //     ReadGltf.ImportGltf(ModelRoot.Load(arg.Substring(16)));
+            // }
         }
     }
 

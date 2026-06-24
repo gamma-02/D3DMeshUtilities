@@ -17,6 +17,15 @@
         <Style Selector="ListBoxItem:selected Border">
             <Setter Property="Background" Value="rgb(85, 113, 64)" />
         </Style>
+        
+        <Style Selector="ListBoxItem">
+            
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected Border">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
     </Window.Styles>
     
     <Grid Margin="10 10">
@@ -27,9 +36,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="0"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
@@ -48,30 +57,8 @@
             </Grid>
             
             
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*"></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                
-                <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="15" Name="filePath" > Archive containing mesh to extract </TextBox>
-                
-                <Button Grid.Column="1" FontSize="15" Height="35" Click="OpenFile_OnClick"> Open File </Button>
-            </Grid>
-            
-            <Grid Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                
-                <Button Grid.Column="1" Click="OpenArchive_OnClick" Name="OpenArchive" FontSize="15" Height="35"> Load Archive </Button>
-            </Grid>
-            
-            
-            <TextBlock Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">OR</TextBlock>
-            <Line Grid.Row="5" Stretch="Fill" Stroke="Black" VerticalAlignment="Bottom"></Line>
+            <!-- <TextBlock Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20">OR</TextBlock> -->
+            <!-- <Line Grid.Row="4" Stretch="Fill" Stroke="Black" VerticalAlignment="Bottom"></Line> -->
             
             <Grid Grid.Row="5">
                 <Grid.ColumnDefinitions>
@@ -79,7 +66,7 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 
-                <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="20" Name="GameDataPath" > Game Data Directory </TextBox>
+                <TextBox Grid.Column="0"  TextAlignment="Left" VerticalAlignment="Stretch" FontSize="20" Name="GameDataPath" PlaceholderText="Game Data Directory" TextChanged="GameDataPath_OnTextChanged" />
                 
                 <Button Grid.Column="1" FontSize="20" Click="OpenFolder_OnClick"> Open Folder </Button>
             </Grid>
@@ -87,16 +74,28 @@
             <Grid Grid.Row="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                    <ColumnDefinition Width="0.4*"></ColumnDefinition>
                     <ColumnDefinition Width="3*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 
-                <Button Grid.Column="1" Click="LoadResources_OnClick" Name="OpenGameDir" FontSize="20" Height="40"> Load Game Resources </Button>
+                <Button Grid.Column="0" Click="LoadResources_OnClick" Name="OpenGameDir" IsEnabled="False" FontSize="18" Height="40" HorizontalAlignment="Right"> Load all Game Resources </Button>
+                <TextBox Grid.Column="1" HorizontalAlignment="Center"> OR </TextBox>
+                <Button Grid.Column="2" Click="ChooseSingleArchive_OnClick" Name="ChooseSingleArchive" IsEnabled="False" FontSize="18" Height="40" HorizontalAlignment="Left"> <![CDATA[Load & Choose Archive]]></Button>
             </Grid>
             
-            <Grid Grid.Row="7" IsVisible="False" Name="ArchiveListGrid">
+            <Grid Grid.Row="7" IsVisible="True" Name="ArchiveListGrid">
                 <Border>
                     <ListBox Name="ArchiveList" SelectionChanged="ArchiveList_OnSelectionChanged" Background="#26282c" CornerRadius="5">
+                        <ListBox.Styles>
+                            <!-- Target the Selected State in Template -->
+                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                <!-- Set Custom Selection Background -->
+                                <Setter Property="Background" Value="Transparent" />
+                                <!-- Set Custom Selection Foreground/Text Color -->
+                                <Setter Property="TextBlock.Foreground" Value="Transparent" />
+                            </Style>
+                        </ListBox.Styles>
+                        
                         <ListBoxItem>
                             <TextBlock>Loading...</TextBlock>
                         </ListBoxItem>
