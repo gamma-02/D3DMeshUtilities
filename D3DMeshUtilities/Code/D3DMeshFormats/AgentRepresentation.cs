@@ -34,7 +34,6 @@ public class AgentRepresentation
 {
     public static bool BeganConvertingAgent = false;
     
-    //todo: make this the actual file name (requires changing the search function)
     public string PropertySetName { get; set; }
     public PropertySet AgentPropertySet;
     
