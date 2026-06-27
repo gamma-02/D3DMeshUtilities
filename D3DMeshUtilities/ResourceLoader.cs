@@ -10,6 +10,7 @@ using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit;
 using TelltaleToolKit.IO.Archives;
 using TelltaleToolKit.IO.Resources;
+using TelltaleToolKit.T3Types;
 using Tmds.DBus.Protocol;
 
 
@@ -88,7 +89,7 @@ public class ResourceLoader
                 await Console.Out.WriteLineAsync($"Resdesc at: {resdesc}");
                 await Console.Out.WriteLineAsync(e.ToString()); 
                 
-                //todo: test. will this work? what is a fatal resdesc parsing error?
+                //done: test. will this work? maybe: what is a fatal resdesc parsing error?
                 continue;
             }
                 
@@ -219,5 +220,18 @@ public class ResourceLoader
         }
 
         return entryDict;
+    }
+
+    public ResourceContext? GetContextFromSymbol(Symbol s)
+    {
+        foreach (ResourceContext context in Contexts ?? [])
+        {
+            if (context.ContainsFile(s.Crc64))
+            {
+                return context;
+            }
+        }
+
+        return null;
     }
 }

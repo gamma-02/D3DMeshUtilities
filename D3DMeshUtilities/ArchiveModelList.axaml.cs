@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using D3DMeshUtilities.Code;
 using TelltaleToolKit.IO.Archives;
 
 namespace D3DMeshUtilities;
@@ -251,7 +252,7 @@ public partial class ArchiveModelList : BaseProjectWindow
     {
         List<string> models = modelArray.ToList();
 
-        Converting converting = new Converting(models)
+        Converting converting = new Converting(new MeshConversionTask(models))
         {
             OverriddenOwner = this
         };
@@ -265,7 +266,7 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         if(models.Count == 0) return;
 
-        Converting converting = new Converting(models)
+        Converting converting = new Converting(new MeshConversionTask(models))
         {
             OverriddenOwner = this
         };
@@ -281,4 +282,34 @@ public partial class ArchiveModelList : BaseProjectWindow
     }
 
     public List<string> GetModelsToConvert() => GetSelectedMeshes();
+
+    public class MeshConversionTask(List<string> meshesToConvert) : Converting.ConversionTask
+    {
+        private List<string> _meshesToConvert = meshesToConvert;
+        
+        public override bool ValidateTask(Converting? converting)
+        {
+            if (_meshesToConvert.Count != 0) return true;
+            
+            Console.Out.WriteLine("No models provided!");
+            converting?.AddMessageToBox("No models provided!");
+
+            return false;
+
+        }
+
+        public override async void Convert(string filePath, Converting? converting, Action completeTaskAction)
+        {
+            D3DMeshManager manager = new D3DMeshManager(_meshesToConvert, filePath);
+            
+            converting?.Dispatcher.Invoke(() => converting.AddMessageToBox("Converting..."));
+            await Task.Delay(100);
+            
+            manager.LoadMeshes(converting)?
+                .GetAwaiter().OnCompleted(() => converting?.Dispatcher.Invoke(completeTaskAction)); //lol
+
+            Console.Out.WriteLine("Read mesh data from ttarchive!");
+            
+        }
+    }
 }

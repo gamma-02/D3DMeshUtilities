@@ -1,0 +1,44 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
+        x:Class="D3DMeshUtilities.ArchiveAgentList"
+        Title="ArchiveAgentList"
+        Height="650" Width="800">
+    <Grid Margin="10">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header" SelectionChanged="Header_OnSelectionChanged">
+            <TabItem Header="Load Resources" FontSize="16"></TabItem>
+            <TabItem Header="List Models" FontSize="16" IsSelected="True"></TabItem>
+            <TabItem Header="Convert Models" FontSize="16"></TabItem>
+        </TabControl>
+        
+        <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"> Select Agents To Export </TextBlock>
+        
+        <Border Grid.Row="2" Margin="10" CornerRadius="5" ClipToBounds="True">
+            <ScrollViewer Background="#26282C" >
+                <Border CornerRadius="5" >
+                    
+                    <StackPanel Name="ListPanel"> <!-- This is where our list of items goes! -->
+                        
+                        <TextBlock FontSize="20" Margin="10" HorizontalAlignment="Center"> Loading... </TextBlock>
+                        
+                    </StackPanel>
+                    
+                </Border>
+            </ScrollViewer>
+        </Border>
+        
+        <Grid Row="3" IsVisible="False" Name="ConvertButtonGrid" Margin="10">
+            <Button FontSize="16" Click="BeginConversion"> Choose output directories >>> </Button>
+        </Grid>
+    </Grid>
+</Window>

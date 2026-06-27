@@ -1,8 +1,11 @@
 ﻿using Avalonia;
 using System;
+using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
 using D3DMeshUtilities.Code;
+using D3DMeshUtilities.Code.ImageStuffAUGH;
 using SharpGLTF.Schema2;
+using Codecs = D3DMeshUtilities.Code.MeshHandling.Codecs;
 
 
 namespace D3DMeshUtilities;
@@ -20,7 +23,10 @@ class Program
         
         //todo: process a lot of the startup args relating to default folder loading here
         //todo: allow for game switching while program is running
-        TttkInit.Init(); 
+        TttkInit.Init();
+        Task.Run(Codecs.RegisterCodecs);
+        
+        
         
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args, builderer);

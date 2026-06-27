@@ -364,10 +364,29 @@ public static class ConvertFromGfxPlatformFormat
     {
         object? vert = ReadVertexFromFormat(span, format);
 
-        return vert is Vec4<int> v ? v : null;
+        if (vert is Vec4<int> vsi) return vsi;
+
+        if (IsIntegerVector4(format))
+        {
+            switch (vert)
+            {
+                case Vec4<uint> vui:
+                    return vui.AsVec4Int();
+                case Vec4<short> vss:
+                    return vss.AsVec4Int();
+                case Vec4<ushort> vus:
+                    return vus.AsVec4Int();
+                case Vec4<sbyte> vsb:
+                    return vsb.AsVec4Int();
+                case Vec4<byte> vub:
+                    return vub.AsVec4Int();
+            }
+        }
+
+        return null;
     }
     
-    //todo: check that this will work...
+    //done...?: check that this will work...
     public static float ReadF32(ReadOnlySpan<byte> span)
     {
         //little endian (?) reading

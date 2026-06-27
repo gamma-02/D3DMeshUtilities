@@ -1,0 +1,100 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:D3DMeshUtilities"
+        xmlns:formats="using:D3DMeshUtilities.Code.D3DMeshFormats"
+        >
+    <Design.PreviewWith>
+        <controls:ArchiveAgentListBox />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|ArchiveAgentListBox">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Expander Background="Transparent" Name="Expander" Padding="0" Classes="flat small" IsExpanded="True">
+                    
+                    <Expander.Header>
+                        <TextBlock FontSize="15" VerticalAlignment="Center" Text="{Binding $parent[controls:ArchiveAgentListBox].ArchiveName}"></TextBlock>
+                    </Expander.Header>
+                        
+                    <ListBox ItemsSource="{Binding $parent[controls:ArchiveAgentListBox].Agents}" 
+                             SelectionMode="Multiple" 
+                             Margin="10 0 15 0" 
+                             Padding="0" 
+                             BorderBrush="#43552f"
+                             BorderThickness="5 0 0 0" 
+                             Name="AgentList" 
+                             AutoScrollToSelectedItem="False" >
+                        
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem:selected Border#ItemSourceBorder">
+                                <Setter Property="Background" Value="#FF5c6c95" />
+                            </Style>
+                        </ListBox.Styles>
+                    
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="formats:AgentRepresentation">
+                                <!-- <TextBlock Padding="0" Margin="5 0 0 0" Text="{Binding PropertySetName}" /> -->
+                                <Expander Background="Transparent" Name="Expander" Padding="0" Classes="flat small" IsExpanded="True">
+                                    <Expander.Header>
+                                        <TextBlock FontSize="15" VerticalAlignment="Center" Text="{Binding PropertySetName}" Name="{Binding PropertySetName}"/>
+                                    </Expander.Header>
+                                    
+                                    <Border Margin = "10 0 15 0" 
+                                            BorderBrush="#3d486a"
+                                            BorderThickness="5 0 0 0" 
+                                            Name="ItemSourceBorder">
+                                        <ItemsControl ItemsSource="{Binding MeshAndVisibility}" 
+                                                      Margin="10 0 15 0" 
+                                                      Padding="0" 
+                                                      Name="MeshList" 
+                                                      >
+                                            
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <UniformGrid Columns="1" Rows="{Binding MeshAndVisibility.Count}" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            
+                                            <!-- Prevent weird green circle around checkboxes -->
+                                            <ItemsControl.Styles>
+                                                <Style Selector=":selected Border">
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                </Style>
+                                            </ItemsControl.Styles>
+                                            
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate x:DataType="formats:MeshVisibility">
+                                                    <Grid ColumnDefinitions="*, Auto" Margin="0 5 0 5">
+                                                        
+                                                        <CheckBox Grid.Column="1" IsChecked="{Binding Visible, Mode=TwoWay}" Background="Transparent">
+                                                            <CheckBox.Styles>
+                                                                <Style Selector="CheckBox /template/ Path#Graphic">
+                                                                    <Setter Property="ZIndex" Value="1"></Setter>
+                                                                </Style>
+                                                                <Style Selector="CheckBox /template/ Border#PART_RootBorder">
+                                                                    <Setter Property="Background" Value="Transparent" />
+                                                                </Style>
+                                                            </CheckBox.Styles>
+                                                        </CheckBox>
+                                                        <TextBlock Grid.Column="0" Text="{Binding MeshName}" />
+                                                        
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            
+                                        </ItemsControl>
+                                    </Border>
+                                </Expander>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                            
+                    </ListBox>
+                    
+                </Expander>
+                
+            </ControlTemplate>
+
+        </Setter>
+    </Style>
+</Styles>

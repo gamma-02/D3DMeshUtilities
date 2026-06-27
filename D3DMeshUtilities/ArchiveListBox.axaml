@@ -32,7 +32,7 @@
                              SelectionMode="Multiple" 
                              Margin="10 0 15 0" 
                              Padding="0" 
-                             BorderBrush="#43552f" 
+                             BorderBrush="#43552f"
                              BorderThickness="5 0 0 0" 
                              Name="ArchiveList" 
                              AutoScrollToSelectedItem="False" >

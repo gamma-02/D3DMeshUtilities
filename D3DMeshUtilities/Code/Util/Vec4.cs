@@ -41,5 +41,13 @@ public class Vec4<T> : Vec<T>
             throw new ArgumentOutOfRangeException(nameof(vals), "Must be exactly four");
         }
     }
+
+    public Vec4<int> AsVec4Int()
+    {
+        unchecked
+        {
+            return new Vec4<int>(Convert.ToInt32((object)X), Convert.ToInt32((object)Y), Convert.ToInt32((object)Z), Convert.ToInt32((object)W));
+        }
+    }
     
 }

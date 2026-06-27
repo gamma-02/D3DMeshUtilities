@@ -27,4 +27,8 @@
         </Setter>
         <Setter Property="ToolTip.ShowOnDisabled" Value="True" />
     </Style>
+    
+    <!-- <Style Selector="Expander.test-thing"> -->
+    <!--     <Setter Property="Theme" Value="{StaticResource }"></Setter> -->
+    <!-- </Style> -->
 </Styles>

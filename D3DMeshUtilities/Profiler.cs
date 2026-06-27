@@ -10,7 +10,6 @@ namespace D3DMeshUtilities;
 
 public class Profiler
 {
-
     public static readonly Profiler Instance = new Profiler();
     
     public readonly List<ProfilerFrame> ParentFrames = [];
@@ -83,7 +82,8 @@ public class Profiler
     public class ProfilerFrame(string name)
     {
         public string Name = name;
-        [SuppressMessage("ReSharper", "NotAccessedField.Global")] public ProfilerFrame? Parent;
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")] 
+        public ProfilerFrame? Parent;
         public readonly List<ProfilerFrame> Children = [];
         public DateTime StartTime { get; private set; } = DateTime.Now;
         public DateTime? EndTime;
@@ -105,10 +105,7 @@ public class Profiler
             parent.AddChild(this);
         }
 
-        public void AddChild(ProfilerFrame frame)
-        {
-            Children.Add(frame);
-        }
+        public void AddChild(ProfilerFrame frame) => Children.Add(frame);
 
         public ProfilerFrame CreateChild(string name)
         {

@@ -66,90 +66,7 @@ public class D3DMeshManager(List<string> file, string outputPath)
 
         foreach (string meshFile in Files)
         {
-            string meshName = meshFile.Remove(meshFile.Length - ".d3dmesh".Length);
-            
-            Profiler.Instance.BeginFrame($"{meshName} conversion", convertTask, out conversionFrame);
-            D3DMesh? mesh = TttkInit.Workspace?.LoadAsset<D3DMesh>(meshFile);
-
-
-            Console.Out.WriteLine($"Attempting to decode {meshFile}");
-           
-            
-            if (mesh == null)
-            {
-                Profiler.Instance.EndFrame(conversionFrame);
-                continue;
-            }
-
-            
-            Task.Run(() =>
-            {
-                convertingWindow?.Dispatcher.Invoke(() =>
-                    convertingWindow.AddMessageToBox($"Beginning {meshName}"));
-            });
-            
-            MeshInfo info = new MeshInfo(mesh, meshFile);
-
-            IMeshCodec? codec = info.GetMeshRepresentation(mesh);
-
-            if (codec == null)
-            {
-                Profiler.Instance.EndFrame(conversionFrame);
-                Console.Out.WriteLine($"Failed to find a mesh codec that can decode {meshFile}, skipping!");
-                
-                continue;
-            }
-
-            bool succeeded = codec.Read(mesh, info, meshFile, conversionFrame, out IMeshRepresentation? intermediateMesh);
-
-            Profiler.Instance.EndFrame(conversionFrame, out TimeSpan convertDuration); //end convert frame
-
-            if (!succeeded || intermediateMesh == null)
-            {
-                continue;
-            }
-            
-            string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "glb"));
-            
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine($"Converting {meshName} took: " + convertDuration); 
-            Console.ResetColor();
-
-            convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Converted {meshName}"));
-
-            Profiler.ProfilerFrame frame = conversionFrame;
-            Task t = Task.Run(() =>
-            { 
-                Profiler.Instance.BeginFrame($"Saving {meshName}", frame, out Profiler.ProfilerFrame savingFrame);
-                SceneBuilder scene = new SceneBuilder();
-
-                var rootNode = new NodeBuilder(meshName);
-
-                rootNode.WithLocalScale(new Vector3(10.0f));
-
-                if (!intermediateMesh.SaveToScene(scene, rootNode))
-                {
-                    Console.Out.WriteLine("Failed to create mesh!");
-
-                    return;
-                }
-
-                ModelRoot root = scene.ToGltf2();
-
-                root.SaveGLB(outPath);
-                
-                Profiler.Instance.EndFrame(savingFrame, out TimeSpan saveDuration);
-                
-                Console.Out.WriteLine($"Succeeded in converting {meshFile}! \r\n\tSaved at: {outPath}");
-
-                //todo: reduced debug info or something?
-                convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Saved {meshName}.glb to disk"));
-                
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Out.WriteLine($"\tSaving {meshName} took: " + saveDuration);
-                Console.ResetColor();
-
-            });
+            ConvertMesh(convertingWindow, meshFile, convertTask, out Task t);
 
             if (Files[^1] == meshFile)
             {
@@ -160,7 +77,6 @@ public class D3DMeshManager(List<string> file, string outputPath)
                 
                 return t;
             }
-            
         }
         
         
@@ -172,8 +88,98 @@ public class D3DMeshManager(List<string> file, string outputPath)
         return null;
 
     }
-    
-    
+
+    private void ConvertMesh(Converting? convertingWindow, string meshFile, Profiler.ProfilerFrame convertTask,
+        out Task t)
+    {
+        Profiler.ProfilerFrame conversionFrame;
+        string meshName = meshFile.Remove(meshFile.Length - ".d3dmesh".Length);
+            
+        Profiler.Instance.BeginFrame($"{meshName} conversion", convertTask, out conversionFrame);
+        D3DMesh? mesh = TttkInit.Workspace?.LoadAsset<D3DMesh>(meshFile);
+
+        Console.Out.WriteLine($"Attempting to decode {meshFile}");
+            
+        if (mesh == null)
+        {
+            Profiler.Instance.EndFrame(conversionFrame);
+            t = null;
+            return;
+        }
+            
+        Task.Run(() =>
+        {
+            convertingWindow?.Dispatcher.Invoke(() =>
+                convertingWindow.AddMessageToBox($"Beginning {meshName}"));
+        });
+            
+        MeshInfo info = new MeshInfo(mesh, meshFile);
+
+        IMeshCodec? codec = info.GetMeshRepresentation(mesh);
+
+        if (codec == null)
+        {
+            Profiler.Instance.EndFrame(conversionFrame);
+            Console.Out.WriteLine($"Failed to find a mesh codec that can decode {meshFile}, skipping!");
+
+            t = null;
+            return;
+        }
+
+        bool succeeded = codec.Read(mesh, info, meshFile, conversionFrame, out IMeshRepresentation? intermediateMesh);
+
+        Profiler.Instance.EndFrame(conversionFrame, out TimeSpan convertDuration); //end convert frame
+
+        if (!succeeded || intermediateMesh == null)
+        {
+            t = null;
+            return;
+        }
+            
+        string outPath = Path.Combine(outputPath, meshFile.Replace("d3dmesh", "glb"));
+            
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.WriteLine($"Converting {meshName} took: {convertDuration}"); 
+        Console.ResetColor();
+
+        convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Converted {meshName}"));
+
+        // Profiler.ProfilerFrame frame = conversionFrame;
+        t = Task.Run(() =>
+        { 
+            Profiler.Instance.BeginFrame($"Saving {meshName}", conversionFrame, out Profiler.ProfilerFrame savingFrame);
+            SceneBuilder scene = new SceneBuilder();
+
+            var rootNode = new NodeBuilder(meshName);
+
+            rootNode.WithLocalScale(new Vector3(10.0f));
+
+            if (!intermediateMesh.SaveToScene(scene, rootNode))
+            {
+                Console.Out.WriteLine("Failed to create mesh!");
+
+                return;
+            }
+
+            ModelRoot root = scene.ToGltf2();
+
+            root.SaveGLB(outPath);
+                
+            Profiler.Instance.EndFrame(savingFrame, out TimeSpan saveDuration);
+                
+            Console.Out.WriteLine($"Succeeded in converting {meshFile}! \r\n\tSaved at: {outPath}");
+
+            //todo: reduced debug info or something?
+            convertingWindow?.Dispatcher.Invoke(() => convertingWindow.AddMessageToBox($"Saved {meshName}.glb to disk"));
+                
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Out.WriteLine($"\tSaving {meshName} took: " + saveDuration);
+            Console.ResetColor();
+
+        });
+    }
+
+
     public void SaveTexture(Handle<T3Texture>? textureHandle, Workspace workspace)
     {
         //Make sure the texture exists :D

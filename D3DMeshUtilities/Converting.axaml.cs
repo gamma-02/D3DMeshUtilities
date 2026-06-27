@@ -14,27 +14,21 @@ namespace D3DMeshUtilities;
 public partial class Converting : BaseProjectWindow
 {
     
-    public List<string> ModelsToConvert
+    public ConversionTask? ModelsToConvert
     {
-        get => _modelsToConvert;
+        get => _task;
 
-        set => _modelsToConvert = value;
+        set => _task = value;
     }
 
-    private List<string> _modelsToConvert;
+    private ConversionTask? _task;
     
-    public Converting(List<string> modelsToConvert)
+    public Converting(ConversionTask task)
     {
-        _modelsToConvert = modelsToConvert;
+        _task = task;
         InitializeComponent();
-        
-        if (_modelsToConvert.Count == 0)
-        {
-            MessageBox.IsVisible = true;
-            Console.Out.WriteLine("No models provided!");
 
-            AddMessageToBox("No models provided!");
-        }
+        ConvertButton.IsEnabled = _task.ValidateTask(this);
         
         if (string.IsNullOrWhiteSpace(App.StartupOutputDir)) return;
         FilePath.Text = App.StartupOutputDir;
@@ -42,23 +36,21 @@ public partial class Converting : BaseProjectWindow
         if (!App.StartupConvertModels) return;
         
         Convert_OnClick(null, new RoutedEventArgs());
-        
-        
     }
 
     public Converting()
     {
-        _modelsToConvert = new List<string>();
+        // _task = new List<string>();
         InitializeComponent();
 
         ConvertButton.IsEnabled = false;
     }
 
-    public void SetModelsToConvert(List<string> models)
+    public void SetTask(ConversionTask task)
     {
-        _modelsToConvert = models;
+        _task = task;
 
-        ConvertButton.IsEnabled = true;
+        ConvertButton.IsEnabled = task.ValidateTask(this);
     }
     
     private async void OpenFile()
@@ -82,17 +74,15 @@ public partial class Converting : BaseProjectWindow
     {
         MessageBox.IsVisible = true;
 
-        if (_modelsToConvert.Count == 0)
-        {
-            Console.Out.WriteLine("No models provided!");
-
-            AddMessageToBox("No models provided!");
-        }
+        if (!(_task ?? new NoneConversionTask()).ValidateTask(this))
+            return;
         
         if (string.IsNullOrWhiteSpace(FilePath.Text))
             return;
 
-        if (!Directory.Exists(FilePath.Text))
+        string fullPath = Path.GetFullPath(FilePath.Text);
+
+        if (!Directory.Exists(fullPath))
         {
             Console.Out.WriteLine($"Directory {FilePath.Text} not found!");
             
@@ -100,24 +90,10 @@ public partial class Converting : BaseProjectWindow
 
             return;
         }
-        
-        D3DMeshManager manager = new D3DMeshManager(_modelsToConvert, FilePath.Text);
 
         SetImportantControlsEnabled( false);
 
-        Task.Run(async () =>
-        {
-            Dispatcher.Invoke(() => AddMessageToBox("Converting..."));
-            await Task.Delay(100);
-            
-            manager.LoadMeshes(this)?
-                .GetAwaiter().OnCompleted(() => Dispatcher.Invoke(CompleteMeshLoad)); //lol
-
-            Console.Out.WriteLine("Read mesh data from ttarchive!");
-
-            //todo: some kind of a system to automatically hide the box if there's been no more messages for a while
-
-        });
+        Task.Run(() => _task.Convert(fullPath, this, CompleteMeshLoad));
     }
 
     private void CompleteMeshLoad()
@@ -187,5 +163,30 @@ public partial class Converting : BaseProjectWindow
     private void OutFile_OnClick(object? sender, RoutedEventArgs e)
     {
         Dispatcher.InvokeAsync(OpenFile);
+    }
+
+    public abstract class ConversionTask
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="converting"></param>
+        /// <returns></returns>
+        public abstract bool ValidateTask(Converting? converting);
+
+        /// <summary>
+        /// This should be an async function that executes the conversion task given an input file path and the instance of the task
+        /// </summary>
+        /// <param name="filePath"> Folder the results of this task should be placed into </param>
+        /// <param name="converting"> The instance of the conversion window that the task is being ran in </param>
+        /// <param name="completeTaskAction"> Action to be ran after the conversion task finishes </param>
+        public abstract void Convert(string filePath, Converting? converting, Action completeTaskAction);
+    }
+
+    public class NoneConversionTask : ConversionTask
+    {
+        public override bool ValidateTask(Converting? converting) => false;
+
+        public override void Convert(string filePath, Converting? converting, Action completeTaskAction) { }
     }
 }

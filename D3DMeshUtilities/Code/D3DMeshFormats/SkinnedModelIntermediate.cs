@@ -107,8 +107,9 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             if (info.Name != null)
             {
                 AsyncSearchForSkeletonFiles.AgentPropertiesByMeshFile.TryGetValue(info.Name.Crc64,
-                    out PropertySet? set);
-                agentProp = set;
+                    out (PropertySet set, Symbol name) set);
+                agentProp = set.set;
+
             }
 
         }
@@ -247,9 +248,9 @@ public class SkinnedModelIntermediate : IMeshRepresentation
         else
         {
             if (!Info.HasVertexTangents)
-                meshBuilder = new MeshBuilder<VertexPositionNormal, VertexTexture1, VertexJoints4>("mainMesh");
+                meshBuilder = new MeshBuilder<VertexPositionNormal, VertexTexture1, VertexJoints4>(Info.Name?.ToString() + "_main");
             else
-                meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexJoints4>("mainMesh");
+                meshBuilder = new MeshBuilder<VertexPositionNormalTangent, VertexTexture1, VertexJoints4>(Info.Name?.ToString() + "_main");
         }
         
         //build list of vertices
@@ -266,7 +267,6 @@ public class SkinnedModelIntermediate : IMeshRepresentation
             AddVertexWithSkinning(i, verts, blendIndices);
             
         }
-        
         
         T3MeshLOD lod = LODs[0];
 
@@ -435,14 +435,138 @@ public class SkinnedModelIntermediate : IMeshRepresentation
 
     public bool SaveToMeshBuilder(out IMeshBuilder<MaterialBuilder> meshBuilder)
     {
-        bool succeeded = SaveToGLTF(out var mb);
-
-        meshBuilder = mb;
+        bool succeeded = SaveToGLTF(out meshBuilder);
 
         return succeeded;
     }
+    
+    public bool SaveToScene(
+        SceneBuilder scene, 
+        NodeBuilder modelRoot
+        )
+    {
+        bool builtSkeleton = 
+            BuildSkeletonStructure(Skeleton, modelRoot, out List<NodeBuilder> jointNodeBuilders, out Dictionary<string, int> boneNameToJointIndex);
 
-    public bool SaveToScene(SceneBuilder scene, NodeBuilder modelRoot)
+
+        if (builtSkeleton && jointNodeBuilders.Count > 0 && boneNameToJointIndex.Count > 0)
+        {
+            return SaveSkinnedModelToScene(scene, modelRoot, jointNodeBuilders, boneNameToJointIndex);
+        }
+        
+        if (!SaveToGLTF(out IMeshBuilder<MaterialBuilder> nonSkinnedMesh))
+        {
+            return false;
+        }
+        
+        scene.AddRigidMesh(nonSkinnedMesh, modelRoot);
+        return true;
+        
+    }
+
+    public bool SaveSkinnedModelToScene(SceneBuilder scene, NodeBuilder modelRoot, List<NodeBuilder> jointNodeBuilders,
+        Dictionary<string, int> boneNameToJointIndex)
+    {
+        for (int i = 0; i < jointNodeBuilders.Count; i++)
+        {
+            // Assuming jointNodeBuilders[i].Name is the bone name (or you can extract it)
+            string boneName = jointNodeBuilders[i].Name;
+            boneNameToJointIndex[boneName] = i;
+        }
+
+        List<Vec4<int>> blendIndices = BlendIndices;
+        
+        List<T3MeshBoneEntry> d3dMeshBones = MeshDataBones;
+        for (var i = 0; i < blendIndices.Count; i++)
+        {
+            var index1 = blendIndices[i][0];
+            var index2 = blendIndices[i][1];
+            var index3 = blendIndices[i][2];
+            var index4 = blendIndices[i][3];
+
+            T3MeshBoneEntry bone1 = d3dMeshBones[index1];
+            T3MeshBoneEntry bone2 = d3dMeshBones[index2];
+            T3MeshBoneEntry bone3 = d3dMeshBones[index3];
+            T3MeshBoneEntry bone4 = d3dMeshBones[index4];
+
+            int remappedIndex1 = RemapBoneIndex(bone1, boneNameToJointIndex);
+            int remappedIndex2 = RemapBoneIndex(bone2, boneNameToJointIndex);
+            int remappedIndex3 = RemapBoneIndex(bone3, boneNameToJointIndex);
+            int remappedIndex4 = RemapBoneIndex(bone4, boneNameToJointIndex);
+
+            blendIndices[i] = new Vec4<int>([remappedIndex1, remappedIndex2, remappedIndex3, remappedIndex4]);
+        }
+
+        if (!SaveToGLTF(out IMeshBuilder<MaterialBuilder> skinnedMesh, blendIndices))
+        {
+            return false;
+        }
+
+        // scene.AddRigidMesh(skinnedMesh, modelRoot);
+        scene.AddSkinnedMesh(skinnedMesh, modelRoot.WorldMatrix, jointNodeBuilders.ToArray());
+        return true;
+    }
+
+    public static bool BuildSkeletonStructure(
+        Skeleton? skeleton, 
+        NodeBuilder modelRoot,
+        out List<NodeBuilder> jointNodeBuilders,
+        out Dictionary<string, int> boneNameToJointIndex)
+    {
+        jointNodeBuilders = [];
+        boneNameToJointIndex = [];
+        
+        int camera = 0;
+        if (skeleton == null) return false;
+        
+        // First create all nodes
+        foreach (Skeleton.Entry bone in skeleton.Entries)
+        {
+            TttkInit.Workspace!.ResolveSymbol(bone.JointName);
+                
+            var nodeBuilder = new NodeBuilder(bone.JointName.ToString());
+
+            // Set local transform
+            nodeBuilder.WithLocalTranslation(new Vector3(bone.LocalPosition.X, bone.LocalPosition.Y,
+                bone.LocalPosition.Z));
+
+            var originalRotation =
+                new Quaternion(bone.LocalQuat.X, bone.LocalQuat.Y, bone.LocalQuat.Z, bone.LocalQuat.W);
+
+            nodeBuilder.WithLocalRotation(originalRotation);
+            nodeBuilder.WithLocalScale(Vector3.One);
+                
+            // scene.AddRigidMesh(D3DMeshManager.BoneMesh, nodeBuilder);
+
+            if (bone.ParentIndex == -1 && bone.JointName.ToString() != "Root")
+            {
+                modelRoot.AddNode(nodeBuilder);
+                camera++;
+            }
+            else
+            {
+                jointNodeBuilders.Add(nodeBuilder);
+            }
+        }
+
+        // Then build hierarchy
+        for (var i = 0; i < jointNodeBuilders.Count; i++)
+        {
+            Skeleton.Entry bone = skeleton.Entries[i + camera];
+            if (bone.ParentIndex >= 0 && bone.ParentIndex < jointNodeBuilders.Count)
+            {
+                jointNodeBuilders[bone.ParentIndex - camera].AddNode(jointNodeBuilders[i]);
+            }
+            else if (bone.JointName.ToString() is "Root")
+            {
+                modelRoot.AddNode(jointNodeBuilders[i]);
+            }
+        }
+
+        return true;
+    }
+
+    public bool OldSaveToScene(SceneBuilder scene, NodeBuilder modelRoot)
     {
         List<NodeBuilder> jointNodeBuilders = [];
         
@@ -549,7 +673,7 @@ public class SkinnedModelIntermediate : IMeshRepresentation
     }
     
     
-    private static int RemapBoneIndex(T3MeshBoneEntry meshBone,
+    public static int RemapBoneIndex(T3MeshBoneEntry meshBone,
         Dictionary<string, int> boneNameToJointIndex)
     {
         var boneName = meshBone.BoneName.ToString(); // Use whatever property has the bone name

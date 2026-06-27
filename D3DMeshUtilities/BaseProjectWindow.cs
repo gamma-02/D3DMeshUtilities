@@ -9,13 +9,14 @@ namespace D3DMeshUtilities;
 
 public abstract class BaseProjectWindow : Window
 {
-    new public Action? Opened;
+    public new Action? Opened;
     
     public static Dictionary<Window, Func<BaseProjectWindow>> WindowConstructorMap =
-        new Dictionary<Window, Func<BaseProjectWindow>>()
+        new ()
         {
             { Window.LoadResources, () => new MainWindow()/*{ OverriddenOwner = GetMainWindow() }*/ },
             { Window.ListModels, () => new ArchiveModelList(true)/*{ OverriddenOwner = GetMainWindow() }*/ },
+            { Window.ListAgents, () => new ArchiveAgentList() },
             { Window.ConvertModels, () => new Converting()/*{ OverriddenOwner = GetMainWindow() }*/ }
         };
     
@@ -38,6 +39,7 @@ public abstract class BaseProjectWindow : Window
     {
         LoadResources,
         ListModels,
+        ListAgents,
         ConvertModels
     }
 
@@ -110,7 +112,7 @@ public abstract class BaseProjectWindow : Window
 
         if (this is ArchiveModelList list && newWindow is Converting c)
         {
-            c.SetModelsToConvert(list.GetModelsToConvert());
+            c.SetTask(new ArchiveModelList.MeshConversionTask(list.GetModelsToConvert()));
         }
         
         CloseOnNewWindowOpened(newWindow);

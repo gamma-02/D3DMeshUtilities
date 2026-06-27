@@ -11,6 +11,7 @@
         
         <StyleInclude Source="avares://D3DMeshUtilities/Styles.axaml" />
         <StyleInclude Source="avares://D3DMeshUtilities/ArchiveListBox.axaml" />
+        <StyleInclude Source="avares://D3DMeshUtilities/ArchiveAgentListBox.axaml" />
         
         <!-- Reusable class for small Material Expanders -->
         <Style Selector="Expander.small">

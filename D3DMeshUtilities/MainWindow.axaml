@@ -45,10 +45,10 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="0"/>
-                <RowDefinition Height="0"/>
+                <RowDefinition Height="10"/>
                 <RowDefinition Height="0"/>
                 <RowDefinition Height="50"/>
+                <RowDefinition Height="10"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -61,11 +61,14 @@
                 <TabItem Header="Convert Models" FontSize="16"></TabItem>
             </TabControl>
             
+        
+            
             <Grid Grid.Row="1">
                 <ComboBox Name="GameDropdown" FontSize="16"></ComboBox>
             </Grid>
             
-            <Grid Grid.Row="5">
+            
+            <Grid Grid.Row="4" ClipToBounds="False">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -76,7 +79,7 @@
                 <Button Grid.Column="1" FontSize="20" Click="OpenFolder_OnClick"> Open Folder </Button>
             </Grid>
             
-            <Grid Grid.Row="6">
+            <Grid Grid.Row="6" VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"></ColumnDefinition>
                     <ColumnDefinition Width="0.4*"></ColumnDefinition>
@@ -84,25 +87,15 @@
                 </Grid.ColumnDefinitions>
                 
                 <Button Grid.Column="0" Click="LoadResources_OnClick" Name="OpenGameDir" IsEnabled="False" FontSize="18" Height="40" HorizontalAlignment="Right"> Load all Game Resources </Button>
-                <TextBox Grid.Column="1" HorizontalAlignment="Center"> OR </TextBox>
+                <TextBox Grid.Column="1" HorizontalAlignment="Center" > OR </TextBox>
                 <Button Grid.Column="2" Click="ChooseSingleArchive_OnClick" Name="ChooseSingleArchive" IsEnabled="False" FontSize="18" Height="40" HorizontalAlignment="Left"> <![CDATA[Load & Choose Archive]]></Button>
             </Grid>
             
             <Grid Grid.Row="7" IsVisible="True" Name="ArchiveListGrid" Margin="10">
                 <Border>
                     <ListBox Name="MessageBox" Background="#26282c" CornerRadius="5" AutoScrollToSelectedItem="True" Padding="10 5 0 0">
-                        <ListBox.Styles>
-                            <!-- ~1~ Target the Selected State in Template @1@ -->
-                            <!-- <Style Selector="ListBoxItem:selected /template/ ContentPresenter"> -->
-                            <!--     ~1~ Set Custom Selection Background @1@ -->
-                            <!--     <Setter Property="Background" Value="Transparent" /> -->
-                            <!--     ~1~ Set Custom Selection Foreground/Text Color @1@ -->
-                            <!--     <Setter Property="TextBlock.Foreground" Value="Transparent" /> -->
-                            <!-- </Style> -->
-                        </ListBox.Styles>
                         
                         <TextBlock FontSize="16">Waiting to load resources....</TextBlock>
-                        
                         
                     </ListBox>
                 </Border>
@@ -111,17 +104,17 @@
             
             <Grid Grid.Row="8" RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="10" Name="OpenArchiveGrid" VerticalAlignment="Bottom" Margin="0 10">
                 <Button Grid.Row="0" FontSize="16" Click="MoveToListMeshes"> Export Meshes >>> </Button>
-                <Button Grid.Row="1" FontSize="16" Click="MoveToListAgents" IsEnabled="False" ToolTip.ShowOnDisabled="True" ToolTip.Placement="Top">
-                    <ToolTip.Tip>
-                        <Border 
-                            CornerRadius="5" 
-                            Padding="5" 
-                            Background="{DynamicResource MaterialDesignPaper}" 
-                            BorderBrush="{DynamicResource MaterialCardBackgroundBrush}" 
-                            BorderThickness="2">
-                            <TextBlock Text="Feature coming soon!"/>
-                        </Border>
-                    </ToolTip.Tip>
+                <Button Grid.Row="1" FontSize="16" Click="MoveToListAgents" > <!-- IsEnabled="False" ToolTip.ShowOnDisabled="True" ToolTip.Placement="Top" -->
+                    <!-- <ToolTip.Tip> -->
+                    <!--     <Border  -->
+                    <!--         CornerRadius="5"  -->
+                    <!--         Padding="5"  -->
+                    <!--         Background="{DynamicResource MaterialDesignPaper}"  -->
+                    <!--         BorderBrush="{DynamicResource MaterialCardBackgroundBrush}"  -->
+                    <!--         BorderThickness="2"> -->
+                    <!--         <TextBlock Text="Feature coming soon!"/> -->
+                    <!--     </Border> -->
+                    <!-- </ToolTip.Tip> -->
                     Export Agents >>>
                 </Button>
                 <Button Grid.Row="2" FontSize="16" Click="MoveToImportMeshes" IsEnabled="False" ToolTip.ShowOnDisabled="True" ToolTip.Placement="Top">
@@ -151,9 +144,5 @@
                     Import Agents >>>
                 </Button>
             </Grid>
-
-
-            
-            
         </Grid>
 </Window>

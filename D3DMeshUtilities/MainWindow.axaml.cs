@@ -13,6 +13,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ICSharpCode.SharpZipLib.Core;
 using TelltaleToolKit;
+using TelltaleToolKit.IO.Archives;
 using Tmds.DBus.Protocol;
 using HorizontalAlignment = Avalonia.Layout.HorizontalAlignment;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
@@ -218,8 +219,7 @@ public partial class MainWindow : BaseProjectWindow
     {
         Dispatcher.InvokeAsync(LoadResources);
     }
-
-    //huge todo: add the console window thing, gonna need to change ArchiveLoader for that too tbf
+    
 
     private static async Task<List<string>> LoadGameDir(MainWindow window, string? gameDataPath, string chosenGame)
     {
@@ -239,7 +239,6 @@ public partial class MainWindow : BaseProjectWindow
             var cts = new CancellationTokenSource();
 
             
-            //todo: message box logging
             Task<List<string>> pathTask = Task.Run(() =>
                 ResourceLoader.Instance.LoadResourceContexts(cts, window, fullPath, chosenGame), cts.Token);
 
@@ -371,17 +370,21 @@ public partial class MainWindow : BaseProjectWindow
         {
             List<string> archives = await LoadGameDir(window, gameDataPath, chosenGame);
 
-            var dialouge = new SelectSingleArchive(archives);
 
-            string? archive = await dialouge.ShowDialog<string?>(this);
+            await window.Dispatcher.Invoke(async () =>
+            {
+                var dialouge = new SelectSingleArchive(archives);
 
-            if (archive == null)
-                return;
-            
-            ResourceLoader.Instance.LoadArchive(this, Path.Combine(gameDataPath!, archive), chosenGame);
-            
-            //todo: Log that the archive has been selected in the console
-            Dispatcher.Invoke(() => AddMessageToBox($"Archive {archive} selected!", Color.FromUInt32(0x62a36d)));
+                string? archive = await dialouge.ShowDialog<string?>(this);
+
+                if (archive == null)
+                    return;
+
+                ResourceLoader.Instance.LoadArchive(this, Path.Combine(gameDataPath!, archive), chosenGame);
+
+                AddMessageToBox($"Archive {archive} selected!", Color.FromUInt32(0x62a36d));
+            });
+
         }
         catch (Exception e)
         {
@@ -416,7 +419,15 @@ public partial class MainWindow : BaseProjectWindow
 
     private void MoveToListAgents(object? sender, RoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        ArchiveAgentList list;
+
+        (string name, IEnumerable<ResourceEntry> thing) = ResourceLoader.Instance.GetEntriesInCurrentArchive();
+        
+        list = !string.IsNullOrWhiteSpace(ResourceLoader.Instance.ArchiveLocation) 
+            ? new ArchiveAgentList([name]) { OverriddenOwner = this } 
+            : new ArchiveAgentList { OverriddenOwner = this };
+        
+        CloseOnNewWindowOpened(list);
     }
 
     private void MoveToImportMeshes(object? sender, RoutedEventArgs e)
