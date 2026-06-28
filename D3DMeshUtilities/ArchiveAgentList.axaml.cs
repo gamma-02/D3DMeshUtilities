@@ -30,6 +30,9 @@ public partial class ArchiveAgentList : BaseProjectWindow
     public ArchiveAgentList()
     {
         InitializeComponent();
+
+        // TestBox.Items.Add("HELLO");
+        // TestBox.SelectedIndex = 0;
         
         if (Design.IsDesignMode)
         {
@@ -99,8 +102,13 @@ public partial class ArchiveAgentList : BaseProjectWindow
         {
             ListPanel.Children.Clear();
             
-            var notLoadedMessage = new TextBlock();
-            notLoadedMessage.Text = "Archive not yet loaded";
+            var notLoadedMessage = new TextBlock
+            {
+                Text = "Agent Dictionary building, please wait...",
+                FontSize = 20,
+                TextAlignment = TextAlignment.Center,
+                Margin = new Thickness(10)
+            };
         
             ListPanel.Children.Add(notLoadedMessage);
             
@@ -120,9 +128,27 @@ public partial class ArchiveAgentList : BaseProjectWindow
         
         foreach (string contextName in contextsToScanThrough)
         {
-            var archiveAgentListBox = new ArchiveAgentListBox(contextName, ContextAgentDictionary[contextName]);
+            if(!ContextAgentDictionary.TryGetValue(contextName, out List<AgentRepresentation>? agents)) continue;
+            
+            var archiveAgentListBox = new ArchiveAgentListBox(contextName, agents);
             archiveAgentListBox.SelectionChanged += ArchiveAgentListBox_OnSelectionChanged;
             ListPanel.Children.Add(archiveAgentListBox);
+        }
+
+        if (ListPanel.Children.Count == 0)
+        {
+            ListPanel.Children.Clear();
+            
+            var notLoadedMessage = new TextBlock
+            {
+                Text = "No agents found in archive!",
+                FontSize = 20,
+                TextAlignment = TextAlignment.Center,
+                Margin = new Thickness(10)
+            };
+        
+            ListPanel.Children.Add(notLoadedMessage);
+            
         }
         
     }

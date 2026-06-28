@@ -35,9 +35,9 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="formats:AgentRepresentation">
                                 <!-- <TextBlock Padding="0" Margin="5 0 0 0" Text="{Binding PropertySetName}" /> -->
-                                <Expander Background="Transparent" Name="Expander" Padding="0" Classes="flat small" IsExpanded="True">
+                                <Expander Background="Transparent" Padding="0" Classes="flat small" IsExpanded="{Binding Expanded, Mode=TwoWay}" Name="{Binding PropertySetName}">
                                     <Expander.Header>
-                                        <TextBlock FontSize="15" VerticalAlignment="Center" Text="{Binding PropertySetName}" Name="{Binding PropertySetName}"/>
+                                        <TextBlock FontSize="15" VerticalAlignment="Center" Text="{Binding PropertySetName}" />
                                     </Expander.Header>
                                     
                                     <Border Margin = "10 0 15 0" 

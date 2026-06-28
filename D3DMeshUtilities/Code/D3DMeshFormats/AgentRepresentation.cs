@@ -40,18 +40,19 @@ public class AgentRepresentation
     public List<Handle<D3DMesh>> AgentMeshHandles = [];
     public List<Handle<D3DMesh>> VisibleAgentMeshes = [];
 
-    private ObservableCollection<MeshVisibility>? _meshVisibilities; //build and cache mesh visibility
     public ObservableCollection<MeshVisibility> MeshAndVisibility 
     {
         get
         {
-            if (_meshVisibilities != null) return _meshVisibilities;
+            if (field != null) return field;
             List<MeshVisibility> val = [];
             val.AddRange(AgentMeshHandles.Select(handle => new MeshVisibility(handle, VisibleAgentMeshes.Contains(handle))));
-            _meshVisibilities = new ObservableCollection<MeshVisibility>(val);
-            return _meshVisibilities;
+            field = new ObservableCollection<MeshVisibility>(val);
+            return field;
         }
     }
+
+    public bool Expanded { get; set; } = true;
 
     public Skeleton? Skeleton;
 

@@ -5,6 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="650"
         x:Class="D3DMeshUtilities.ArchiveAgentList"
         Title="ArchiveAgentList"
+        WindowStartupLocation="CenterOwner"
         Height="650" Width="800">
     <Grid Margin="10">
         
@@ -19,6 +20,12 @@
             <TabItem Header="Load Resources" FontSize="16"></TabItem>
             <TabItem Header="List Models" FontSize="16" IsSelected="True"></TabItem>
             <TabItem Header="Convert Models" FontSize="16"></TabItem>
+            <!-- <TabItem> -->
+            <!--     <TabItem.Header> -->
+            <!--         <ComboBox Name="TestBox" ZIndex="1"> -->
+            <!--         </ComboBox> -->
+            <!--     </TabItem.Header> -->
+            <!-- </TabItem> -->
         </TabControl>
         
         <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"> Select Agents To Export </TextBlock>

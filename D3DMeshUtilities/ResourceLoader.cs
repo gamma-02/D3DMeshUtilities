@@ -173,6 +173,7 @@ public class ResourceLoader
         // int seperator = archivePath.LastIndexOfAny(['\\', '/']);
         //
         // string archiveName = archivePath.Substring(seperator + 1);
+        if (string.IsNullOrWhiteSpace(archivePath) || !File.Exists(archivePath)) return null;
 
         return Contexts?
             .Where(rc => rc.Providers.Any(

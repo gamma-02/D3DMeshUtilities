@@ -9,6 +9,8 @@ namespace D3DMeshUtilities;
 
 public abstract class BaseProjectWindow : Window
 {
+    
+    
     public new Action? Opened;
     
     public static Dictionary<Window, Func<BaseProjectWindow>> WindowConstructorMap =
@@ -97,25 +99,30 @@ public abstract class BaseProjectWindow : Window
             return;
         }
         
+        // return;
+        
         if (!(sender is TabControl control)) return;
 
         if (!(control.SelectedItem is TabItem item)) return;
 
-        Enum.TryParse((item.Header as string)?.Replace(" ", ""), out Window window);
-
-        control.IsEnabled = false;
-
-        Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
-
-        BaseProjectWindow newWindow = newWindowConstructor();
-        newWindow.SetOwner(this);
-
-        if (this is ArchiveModelList list && newWindow is Converting c)
+        if(Enum.TryParse((item.Header as string)?.Replace(" ", ""), out Window window))
         {
-            c.SetTask(new ArchiveModelList.MeshConversionTask(list.GetModelsToConvert()));
+
+            control.IsEnabled = false;
+
+            Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
+
+            BaseProjectWindow newWindow = newWindowConstructor();
+            newWindow.SetOwner(this);
+
+            if (this is ArchiveModelList list && newWindow is Converting c)
+            {
+                c.SetTask(new ArchiveModelList.MeshConversionTask(list.GetModelsToConvert()));
+            }
+
+            CloseOnNewWindowOpened(newWindow);
+            
         }
-        
-        CloseOnNewWindowOpened(newWindow);
 
         // Console.WriteLine(item.Header);
         // Console.Out.WriteLine(window);

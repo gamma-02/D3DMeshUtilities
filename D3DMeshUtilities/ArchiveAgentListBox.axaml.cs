@@ -2,9 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
+using Avalonia.VisualTree;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 
 namespace D3DMeshUtilities;
@@ -37,6 +41,32 @@ public class ArchiveAgentListBox : TemplatedControl
             AgentList.SelectionChanged += eventHandler;
         }
         
+        // foreach (Visual visual in AgentList.GetVisualDescendants())
+        // {
+        //     Console.Out.Write(visual);
+        // }
+
+        AgentList.Initialized += OnAgentListInit;
+
+        AgentList.Loaded += OnAgentListInit;
+
+    }
+
+    private void OnAgentListInit(object? sender, EventArgs e)
+    {
+        if(sender is not ListBox box) return;
+        
+        foreach (Visual visual in box.GetVisualDescendants())
+        {
+            if (visual is not Expander ex) continue;
+            
+            ex.Expanded += OnExpanderExpanded;
+        }
+    }
+
+    private void OnExpanderExpanded(object? sender, RoutedEventArgs e)
+    {
+        Console.Out.WriteLine($"{sender} expanded!");
     }
 
     public ArchiveAgentListBox(string archiveName, List<AgentRepresentation> agents)

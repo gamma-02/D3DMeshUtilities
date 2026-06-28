@@ -56,15 +56,15 @@
             </Grid.RowDefinitions>
             
             <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header" SelectionChanged="Header_OnSelectionChanged">
-                <TabItem Header="Load Resources" FontSize="16"></TabItem>
-                <TabItem Header="List Models" FontSize="16"></TabItem>
-                <TabItem Header="Convert Models" FontSize="16"></TabItem>
+                <TabItem Header="Load Resources" FontSize="16" />
+                <TabItem Header="List Models" FontSize="16" />
+                <TabItem Header="Convert Models" FontSize="16" />
             </TabControl>
             
         
             
             <Grid Grid.Row="1">
-                <ComboBox Name="GameDropdown" FontSize="16"></ComboBox>
+                <ComboBox Name="GameDropdown" FontSize="16" />
             </Grid>
             
             
@@ -81,9 +81,9 @@
             
             <Grid Grid.Row="6" VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="0.4*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="0.4*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 
                 <Button Grid.Column="0" Click="LoadResources_OnClick" Name="OpenGameDir" IsEnabled="False" FontSize="18" Height="40" HorizontalAlignment="Right"> Load all Game Resources </Button>
