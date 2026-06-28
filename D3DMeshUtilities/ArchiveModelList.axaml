@@ -21,11 +21,12 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header" SelectionChanged="Header_OnSelectionChanged">
-            <TabItem Header="Load Resources" FontSize="16"></TabItem>
-            <TabItem Header="List Models" FontSize="16" IsSelected="True"></TabItem>
-            <TabItem Header="Convert Models" FontSize="16"></TabItem>
-        </TabControl>
+        <d3DMeshUtilities:WindowTabs Grid.Row="0" Name="Header" SelectionChanged="Header_OnSelectionChanged" >
+            <x:Arguments>
+                <x:Static Member="d3DMeshUtilities:BaseProjectWindow.TabsState" />
+            </x:Arguments>
+        </d3DMeshUtilities:WindowTabs>
+
         
         <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24"> Select Mesh To Export </TextBlock>
         

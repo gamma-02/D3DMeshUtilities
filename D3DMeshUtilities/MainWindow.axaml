@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ourstuff="clr-namespace:D3DMeshUtilities"
         mc:ProcessContent="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="D3DMeshUtilities.MainWindow"
         Title="D3DMeshUtilities"
@@ -55,11 +56,11 @@
 
             </Grid.RowDefinitions>
             
-            <TabControl Grid.Row="0" Height="28" VerticalAlignment="Top" Name="Header" SelectionChanged="Header_OnSelectionChanged">
-                <TabItem Header="Load Resources" FontSize="16" />
-                <TabItem Header="List Models" FontSize="16" />
-                <TabItem Header="Convert Models" FontSize="16" />
-            </TabControl>
+            <ourstuff:WindowTabs Grid.Row="0" SelectionChanged="Header_OnSelectionChanged" >
+                <x:Arguments>
+                    <x:Static Member="ourstuff:BaseProjectWindow.TabsState" />
+                </x:Arguments>
+            </ourstuff:WindowTabs>
             
         
             

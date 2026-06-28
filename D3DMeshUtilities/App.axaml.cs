@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using D3DMeshUtilities.Code;
+using SharpGLTF.Schema2;
 
 namespace D3DMeshUtilities;
 
@@ -17,9 +20,33 @@ public class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
+    private static List<string> ArgPrefixes =
+    [
+        "-gameDir", "-game", "-archive", "-model", "-m", "-models", "-ms", "-out", "-o", "-profileOut", "-po",
+        "-testImportMesh"
+    ];
+
     public static void ProcessArgs(string[] args)
     {
-        foreach (string arg in args)
+        List<string> argsList = [];
+
+        //hacky fix to accept spaces instead of equals
+        for (var index = 0; index < args.Length; index++)
+        {
+            string arg = args[index];
+            
+            if (ArgPrefixes.Contains(arg))
+            {
+                argsList.Add(arg + "=" + args[index + 1]);
+                index += 1;
+            }
+            else
+            {
+                argsList.Add(arg);
+            }
+        }
+
+        foreach (string arg in argsList)
         {
             if (arg.StartsWith("-gameDir="))
             {

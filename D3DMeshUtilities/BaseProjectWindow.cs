@@ -2,16 +2,31 @@
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Xunit.Abstractions;
 using SelectionChangedEventArgs = Avalonia.Controls.SelectionChangedEventArgs;
 using Window = Avalonia.Controls.Window;
 
 namespace D3DMeshUtilities;
 
+public class TabsState
+{
+    public Dictionary<BaseProjectWindow.Window, ITabState> TabStates = [];
+
+    public List<string> ListModelsDropDown = ["List Models", "List Agents"];
+    public int SelectedListTab = 0;
+    public int SelectedTab = 0;
+}
+
+public interface ITabState;
+
 public abstract class BaseProjectWindow : Window
 {
     
+    public static TabsState TabsState = new();
+    
     
     public new Action? Opened;
+    
     
     public static Dictionary<Window, Func<BaseProjectWindow>> WindowConstructorMap =
         new ()
@@ -107,8 +122,9 @@ public abstract class BaseProjectWindow : Window
 
         if(Enum.TryParse((item.Header as string)?.Replace(" ", ""), out Window window))
         {
-
             control.IsEnabled = false;
+
+            TabsState.SelectedListTab = control.SelectedIndex;
 
             Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
 
@@ -122,6 +138,23 @@ public abstract class BaseProjectWindow : Window
 
             CloseOnNewWindowOpened(newWindow);
             
+        } else if (item.Header is ComboBox box && Enum.TryParse(box.Text?.Replace(" ", ""), out Window window1))
+        {
+            control.IsEnabled = false;
+            
+            TabsState.SelectedListTab = control.SelectedIndex;
+
+            Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
+
+            BaseProjectWindow newWindow = newWindowConstructor();
+            newWindow.SetOwner(this);
+
+            if (this is ArchiveModelList list && newWindow is Converting c)
+            {
+                c.SetTask(new ArchiveModelList.MeshConversionTask(list.GetModelsToConvert()));
+            }
+
+            CloseOnNewWindowOpened(newWindow);
         }
 
         // Console.WriteLine(item.Header);

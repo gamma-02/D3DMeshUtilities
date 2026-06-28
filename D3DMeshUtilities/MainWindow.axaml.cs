@@ -22,6 +22,17 @@ using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace D3DMeshUtilities;
 
+public class MainWindowTabState
+{
+    public static int? GameCache;
+    public static string? SingleArchivePathCache;
+    public static string? GameDataDirectoryCache;
+    public static List<string>? LoadedArchivesCache;
+
+    public static List<TextBlock>? MessageBoxCache;
+
+}
+
 public partial class MainWindow : BaseProjectWindow
 {
     private static readonly Dictionary<string, int> EXTRA_GAME_YEARS = new Dictionary<string, int>()
@@ -68,7 +79,16 @@ public partial class MainWindow : BaseProjectWindow
         }
         
         if (!string.IsNullOrWhiteSpace(App.StartupGameName))
-            GameDropdown.SelectedIndex = GameDropdown.Items.IndexOf(App.StartupGameName);
+        {
+            if (int.TryParse(App.StartupGameName, out int index))
+            {
+                GameDropdown.SelectedIndex = index;
+            }
+            else if(GameDropdown.Items.IndexOf(App.StartupGameName) != -1)
+            {
+                GameDropdown.SelectedIndex = GameDropdown.Items.IndexOf(App.StartupGameName);
+            }
+        }
         else if (GameCache.HasValue)
             GameDropdown.SelectedIndex = GameCache.Value;
         else
