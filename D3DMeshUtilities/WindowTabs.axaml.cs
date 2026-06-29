@@ -24,11 +24,29 @@ public partial class WindowTabs : UserControl
         
     }
 
-    private int _count = 0;
+    private bool _hasExpandedThingy = false;
+    private bool _skipNext = false;
+        
     private void Header_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        Console.Out.WriteLine($"Changing tabs... {_count += 1}");
+        if (_skipNext)
+        {
+            _skipNext = false;
+            return;
+        }
+        
+        if(sender is not TabControl control) return;
+        
+        if(control.SelectedIndex == _state.SelectedTab) return;
 
+        if ((control.Items[control.SelectedIndex] as TabItem)?.Header is ComboBox && !_hasExpandedThingy)
+        {
+            _hasExpandedThingy = true;
+            control.SelectedIndex = _state.SelectedTab; //return to initial state since we don't want to chagne it
+            // _skipNext = true; //skip the selection changed event from switching back
+            return;
+        }
+        
         foreach (EventHandler<SelectionChangedEventArgs>? handler in _listeners)
         {
             handler?.Invoke(sender, e);
@@ -53,8 +71,7 @@ public partial class WindowTabs : UserControl
         Header.SelectedIndex = state.SelectedTab;
         
         Header.SelectionChanged += Header_OnSelectionChanged;
-
-
+        
     }
     
     private void IntermediateDropdown_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)

@@ -22,14 +22,14 @@ using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace D3DMeshUtilities;
 
-public class MainWindowTabState
+public class MainWindowTabState : ITabState
 {
-    public static int? GameCache;
-    public static string? SingleArchivePathCache;
-    public static string? GameDataDirectoryCache;
-    public static List<string>? LoadedArchivesCache;
+    public int? GameCache;
+    public string? SingleArchivePathCache;
+    public string? GameDataDirectoryCache;
+    public List<string>? LoadedArchivesCache;
 
-    public static List<TextBlock>? MessageBoxCache;
+    public List<TextBlock> MessageBoxCache = [];
 
 }
 
@@ -40,10 +40,10 @@ public partial class MainWindow : BaseProjectWindow
         { "The Walking Dead", 2012 }
     };
     
-    public static int? GameCache;
     public static string? SingleArchivePathCache;
-    public static string? GameDataDirectoryCache;
     public static List<string>? LoadedArchivesCache;
+
+    private MainWindowTabState state;
     
     public MainWindow()
     {
@@ -52,6 +52,15 @@ public partial class MainWindow : BaseProjectWindow
 #endif
         
         InitializeComponent();
+        
+        TabsState.SelectedTab = 0;//set tab index to our window "id"
+
+        if (!TabsState.TabStates.TryGetValue(Window.LoadResources, out ITabState? uncastedState))
+        {
+            uncastedState = new MainWindowTabState();
+        }
+        
+        state = (uncastedState as MainWindowTabState) ?? new MainWindowTabState();
         
         if (Design.IsDesignMode)
         {
@@ -89,15 +98,20 @@ public partial class MainWindow : BaseProjectWindow
                 GameDropdown.SelectedIndex = GameDropdown.Items.IndexOf(App.StartupGameName);
             }
         }
-        else if (GameCache.HasValue)
-            GameDropdown.SelectedIndex = GameCache.Value;
+        else if (state.GameCache.HasValue)
+            GameDropdown.SelectedIndex = state.GameCache.Value;
         else
             GameDropdown.SelectedIndex = GameDropdown.Items.IndexOf("Poker Night at the Inventory Remastered");
         
         
-        if (GameDataDirectoryCache != null)
+        if (state.GameDataDirectoryCache != null)
         {
-            GameDataPath.Text = GameDataDirectoryCache;
+            GameDataPath.Text = state.GameDataDirectoryCache;
+        }
+
+        foreach (TextBlock block in state.MessageBoxCache)
+        {
+            this.MessageBox.Items.Add(block);
         }
         
         // if (LoadedArchivesCache != null && LoadedArchivesCache.Count > 0)
@@ -122,6 +136,8 @@ public partial class MainWindow : BaseProjectWindow
         //     
         //     ArchiveListGrid.IsVisible = true;
         // }
+        
+        
 
         if (!startedUp)
         {
@@ -343,13 +359,23 @@ public partial class MainWindow : BaseProjectWindow
     {
         if (GameDropdown.SelectedIndex != 79)
         {
-            GameCache = GameDropdown.SelectedIndex;
+            state.GameCache = GameDropdown.SelectedIndex;
         }
 
         if (!(GameDataPath.Text?.Contains("Game Data Directory") ?? false))
         {
-            GameDataDirectoryCache = GameDataPath.Text;
+            state.GameDataDirectoryCache = GameDataPath.Text;
         }
+
+        state.MessageBoxCache.Clear(); //clear message box cache so things don't get duplicated infinitely
+        foreach (object? control in MessageBox.Items)
+        {
+            if (control is not TextBlock block) continue;
+            
+            state.MessageBoxCache.Add(block);
+        }
+        
+        
 
         // LoadedArchivesCache = null;
         //

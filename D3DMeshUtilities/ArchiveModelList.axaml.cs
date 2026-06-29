@@ -24,6 +24,8 @@ public partial class ArchiveModelList : BaseProjectWindow
     {
         InitializeComponent();
         
+        TabsState.SelectedTab = 1;//set index to our window "id"
+        
         if (ArchiveMeshListDictionary.Count == 0 && !Design.IsDesignMode)
         {
             ListPanel.Children.Clear();
@@ -53,6 +55,8 @@ public partial class ArchiveModelList : BaseProjectWindow
     public ArchiveModelList(bool fromTab = true)
     {
         InitializeComponent();
+        
+        TabsState.SelectedTab = 1;//set index to our window "id"
         
         if (fromTab && ArchiveMeshListDictionary.Count == 0 && !Design.IsDesignMode)
         {
@@ -107,6 +111,7 @@ public partial class ArchiveModelList : BaseProjectWindow
     private void FillModelList()
     {
         ResourceLoader.ArchiveLocationLock.TryEnter();
+
 
         try
         {

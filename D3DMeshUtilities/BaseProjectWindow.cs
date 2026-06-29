@@ -14,7 +14,7 @@ public class TabsState
 
     public List<string> ListModelsDropDown = ["List Models", "List Agents"];
     public int SelectedListTab = 0;
-    public int SelectedTab = 0;
+    public int SelectedTab { get; set; } = 0;
 }
 
 public interface ITabState;
@@ -124,7 +124,7 @@ public abstract class BaseProjectWindow : Window
         {
             control.IsEnabled = false;
 
-            TabsState.SelectedListTab = control.SelectedIndex;
+            TabsState.SelectedTab = control.SelectedIndex;
 
             Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
 
@@ -142,9 +142,12 @@ public abstract class BaseProjectWindow : Window
         {
             control.IsEnabled = false;
             
-            TabsState.SelectedListTab = control.SelectedIndex;
+            //goddamnit. i. cannot. that's not what that is.
+            TabsState.SelectedListTab = box.SelectedIndex;
 
-            Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
+            TabsState.SelectedTab = control.SelectedIndex;
+
+            Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window1];
 
             BaseProjectWindow newWindow = newWindowConstructor();
             newWindow.SetOwner(this);

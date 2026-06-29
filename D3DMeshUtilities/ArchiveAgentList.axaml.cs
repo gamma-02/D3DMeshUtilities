@@ -33,6 +33,8 @@ public partial class ArchiveAgentList : BaseProjectWindow
 
         // TestBox.Items.Add("HELLO");
         // TestBox.SelectedIndex = 0;
+
+        TabsState.SelectedTab = 2;//set index to our window "id"
         
         if (Design.IsDesignMode)
         {
