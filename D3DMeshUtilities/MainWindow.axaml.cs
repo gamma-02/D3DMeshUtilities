@@ -22,19 +22,21 @@ using RoutedEventArgs = Avalonia.Interactivity.RoutedEventArgs;
 
 namespace D3DMeshUtilities;
 
-public class MainWindowTabState : ITabState
-{
-    public int? GameCache;
-    public string? SingleArchivePathCache;
-    public string? GameDataDirectoryCache;
-    public List<string>? LoadedArchivesCache;
 
-    public List<TextBlock> MessageBoxCache = [];
-
-}
 
 public partial class MainWindow : BaseProjectWindow
 {
+    public class MainWindowTabState : ITabState
+    {
+        public int? GameCache;
+        public string? SingleArchivePathCache;
+        public string? GameDataDirectoryCache;
+        public List<string>? LoadedArchivesCache;
+
+        public List<TextBlock> MessageBoxCache = [];
+
+    }
+    
     private static readonly Dictionary<string, int> EXTRA_GAME_YEARS = new Dictionary<string, int>()
     {
         { "The Walking Dead", 2012 }
@@ -50,17 +52,13 @@ public partial class MainWindow : BaseProjectWindow
 #if BUILT_FOR_WINDOWS
         App.AllocConsole();
 #endif
-        
-        InitializeComponent();
-        
         TabsState.SelectedTab = 0;//set tab index to our window "id"
 
-        if (!TabsState.TabStates.TryGetValue(Window.LoadResources, out ITabState? uncastedState))
-        {
-            uncastedState = new MainWindowTabState();
-        }
+        InitializeComponent();
         
-        state = (uncastedState as MainWindowTabState) ?? new MainWindowTabState();
+        
+        
+        state = (TabsState.GetOrSetStateForWindow(Window.LoadResources, new MainWindowTabState()) as MainWindowTabState);
         
         if (Design.IsDesignMode)
         {
@@ -72,9 +70,9 @@ public partial class MainWindow : BaseProjectWindow
         
         int _getYear(string gameName)
         {
-            if (EXTRA_GAME_YEARS.ContainsKey(gameName))
+            if (EXTRA_GAME_YEARS.TryGetValue(gameName, out int year))
             {
-                return EXTRA_GAME_YEARS[gameName];
+                return year;
             }
             
             return int.Parse(Regex.Match(Toolkit.Instance.GameProfiles[gameName].Id, "20[0-9]{2}").Value);
@@ -109,36 +107,15 @@ public partial class MainWindow : BaseProjectWindow
             GameDataPath.Text = state.GameDataDirectoryCache;
         }
 
-        foreach (TextBlock block in state.MessageBoxCache)
+        if(state.MessageBoxCache.Count != 0)
         {
-            this.MessageBox.Items.Add(block);
+            this.MessageBox.Items.Clear();
+            foreach (TextBlock block in state.MessageBoxCache)
+            {
+                this.MessageBox.Items.Add(block);
+            }
         }
         
-        // if (LoadedArchivesCache != null && LoadedArchivesCache.Count > 0)
-        // {
-        //     ArchiveList.Items.Clear();
-        //     //assume the resource context is loaded
-        //     foreach (string archivePath in LoadedArchivesCache)
-        //     {
-        //         var li = new ListBoxItem();
-        //         var text = new TextBlock();
-        //
-        //         int seperator = archivePath.LastIndexOfAny(['\\', '/']);
-        //
-        //         string archiveName = archivePath.Substring(seperator + 1);
-        //
-        //         text.Text = archiveName;
-        //         text.HorizontalAlignment = HorizontalAlignment.Left;
-        //         li.Content = text;
-        //
-        //         ArchiveList.Items.Add(li);
-        //     }
-        //     
-        //     ArchiveListGrid.IsVisible = true;
-        // }
-        
-        
-
         if (!startedUp)
         {
             startedUp = true;
@@ -371,35 +348,18 @@ public partial class MainWindow : BaseProjectWindow
         foreach (object? control in MessageBox.Items)
         {
             if (control is not TextBlock block) continue;
-            
-            state.MessageBoxCache.Add(block);
-        }
-        
-        
 
-        // LoadedArchivesCache = null;
-        //
-        // if (ArchiveList.Items.Count == 0)
-        //     return;
-        //
-        // if (ArchiveList.Items[0] is not ListBoxItem { Content: TextBlock b })
-        //     return;
-        //
-        // if (b.Text?.Contains("Loading...") ?? false)
-        //     return;
-        //
-        // var archives = new List<string>();
-        // foreach (object? item in ArchiveList.Items)
-        // {
-        //     if(item is not ListBoxItem listItem)
-        //         continue;
-        //         
-        //     string? archiveName = ((TextBlock)listItem.Content!).Text;
-        //
-        //     archives.Add(Path.Combine(GameDataPath.Text!, archiveName!));
-        // }
-        //
-        // LoadedArchivesCache = archives;
+            var messageBlock = new TextBlock
+            {
+                Text = block.Text,
+                FontSize = block.FontSize,
+                HorizontalAlignment = block.HorizontalAlignment,
+                Foreground = block.Foreground,
+                Margin = block.Margin
+            };
+            
+            state.MessageBoxCache.Add(messageBlock);
+        }
     }
 
     private void ChooseSingleArchive_OnClick(object? sender, RoutedEventArgs args)

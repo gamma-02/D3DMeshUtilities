@@ -24,7 +24,7 @@ public partial class WindowTabs : UserControl
         
     }
 
-    private bool _hasExpandedThingy = false;
+    private bool _hasExpandedDropdown = false;
     private bool _skipNext = false;
         
     private void Header_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -35,17 +35,26 @@ public partial class WindowTabs : UserControl
             return;
         }
         
-        if(sender is not TabControl control) return;
-        
-        if(control.SelectedIndex == _state.SelectedTab) return;
-
-        if ((control.Items[control.SelectedIndex] as TabItem)?.Header is ComboBox && !_hasExpandedThingy)
+        if(sender is TabControl control)
         {
-            _hasExpandedThingy = true;
-            control.SelectedIndex = _state.SelectedTab; //return to initial state since we don't want to chagne it
-            // _skipNext = true; //skip the selection changed event from switching back
-            return;
+            bool isComboBox = (control.Items[control.SelectedIndex] as TabItem)?.Header is ComboBox;
+
+            if (control.SelectedIndex == _state.SelectedTab && !isComboBox) return;
+
+            if (isComboBox && !_hasExpandedDropdown)
+            {
+                _hasExpandedDropdown = true;
+                control.SelectedIndex = _state.SelectedTab; //return to initial state since we don't want to chagne it
+                // _skipNext = true; //skip the selection changed event from switching back
+                return;
+            }
         }
+        else if (sender is ComboBox)
+        {
+            Console.Out.WriteLine("Got ComboBox!");
+        }
+        else
+            return;
         
         foreach (EventHandler<SelectionChangedEventArgs>? handler in _listeners)
         {
@@ -59,12 +68,8 @@ public partial class WindowTabs : UserControl
         _state = state;
         
         foreach (string listModelsTab in state.ListModelsDropDown)
-        {
-
             IntermediateDropdown.Items.Add(listModelsTab);
-            Console.Out.WriteLine(listModelsTab);
-
-        }
+        
 
         IntermediateDropdown.SelectedIndex = state.SelectedListTab;
         
@@ -73,9 +78,37 @@ public partial class WindowTabs : UserControl
         Header.SelectionChanged += Header_OnSelectionChanged;
         
     }
+
+    private bool _selectionNotMade = false;
     
-    private void IntermediateDropdown_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private void IntermediateDropdown_OnSelectionChanged(object? senderTmp, SelectionChangedEventArgs e)
     {
-        _state.SelectedListTab = (sender as ComboBox)!.SelectedIndex;
+        ComboBox sender = (senderTmp as ComboBox)!;
+        _selectionNotMade = false;
+        _state.SelectedListTab = sender.SelectedIndex;
+        if(sender.IsInitialized)
+        {
+            _hasExpandedDropdown = true;
+            Header_OnSelectionChanged(sender, e);
+            _skipNext = true;
+        }
+    }
+    
+    private void IntermediateDropdown_OnDropDownClosed(object? senderTmp, EventArgs e)
+    {
+        ComboBox sender = (senderTmp as ComboBox)!;
+
+        if (!sender.IsInitialized)
+            return;
+
+        if (!_selectionNotMade) return; //selection was made, return
+        
+        Header_OnSelectionChanged(sender, null!);
+        _skipNext = true;
+    }
+
+    private void IntermediateDropdown_OnDropDownOpened(object? sender, EventArgs e)
+    {
+        _selectionNotMade = true;
     }
 }

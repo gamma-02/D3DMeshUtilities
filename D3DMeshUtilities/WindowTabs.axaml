@@ -8,7 +8,14 @@
         <TabItem Header="Load Resources" FontSize="16" />
         <TabItem FontSize="16">
             <TabItem.Header>
-                <ComboBox Name="IntermediateDropdown" ZIndex="1" FontSize="16" SelectionChanged="IntermediateDropdown_OnSelectionChanged">
+                <ComboBox 
+                    Name="IntermediateDropdown" 
+                    ZIndex="1" 
+                    FontSize="16" 
+                    SelectionChanged="IntermediateDropdown_OnSelectionChanged" 
+                    DropDownClosed="IntermediateDropdown_OnDropDownClosed"
+                    DropDownOpened="IntermediateDropdown_OnDropDownOpened"
+                    >
                     
                 </ComboBox>
             </TabItem.Header>

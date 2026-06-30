@@ -10,11 +10,22 @@ namespace D3DMeshUtilities;
 
 public class TabsState
 {
-    public Dictionary<BaseProjectWindow.Window, ITabState> TabStates = [];
+    public Dictionary<BaseProjectWindow.Window, ITabState?> TabStates = [];
 
     public List<string> ListModelsDropDown = ["List Models", "List Agents"];
     public int SelectedListTab = 0;
     public int SelectedTab { get; set; } = 0;
+
+    public T GetOrSetStateForWindow<T>(BaseProjectWindow.Window window, T defaultState) where T : class, ITabState
+    {
+        if (TabStates.TryGetValue(window, out ITabState? state)) return (state as T)!;
+        
+        TabStates[window] = defaultState;
+        state = defaultState;
+
+        return (state as T)!;
+
+    }
 }
 
 public interface ITabState;
@@ -114,17 +125,21 @@ public abstract class BaseProjectWindow : Window
             return;
         }
         
-        // return;
+        if (sender is ComboBox senderBox)
+        {
+            Header_HandleChangeComboBox(senderBox, selectionChangedEventArgs);
+            return;
+        }
         
-        if (!(sender is TabControl control)) return;
+        if (sender is not TabControl control) return;
 
-        if (!(control.SelectedItem is TabItem item)) return;
+        if (control.SelectedItem is not TabItem item) return;
 
         if(Enum.TryParse((item.Header as string)?.Replace(" ", ""), out Window window))
         {
             control.IsEnabled = false;
 
-            TabsState.SelectedTab = control.SelectedIndex;
+            // TabsState.SelectedTab = control.SelectedIndex;
 
             Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window];
 
@@ -145,7 +160,7 @@ public abstract class BaseProjectWindow : Window
             //goddamnit. i. cannot. that's not what that is.
             TabsState.SelectedListTab = box.SelectedIndex;
 
-            TabsState.SelectedTab = control.SelectedIndex;
+            // TabsState.SelectedTab = control.SelectedIndex;
 
             Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window1];
 
@@ -162,5 +177,28 @@ public abstract class BaseProjectWindow : Window
 
         // Console.WriteLine(item.Header);
         // Console.Out.WriteLine(window);
+    }
+
+    private void Header_HandleChangeComboBox(ComboBox box, SelectionChangedEventArgs _)
+    {
+        if (!Enum.TryParse(box.Text?.Replace(" ", ""), out Window window1)) return;
+        
+        //goddamnit. i. cannot. that's not what that is.
+        TabsState.SelectedListTab = box.SelectedIndex;
+
+        // TabsState.SelectedTab = control.SelectedIndex;
+
+        Func<BaseProjectWindow> newWindowConstructor = WindowConstructorMap[window1];
+
+        BaseProjectWindow newWindow = newWindowConstructor();
+        newWindow.SetOwner(this);
+
+        if (this is ArchiveModelList list && newWindow is Converting c)
+        {
+            c.SetTask(new ArchiveModelList.MeshConversionTask(list.GetModelsToConvert()));
+        }
+
+        CloseOnNewWindowOpened(newWindow);
+
     }
 }

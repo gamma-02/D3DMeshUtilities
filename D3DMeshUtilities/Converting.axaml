@@ -6,6 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="480"
         x:Class="D3DMeshUtilities.Converting"
         Title="D3DMeshUtilities"
+        Closed="Converting_OnClosed"
         WindowStartupLocation="CenterOwner"
         Width="800" Height="650">
     
@@ -94,9 +95,10 @@
                         <Setter Property="TextBlock.Foreground" Value="Transparent" />
                     </Style>
                 </ListBox.Styles>
+                <!-- todo: custom messages when nothing to do/not started -->
                 <!-- <ListBoxItem> -->
                 <!--     <TextBlock HorizontalAlignment="Left" FontSize="20"> -->
-                <!--         Converting... -->
+                <!--         Waiting to begin... -->
                 <!--     </TextBlock> -->
                 <!-- </ListBoxItem> -->
                 

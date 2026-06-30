@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using D3DMeshUtilities.Code.D3DMeshFormats;
 using TelltaleToolKit.Meta.Reflection;
 using TelltaleToolKit.T3Types;
@@ -19,6 +20,11 @@ namespace D3DMeshUtilities;
 public partial class ArchiveAgentList : BaseProjectWindow
 {
 
+    public class AgentListState : ITabState
+    {
+        
+    }
+
     public static readonly Dictionary<string, List<AgentRepresentation>> ContextAgentDictionary = new ();
 
     public static Action? OnAgentDictionaryBuilt;
@@ -26,15 +32,16 @@ public partial class ArchiveAgentList : BaseProjectWindow
     private List<string>? _specificArchives;
     
     private bool _enableButton = true;
+
+    private AgentListState _state;
     
     public ArchiveAgentList()
     {
+        TabsState.SelectedTab = 1;//set index to our window "id"
+
         InitializeComponent();
 
-        // TestBox.Items.Add("HELLO");
-        // TestBox.SelectedIndex = 0;
-
-        TabsState.SelectedTab = 2;//set index to our window "id"
+        _state = TabsState.GetOrSetStateForWindow(Window.ListAgents, new AgentListState());
         
         if (Design.IsDesignMode)
         {
@@ -96,6 +103,10 @@ public partial class ArchiveAgentList : BaseProjectWindow
     public ArchiveAgentList(List<string> specificArchives)
     {
         InitializeComponent();
+        
+        TabsState.SelectedTab = 2;//set index to our window "id"
+        
+        _state = TabsState.GetOrSetStateForWindow(Window.ListAgents, new AgentListState());
 
         _specificArchives = specificArchives;
         
@@ -204,17 +215,45 @@ public partial class ArchiveAgentList : BaseProjectWindow
     {
         return Window.ListAgents;
     }
+    
+    private async Task<string?> OpenFile()
+    {
+        IReadOnlyList<IStorageFolder> dialouge = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        {
+            AllowMultiple = false,
+            Title = "Select Output Directory"
+        });
+
+        if (dialouge.Count <= 0) return null;
+        
+        string? folder = dialouge[0].TryGetLocalPath();
+
+        return !string.IsNullOrWhiteSpace(folder) ? folder : null;
+    }
 
     private void BeginConversion(object? sender, RoutedEventArgs e)
     {
+        Task<string?> task = Dispatcher.InvokeAsync(OpenFile);
+        
+        
         List<AgentRepresentation> agentRepresentations = GetSelectedAgents();
         
         if(agentRepresentations.Count == 0) return;
         
-        var task = new AgentConversionTask(agentRepresentations);
+        //this sometimes fails? I REALLY Don't know why.
+        Dispatcher.Invoke(async () =>
+        {
+            await task;
 
-        var converting = new Converting(task) { OverriddenOwner = this };
-        CloseOnNewWindowOpened(converting);
+            var conversionTask = new AgentConversionTask(agentRepresentations);
+
+            var converting = new Converting(conversionTask, task.Result)
+            {
+                OverriddenOwner = this
+            };
+
+            CloseOnNewWindowOpened(converting);
+        });
     }
 
     public static async void BuildArchiveAgentDictionary()
@@ -293,8 +332,9 @@ public partial class ArchiveAgentList : BaseProjectWindow
             Console.Out.WriteLine($"Finished converting agents! Took: {span}");
             Console.ResetColor();
 
-            converting?.Dispatcher.Invoke(() => converting.AddMessageToBox("Finished converting agents!"));
-
         }
+
+        public override string WaitingString { get; } = "Waiting to start agent conversion....";
+        public override string CompletedString { get; } = "Finished converting agents!";
     }
 }

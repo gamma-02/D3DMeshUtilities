@@ -55,18 +55,6 @@ public class ArchiveAgentListBox : TemplatedControl
     private void OnAgentListInit(object? sender, EventArgs e)
     {
         if(sender is not ListBox box) return;
-        
-        foreach (Visual visual in box.GetVisualDescendants())
-        {
-            if (visual is not Expander ex) continue;
-            
-            ex.Expanded += OnExpanderExpanded;
-        }
-    }
-
-    private void OnExpanderExpanded(object? sender, RoutedEventArgs e)
-    {
-        Console.Out.WriteLine($"{sender} expanded!");
     }
 
     public ArchiveAgentListBox(string archiveName, List<AgentRepresentation> agents)

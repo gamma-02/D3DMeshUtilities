@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
+using Avalonia.Platform.Storage;
 using D3DMeshUtilities.Code;
 using TelltaleToolKit.IO.Archives;
 
@@ -13,6 +15,12 @@ namespace D3DMeshUtilities;
 
 public partial class ArchiveModelList : BaseProjectWindow
 {
+    
+    public class ArchiveListState : ITabState
+    {
+        
+    }
+    
     public static readonly Dictionary<string, List<string>> ArchiveMeshListDictionary =
         new Dictionary<string, List<string>>();
 
@@ -20,11 +28,15 @@ public partial class ArchiveModelList : BaseProjectWindow
 
     // public bool fromTab = true;
 
+    public ArchiveListState _state;
+
     public ArchiveModelList()
     {
+        TabsState.SelectedTab = 1;//set index to our window "id"
+
         InitializeComponent();
         
-        TabsState.SelectedTab = 1;//set index to our window "id"
+        _state = TabsState.GetOrSetStateForWindow(Window.ListModels, new ArchiveListState());
         
         if (ArchiveMeshListDictionary.Count == 0 && !Design.IsDesignMode)
         {
@@ -54,9 +66,11 @@ public partial class ArchiveModelList : BaseProjectWindow
     
     public ArchiveModelList(bool fromTab = true)
     {
+        TabsState.SelectedTab = 1;//set index to our window "id"
+        
         InitializeComponent();
         
-        TabsState.SelectedTab = 1;//set index to our window "id"
+        _state = TabsState.GetOrSetStateForWindow(Window.ListModels, new ArchiveListState());
         
         if (fromTab && ArchiveMeshListDictionary.Count == 0 && !Design.IsDesignMode)
         {
@@ -65,7 +79,9 @@ public partial class ArchiveModelList : BaseProjectWindow
             var notLoadedMessage = new TextBlock
             {
                 Text = "Archive not yet loaded :(",
-                FontSize = 20
+                FontSize = 20,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(15)
             };
 
             ListPanel.Children.Add(notLoadedMessage);
@@ -115,7 +131,7 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         try
         {
-            if(!Design.IsDesignMode)
+            if(!Design.IsDesignMode && ArchiveMeshListDictionary.Count != 0)
             {
                 ListPanel.Children.Clear();
             }
@@ -264,19 +280,42 @@ public partial class ArchiveModelList : BaseProjectWindow
 
         CloseOnNewWindowOpened(converting);
     }
+    
+    private async Task<string?> OpenFile()
+    {
+        IReadOnlyList<IStorageFolder> dialouge = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        {
+            AllowMultiple = false,
+            Title = "Select Output Directory"
+        });
+
+        if (dialouge.Count <= 0) return null;
+        
+        string? folder = dialouge[0].TryGetLocalPath();
+
+        return !string.IsNullOrWhiteSpace(folder) ? folder : null;
+    }
 
     void BeginConversion(object sender, RoutedEventArgs routedEventArgs)
     {
+
+        Task<string?> task = Dispatcher.InvokeAsync(OpenFile);
+        
         List<string> models = GetSelectedMeshes();
 
         if(models.Count == 0) return;
 
-        Converting converting = new Converting(new MeshConversionTask(models))
+        Dispatcher.Invoke(async () =>
         {
-            OverriddenOwner = this
-        };
-        
-        CloseOnNewWindowOpened(converting);
+            await task;
+
+            var converting = new Converting(new MeshConversionTask(models), task.Result)
+            {
+                OverriddenOwner = this
+            };
+
+            CloseOnNewWindowOpened(converting);
+        });
         
     }
     
@@ -316,5 +355,8 @@ public partial class ArchiveModelList : BaseProjectWindow
             Console.Out.WriteLine("Read mesh data from ttarchive!");
             
         }
+
+        public override string WaitingString { get; } = "Waiting to start mesh conversion....";
+        public override string CompletedString { get; } = "Completed mesh conversion!";
     }
 }
